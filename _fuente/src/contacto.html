@@ -1,0 +1,80 @@
+<section class="page-hero">
+  <div class="hero__bg"><div class="hero__grid-lines"></div></div>
+  <div class="container">
+    <div class="reveal">
+      <nav class="breadcrumb" aria-label="Migas de pan"><a href="index.html">Inicio</a><span aria-hidden="true">/</span><span>Contacto</span></nav>
+      <span class="eyebrow">Estudio gratuito</span>
+      <h1>Hablemos de <em>tu proyecto</em></h1>
+      <p class="lead">Cuéntanos qué necesitas y te respondemos en menos de 24 horas laborables. Visita y presupuesto sin compromiso en toda la Comunidad de Madrid.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container contact-grid">
+    <div class="contact-info reveal">
+      <a class="contact-item" href="tel:{{PHONE_TEL}}"><span class="icon-box">[[i:phone]]</span><span><small>Llámanos</small><b>{{PHONE}}</b></span></a>
+      <a class="contact-item" href="https://wa.me/{{WA}}" target="_blank" rel="noopener"><span class="icon-box" style="background:#25d366;color:#fff">[[i:whatsapp]]</span><span><small>WhatsApp · respuesta rápida</small><b>Escríbenos ahora</b></span></a>
+      <a class="contact-item" href="mailto:{{EMAIL}}"><span class="icon-box">[[i:mail]]</span><span><small>Email</small><b>{{EMAIL}}</b></span></a>
+      <a class="contact-item" href="https://www.instagram.com/{{IG}}/" target="_blank" rel="noopener"><span class="icon-box">[[i:instagram]]</span><span><small>Instagram</small><b>@{{IG}}</b></span></a>
+      <div class="contact-item"><span class="icon-box">[[i:clock]]</span><span><small>Horario</small><b>Lunes a viernes · 9:00–19:00</b></span></div>
+      <div class="note-box mt-2"><strong>¿Qué pasa después?</strong><br>1. Te llamamos para entender tu proyecto. 2. Visitamos tu vivienda o local. 3. Recibes una propuesta cerrada por estancias.</div>
+    </div>
+
+    <form class="form reveal reveal-d1" id="contact-form" novalidate>
+      <h2>Solicita tu <em>estudio gratuito</em></h2>
+      <p style="color:var(--muted)">Cuantos más detalles nos des, más afinada será la propuesta.</p>
+      <div class="form-row">
+        <div class="field"><label for="nombre">Nombre *</label><input id="nombre" name="nombre" autocomplete="name" required></div>
+        <div class="field"><label for="telefono">Teléfono *</label><input id="telefono" name="telefono" type="tel" autocomplete="tel" required></div>
+      </div>
+      <div class="form-row">
+        <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email"></div>
+        <div class="field"><label for="municipio">Municipio</label><input id="municipio" name="municipio" placeholder="Madrid, Pozuelo, Las Rozas…"></div>
+      </div>
+      <div class="field"><label for="tipo">Tipo de proyecto</label>
+        <select id="tipo" name="tipo">
+          <option>Piso o vivienda habitada</option>
+          <option>Chalet / unifamiliar</option>
+          <option>Reforma integral u obra nueva</option>
+          <option>Oficina o local comercial</option>
+          <option>Hotel, clínica u otro edificio</option>
+        </select>
+      </div>
+      <fieldset class="field" style="border:0;padding:0;margin:0 0 18px">
+        <legend style="font-size:.85rem;font-weight:600;color:var(--ink-2);margin-bottom:8px">¿Qué te interesa?</legend>
+        <div class="chips">
+          <label class="chip"><input type="checkbox" name="interes" value="Iluminación"><span>Iluminación</span></label>
+          <label class="chip"><input type="checkbox" name="interes" value="Persianas"><span>Persianas</span></label>
+          <label class="chip"><input type="checkbox" name="interes" value="Climatización / Airzone"><span>Clima / Airzone</span></label>
+          <label class="chip"><input type="checkbox" name="interes" value="Seguridad"><span>Seguridad</span></label>
+          <label class="chip"><input type="checkbox" name="interes" value="Energía / solar"><span>Energía / solar</span></label>
+          <label class="chip"><input type="checkbox" name="interes" value="Interruptores Legrand Netatmo"><span>Interruptores de diseño</span></label>
+          <label class="chip"><input type="checkbox" name="interes" value="Home Assistant"><span>Home Assistant</span></label>
+          <label class="chip"><input type="checkbox" name="interes" value="KNX / DALI"><span>KNX / DALI</span></label>
+        </div>
+      </fieldset>
+      <div class="field"><label for="mensaje">Cuéntanos tu proyecto</label><textarea id="mensaje" name="mensaje" placeholder="Metros, número de estancias, qué te gustaría automatizar…"></textarea></div>
+      <label class="consent"><input type="checkbox" required> <span>He leído y acepto la <a href="legal.html#privacidad">política de privacidad</a>.</span></label>
+      <div class="btn-row">
+        <button class="btn btn--primary btn--lg" type="submit">Enviar por email [[i:arrow]]</button>
+        <button class="btn btn--dark btn--lg" type="button" data-wa-submit>[[i:whatsapp]] Enviar por WhatsApp</button>
+      </div>
+      <p class="form-success" role="status">¡Gracias! Hemos preparado tu mensaje. Si no se ha abierto tu aplicación de correo o WhatsApp, llámanos al {{PHONE}}.</p>
+      <p class="form-note">Tus datos solo se usan para responder a tu solicitud.</p>
+    </form>
+  </div>
+</section>
+
+<section class="section section--dark section--tight">
+  <div class="container split">
+    <div class="reveal">
+      <span class="eyebrow">Zona de servicio</span>
+      <h2>Madrid y <em>toda la Comunidad</em></h2>
+      <p class="lead">Trabajamos en Madrid capital y municipios de alrededor. Para proyectos de empresa, consúltanos fuera de la Comunidad.</p>
+    </div>
+    <div class="zones reveal reveal-d1">
+      <span>Madrid capital</span><span>Pozuelo de Alarcón</span><span>Majadahonda</span><span>Las Rozas</span><span>Boadilla del Monte</span><span>Aravaca</span><span>Alcobendas</span><span>La Moraleja</span><span>San Sebastián de los Reyes</span><span>Tres Cantos</span><span>Villanueva de la Cañada</span><span>Torrelodones</span><span>Getafe</span><span>Leganés</span><span>Alcorcón</span><span>Rivas-Vaciamadrid</span><span>Alcalá de Henares</span><span>Collado Villalba</span>
+    </div>
+  </div>
+</section>

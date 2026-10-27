@@ -7,11 +7,11 @@ Se puede publicar tal cual en cualquier hosting (Netlify, Vercel, GitHub Pages, 
 
 | Archivo | Contenido |
 |---|---|
-| `index.html` | Portada: hero con panel animado de Home Assistant, marcas, servicios, escenas interactivas, cifras, proceso, proyectos, testimonios, Instagram, FAQ |
-| `domotica-hogar.html` | Home Assistant, qué se automatiza, Shelly / Sonoff / Aqara / Airzone / Legrand / Hue, comparativa de protocolos, ahorro energético y packs |
+| `index.html` | Portada: hero con vídeos reales, marcas y protocolos, servicios, tira de vídeos de Instagram, escenas interactivas, cifras, proceso, trabajos reales, testimonios, FAQ |
+| `domotica-hogar.html` | Home Assistant, qué se automatiza, Shelly / Sonoff / Aqara / Airzone / Legrand / Hikvision / Matter / Z-Wave, protocolos (Wi-Fi, Zigbee, Z-Wave, Thread, Matter sobre Thread y sobre Wi-Fi, KNX), videoportero, panel de pared, ahorro energético y packs |
 | `interruptores-zigbee.html` | Mecanismos Legrand with Netatmo, red Zigbee, acabados, microrrelés para mecanismos existentes |
 | `empresas-knx-dali.html` | Sectores, KNX, DALI/DALI-2, arquitectura (KNX IP, DALI, Modbus, BACnet), eficiencia y metodología |
-| `proyectos.html` | Caso destacado, galería filtrable, testimonios e Instagram |
+| `proyectos.html` | Caso destacado en vídeo, galería de vídeos reales filtrable y testimonios |
 | `contacto.html` | Formulario (envía por email o WhatsApp), datos de contacto y zonas de servicio |
 | `legal.html` | Aviso legal, privacidad y cookies |
 
@@ -38,11 +38,25 @@ instagramPosts: [
 ],
 ```
 
-Si la lista tiene contenido, la web incrusta los reels oficiales; si está vacía, muestra tarjetas de diseño que enlazan al perfil.
+Si la lista tiene contenido, la web incrusta además los reels oficiales encima de la tira de vídeos propios.
 
-## Fotos reales
+## Vídeos y logotipo
 
-Los visuales están hechos en CSS/SVG para que la web funcione sin imágenes. Para usar fotos de proyectos, guárdalas en `assets/img/` y, en cada tarjeta de proyecto, sustituye `<div class="art art-1"></div>` (y el `div.art-svg` contiguo) por `<img src="assets/img/foto.jpg" alt="Descripción">`.
+- Los vídeos están en `assets/video/` (MP4 H.264 + póster `.jpg`). Se reproducen en silencio al aparecer en pantalla y, al pulsarlos, se abren a pantalla completa con sonido.
+- Para añadir uno nuevo: conviértelo con
+  `ffmpeg -i video.mov -vf "scale=540:-2" -c:v libx264 -crf 27 -movflags +faststart -c:a aac -b:a 64k nombre.mp4`
+  y añádelo en la tabla `VIDEOS` de `_fuente/build.py` (o copia una tarjeta `<figure class="vcard">` existente).
+- Logotipo: `assets/logo.svg` (versión vectorial), `assets/favicon.svg` y el original en `assets/img/logo-domotica-hogar-madrid.jpg` (usado como imagen al compartir en redes).
+
+## Cómo se generan las páginas
+
+Las páginas `.html` de la raíz se generan desde `_fuente/` (cabecera, pie, iconos y tarjetas de vídeo compartidos):
+
+```bash
+python3 _fuente/build.py
+```
+
+Edita el contenido en `_fuente/src/*.html` y vuelve a ejecutar el comando. Si prefieres editar directamente los `.html` de la raíz, no regeneres después o perderás esos cambios.
 
 ## Ver en local
 

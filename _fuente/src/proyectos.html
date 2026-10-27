@@ -1,0 +1,73 @@
+<section class="page-hero">
+  <div class="hero__bg"><div class="hero__grid-lines"></div></div>
+  <div class="container">
+    <div class="reveal">
+      <nav class="breadcrumb" aria-label="Migas de pan"><a href="index.html">Inicio</a><span aria-hidden="true">/</span><span>Proyectos</span></nav>
+      <span class="eyebrow">Trabajos reales</span>
+      <h1>Proyectos que hablan <em>por nosotros</em></h1>
+      <p class="lead">Iluminación, accesos, seguridad, paneles de control e infraestructura. Así quedan nuestras instalaciones en viviendas de Madrid.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CASO DESTACADO ============ -->
+<section class="section">
+  <div class="container">
+    <article class="case reveal">
+      <div class="case__visual" style="background:var(--bg-dark)">
+        [[vf:vivienda-recorrido|vframe vframe--plain]]
+        <span class="project__cat">Caso destacado</span>
+      </div>
+      <div class="case__body">
+        <span class="eyebrow">Vivienda unifamiliar</span>
+        <h2 style="font-size:clamp(1.7rem,2.8vw,2.3rem)">Una casa <em>completamente conectada</em>, por dentro y por fuera</h2>
+        <p style="color:var(--muted)">Un proyecto integral en el que unimos en Home Assistant la iluminación interior y exterior, el videoportero Hikvision con control de accesos, las cámaras de seguridad y un panel táctil de pared para gobernar toda la vivienda.</p>
+        <ul class="check-list">
+          <li><div><strong>Accesos</strong><span>Videoportero con código, tarjeta y apertura desde el panel o el móvil.</span></div></li>
+          <li><div><strong>Exterior</strong><span>Pérgola con LED regulable, jardín y piscina con escenas.</span></div></li>
+          <li><div><strong>Control</strong><span>Panel de pared con diseño a medida y app para toda la familia.</span></div></li>
+        </ul>
+        <div class="tags"><span class="tag">Home Assistant</span><span class="tag">Hikvision</span><span class="tag">Iluminación LED</span><span class="tag">Panel táctil</span></div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- ============ GALERÍA DE VÍDEOS ============ -->
+<section class="section section--paper2">
+  <div class="container">
+    <div class="flex-between reveal" style="margin-bottom:32px">
+      <div class="section-head mb-0"><span class="eyebrow">Galería</span><h2 class="mb-0">Nuestro trabajo <em>en vídeo</em></h2></div>
+      <div class="filters mb-0" role="group" aria-label="Filtrar vídeos" style="margin:0">
+        <button class="filter-btn is-active" data-filter="all">Todos</button>
+        <button class="filter-btn" data-filter="iluminacion">Iluminación</button>
+        <button class="filter-btn" data-filter="accesos">Accesos y seguridad</button>
+        <button class="filter-btn" data-filter="control">Control</button>
+        <button class="filter-btn" data-filter="instalacion">Instalación</button>
+      </div>
+    </div>
+    <div class="video-grid">
+      <div class="project" data-cat="iluminacion" style="background:none;border:0">[[v:jardin-piscina]]</div>
+      <div class="project" data-cat="iluminacion" style="background:none;border:0">[[v:pergola-led]]</div>
+      <div class="project" data-cat="control" style="background:none;border:0">[[v:panel-home-assistant]]</div>
+      <div class="project" data-cat="control accesos" style="background:none;border:0">[[v:videoportero-panel]]</div>
+      <div class="project" data-cat="accesos" style="background:none;border:0">[[v:videoportero-accesos]]</div>
+      <div class="project" data-cat="accesos instalacion" style="background:none;border:0">[[v:camaras-seguridad]]</div>
+      <div class="project" data-cat="instalacion" style="background:none;border:0">[[v:rack-cuadro]]</div>
+      <div class="project" data-cat="instalacion iluminacion" style="background:none;border:0">[[v:exterior-vivienda]]</div>
+      <div class="project" data-cat="accesos" style="background:none;border:0"><div class="photo" style="aspect-ratio:9/16;height:100%"><img src="assets/img/videoportero-hikvision.jpg" alt="Videoportero Hikvision instalado en una puerta exterior gris" loading="lazy"></div></div>
+    </div>
+    <p class="small mt-2" style="color:var(--muted)">Pulsa un vídeo para verlo a pantalla completa con sonido.</p>
+  </div>
+</section>
+
+{{include:testimonios}}
+
+<section class="section section--tight">
+  <div class="container">
+    <div class="cta-band reveal">
+      <div><h2>Más vídeos <em>en Instagram</em></h2><p>Publicamos instalaciones, trucos de Home Assistant y novedades en @{{IG}}.</p></div>
+      <div class="btn-row"><a class="btn btn--primary btn--lg" href="https://www.instagram.com/{{IG}}/" target="_blank" rel="noopener">[[i:instagram]] Seguir</a><a class="btn btn--ghost btn--lg" href="contacto.html">Empezar mi proyecto</a></div>
+    </div>
+  </div>
+</section>

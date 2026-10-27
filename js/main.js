@@ -205,3 +205,66 @@ if (form) {
 
 /* Año en el pie */
 document.querySelectorAll("[data-year]").forEach((el) => (el.textContent = new Date().getFullYear()));
+
+/* Vídeos: se reproducen en silencio al entrar en pantalla y se pausan al salir */
+const autoVideos = document.querySelectorAll("video[data-autoplay]");
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+if ("IntersectionObserver" in window && !reduceMotion) {
+  const vo = new IntersectionObserver(
+    (entries) =>
+      entries.forEach((e) => {
+        const v = e.target;
+        if (e.isIntersecting) {
+          if (v.preload === "none") v.preload = "auto";
+          v.play().catch(() => {});
+        } else {
+          v.pause();
+        }
+      }),
+    { threshold: 0.35 }
+  );
+  autoVideos.forEach((v) => vo.observe(v));
+}
+
+/* Reproductor a pantalla completa con sonido */
+const lightbox = document.querySelector(".lightbox");
+if (lightbox) {
+  const lbVideo = lightbox.querySelector("video");
+  const lbCaption = lightbox.querySelector(".lightbox__caption");
+  const close = () => {
+    lbVideo.pause();
+    lbVideo.removeAttribute("src");
+    lbVideo.load();
+    lightbox.hidden = true;
+    document.body.style.overflow = "";
+  };
+  document.querySelectorAll("[data-video]").forEach((card) => {
+    const open = () => {
+      lbVideo.src = card.dataset.video;
+      lbVideo.poster = card.dataset.poster || "";
+      lbCaption.textContent = card.dataset.title || "";
+      lightbox.hidden = false;
+      document.body.style.overflow = "hidden";
+      lbVideo.muted = false;
+      lbVideo.play().catch(() => {});
+    };
+    card.addEventListener("click", open);
+    card.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        open();
+      }
+    });
+  });
+  lightbox.querySelector(".lightbox__close").addEventListener("click", close);
+  lightbox.addEventListener("click", (e) => e.target === lightbox && close());
+  document.addEventListener("keydown", (e) => e.key === "Escape" && !lightbox.hidden && close());
+}
+
+/* Flechas de la tira de vídeos */
+const vtrack = document.querySelector("[data-vtrack]");
+if (vtrack) {
+  const vstep = () => (vtrack.querySelector(".vcard")?.offsetWidth || 260) + 18;
+  document.querySelector("[data-vprev]")?.addEventListener("click", () => vtrack.scrollBy({ left: -vstep() * 2, behavior: "smooth" }));
+  document.querySelector("[data-vnext]")?.addEventListener("click", () => vtrack.scrollBy({ left: vstep() * 2, behavior: "smooth" }));
+}

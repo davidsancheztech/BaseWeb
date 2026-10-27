@@ -1,0 +1,241 @@
+<section class="page-hero page-hero--split">
+  <div class="hero__bg"><div class="hero__grid-lines"></div></div>
+  <div class="container">
+    <div class="reveal">
+      <nav class="breadcrumb" aria-label="Migas de pan"><a href="index.html">Inicio</a><span aria-hidden="true">/</span><span>Domótica para el hogar</span></nav>
+      <span class="eyebrow">Domótica residencial</span>
+      <h1>Una casa que <em>se anticipa</em> a ti</h1>
+      <p class="lead">Home Assistant como cerebro y las mejores marcas como músculo: Shelly, Sonoff, Aqara, Airzone, Hikvision y más, sobre Wi-Fi, Zigbee, Z-Wave, Thread y Matter. Todo integrado, privado y fácil de usar por toda la familia.</p>
+      <div class="btn-row mt-2">
+        <a class="btn btn--primary btn--lg" href="contacto.html">Quiero domotizar mi casa [[i:arrow]]</a>
+        <a class="btn btn--ghost btn--lg" href="#packs">Ver packs</a>
+      </div>
+    </div>
+    <div class="reveal reveal-d2">
+      <svg viewBox="0 0 480 440" role="img" aria-label="Home Assistant en el centro conectado con Shelly, Sonoff, Aqara, Airzone, asistentes de voz y la app">
+        <defs>
+          <radialGradient id="hubG"><stop offset="0" stop-color="#3d8bff" stop-opacity=".35"/><stop offset="1" stop-color="#3d8bff" stop-opacity="0"/></radialGradient>
+        </defs>
+        <circle cx="240" cy="220" r="190" fill="none" stroke="rgba(255,255,255,.08)"/>
+        <circle cx="240" cy="220" r="125" fill="none" stroke="rgba(255,255,255,.08)" stroke-dasharray="3 6"/>
+        <circle cx="240" cy="220" r="110" fill="url(#hubG)"/>
+        <g stroke="rgba(52,211,240,.45)" stroke-width="1.5" style="stroke-dasharray:5 7;animation:dash 3s linear infinite">
+          <path d="M240 220 L240 40"/><path d="M240 220 L405 125"/><path d="M240 220 L405 315"/><path d="M240 220 L240 400"/><path d="M240 220 L75 315"/><path d="M240 220 L75 125"/>
+        </g>
+        <g font-family="Inter, sans-serif" font-weight="700" text-anchor="middle">
+          <g><circle cx="240" cy="40" r="34" fill="#10161e" stroke="rgba(61,139,255,.6)"/><text x="240" y="44" fill="#fff" font-size="12">Shelly</text></g>
+          <g><circle cx="405" cy="125" r="34" fill="#10161e" stroke="rgba(61,139,255,.6)"/><text x="405" y="129" fill="#fff" font-size="12">Aqara</text></g>
+          <g><circle cx="405" cy="315" r="34" fill="#10161e" stroke="rgba(61,139,255,.6)"/><text x="405" y="319" fill="#fff" font-size="12">Airzone</text></g>
+          <g><circle cx="240" cy="400" r="34" fill="#10161e" stroke="rgba(61,139,255,.6)"/><text x="240" y="404" fill="#fff" font-size="12">Sonoff</text></g>
+          <g><circle cx="75" cy="315" r="34" fill="#10161e" stroke="rgba(61,139,255,.6)"/><text x="75" y="312" fill="#fff" font-size="11">Alexa</text><text x="75" y="326" fill="#9aa3af" font-size="9" font-weight="500">Google · Siri</text></g>
+          <g><circle cx="75" cy="125" r="34" fill="#10161e" stroke="rgba(61,139,255,.6)"/><text x="75" y="122" fill="#fff" font-size="11">Legrand</text><text x="75" y="136" fill="#9aa3af" font-size="9" font-weight="500">Netatmo</text></g>
+          <circle cx="240" cy="220" r="62" fill="#3d8bff"/>
+          <path d="M214 226 240 202l26 24v20a2 2 0 0 1-2 2h-48a2 2 0 0 1-2-2z" fill="none" stroke="#ffffff" stroke-width="3" stroke-linejoin="round"/>
+        </g>
+        <text x="240" y="310" fill="#8ec0ff" font-family="Inter, sans-serif" font-size="13" font-weight="600" text-anchor="middle" letter-spacing="2">HOME ASSISTANT</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- ============ HOME ASSISTANT ============ -->
+<section class="section section--white" id="home-assistant">
+  <div class="container split">
+    <div class="reveal">
+      <div class="mock" style="background:linear-gradient(160deg,#141b24,#0a0e13)">
+        <div class="mock__bar"><div><b>Mi casa</b><br>Panel principal</div><div class="mock__dots"><i></i><i></i><i></i></div></div>
+        <div class="mock__grid">
+          <div class="tile is-on" data-toggle data-on="Encendidas" data-off="Apagadas"><div class="tile__top"><span class="tile__icon">[[i:bulb]]</span><span class="toggle"></span></div><div><div class="tile__name">Planta baja</div><div class="tile__state">Encendidas</div></div></div>
+          <div class="tile tile--climate"><div class="tile__top"><span class="tile__icon">[[i:thermo]]</span><small>Dormitorio</small></div><div><span class="temp">20<sup>°C</sup></span><div class="tile__state">Noche</div></div></div>
+          <div class="tile" data-toggle data-on="Armada" data-off="Desarmada"><div class="tile__top"><span class="tile__icon">[[i:shield]]</span><span class="toggle"></span></div><div><div class="tile__name">Alarma</div><div class="tile__state">Desarmada</div></div></div>
+          <div class="tile tile--wide tile--energy"><div class="tile__top"><div><div class="tile__name" style="margin:0">Placas solares</div><div class="tile__state">2,8 kW produciendo · excedente 1,1 kW</div></div><span class="tile__icon">[[i:sun]]</span></div>
+            <svg class="spark" viewBox="0 0 200 46" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="sparkFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#34d3f0" stop-opacity=".45"/><stop offset="1" stop-color="#34d3f0" stop-opacity="0"/></linearGradient></defs><path class="area" d="M0 44 C40 44 60 10 100 8 S160 40 200 44 L200 46 L0 46Z"/><path class="line" d="M0 44 C40 44 60 10 100 8 S160 40 200 44"/></svg>
+          </div>
+          <div class="tile"><div class="tile__top"><span class="tile__icon">[[i:euro]]</span><small>PVPC</small></div><div><div class="tile__name">0,09 €/kWh</div><div class="tile__state">Hora valle · lavadora ON</div></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="reveal reveal-d1">
+      <span class="eyebrow">El cerebro</span>
+      <h2>¿Por qué <em>Home Assistant?</em></h2>
+      <p class="lead">Es la plataforma de domótica abierta más potente del mundo, con miles de integraciones. Nosotros la instalamos, la configuramos y la dejamos lista para que solo tengas que disfrutarla.</p>
+      <ul class="check-list">
+        <li><div><strong>Control local, sin cuotas</strong><span>Funciona dentro de tu casa: rápido, privado y sin depender de la nube del fabricante.</span></div></li>
+        <li><div><strong>Todas las marcas en una app</strong><span>Shelly, Aqara, Airzone, Legrand, Hue, Sonos, cámaras, coche eléctrico… en un único panel.</span></div></li>
+        <li><div><strong>Automatizaciones inteligentes</strong><span>Por horario, presencia, luz solar, precio de la luz (PVPC) o producción de tus placas.</span></div></li>
+        <li><div><strong>Compatible con Alexa, Google, Siri y Matter</strong><span>Habla con tu casa con el asistente que ya usas.</span></div></li>
+        <li><div><strong>Copias de seguridad y acceso remoto seguro</strong><span>Lo dejamos todo protegido y documentado.</span></div></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ QUÉ AUTOMATIZAMOS ============ -->
+<section class="section">
+  <div class="container">
+    <div class="section-head section-head--center reveal">
+      <span class="eyebrow">Qué podemos automatizar</span>
+      <h2>Cada rincón de tu casa, <em>bajo control</em></h2>
+    </div>
+    <div class="grid grid-4">
+      <div class="card reveal"><span class="icon-box">[[i:bulb]]</span><h3>Iluminación</h3><p>Encendido, regulación y escenas. Luces que se encienden al pasar y se apagan solas.</p></div>
+      <div class="card reveal reveal-d1"><span class="icon-box">[[i:blinds]]</span><h3>Persianas y toldos</h3><p>Bajan con el sol de la tarde, suben al despertar y se recogen si hay viento.</p></div>
+      <div class="card reveal reveal-d2"><span class="icon-box">[[i:thermo]]</span><h3>Climatización</h3><p>Airzone por zonas, suelo radiante, aerotermia y splits. Cada estancia a su temperatura.</p></div>
+      <div class="card reveal reveal-d3"><span class="icon-box">[[i:shield]]</span><h3>Seguridad</h3><p>Alarma, sensores de apertura, cámaras, simulación de presencia y avisos al móvil.</p></div>
+      <div class="card reveal"><span class="icon-box">[[i:bolt]]</span><h3>Energía</h3><p>Medición de consumos, placas solares, cargador de coche y electrodomésticos en horas baratas.</p></div>
+      <div class="card reveal reveal-d1"><span class="icon-box">[[i:drop]]</span><h3>Agua y riego</h3><p>Riego según la previsión del tiempo y corte automático ante fugas de agua.</p></div>
+      <div class="card reveal reveal-d2"><span class="icon-box">[[i:lock]]</span><h3>Accesos</h3><p>Cerraduras inteligentes, videoportero, puerta de garaje y códigos temporales.</p></div>
+      <div class="card reveal reveal-d3"><span class="icon-box">[[i:mic]]</span><h3>Voz y multimedia</h3><p>Alexa, Google o Siri, audio multiroom y escenas de cine con un solo botón.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ACCESOS ============ -->
+<section class="section section--white" id="accesos">
+  <div class="container media-split">
+    <div class="media-pair reveal">
+      <div class="photo" style="aspect-ratio:9/16"><img src="assets/img/videoportero-hikvision.jpg" alt="Videoportero Hikvision con teclado y lector de tarjetas instalado en una puerta exterior" loading="lazy"></div>
+      [[v:videoportero-accesos]]
+    </div>
+    <div class="reveal reveal-d1">
+      <span class="eyebrow">Accesos y videoportero</span>
+      <h2>Abre la puerta <em>desde donde estés</em></h2>
+      <p class="lead">Instalamos videoporteros IP Hikvision con cámara, teclado y lector de tarjetas, conectados a Home Assistant: la llamada suena en el panel de casa y en el móvil.</p>
+      <ul class="check-list">
+        <li><div><strong>Código, tarjeta, móvil o panel</strong><span>Varias formas de abrir, con códigos temporales para visitas o personal.</span></div></li>
+        <li><div><strong>Llamadas con vídeo en el panel de pared</strong><span>Ves quién llama y abres con un toque.</span></div></li>
+        <li><div><strong>Integrado con alarma y luces</strong><span>Al abrir, se enciende la luz de entrada y se desarma la alarma.</span></div></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container media-split">
+    <div class="reveal">
+      <span class="eyebrow">Panel de control</span>
+      <h2>Toda la casa en <em>una pantalla</em></h2>
+      <p class="lead">Instalamos paneles táctiles de pared con un diseño de Home Assistant hecho a medida: estancias, escenas, clima, cámaras y videoportero, a la vista y sin buscar el móvil.</p>
+      <ul class="check-list">
+        <li><div><strong>Diseño personalizado</strong><span>Iconos, estancias y escenas pensadas para tu familia.</span></div></li>
+        <li><div><strong>Videoportero y cámaras</strong><span>La llamada aparece en la pantalla automáticamente.</span></div></li>
+      </ul>
+      <a class="btn btn--dark mt-2" href="contacto.html">Quiero un panel así [[i:arrow]]</a>
+    </div>
+    <div class="media-pair reveal reveal-d1" style="margin-left:auto">
+      [[v:panel-home-assistant]]
+      [[v:videoportero-panel]]
+    </div>
+  </div>
+</section>
+
+<!-- ============ ECOSISTEMAS ============ -->
+<section class="section section--paper2" id="marcas">
+  <div class="container">
+    <div class="section-head section-head--split reveal">
+      <div>
+        <span class="eyebrow">Marcas con las que trabajamos</span>
+        <h2>El dispositivo justo <em>para cada necesidad</em></h2>
+      </div>
+      <p class="lead">No casamos con ninguna marca: elegimos la mejor para cada uso y la integramos en Home Assistant. Estas son nuestras favoritas y por qué.</p>
+    </div>
+    <div class="eco-grid eco-grid--4">
+      <article class="eco reveal" style="--eco-c:#3b82f6"><div class="eco__head"><span class="eco__logo">Shelly</span><span class="eco__proto">Wi-Fi · Matter</span></div><p>Módulos que se esconden detrás de tus interruptores. Control local y medición de consumo.</p><ul><li>Luces y enchufes (1PM, Plus, Pro)</li><li>Persianas (2PM)</li><li>Energía en el cuadro (Pro 3EM)</li><li>Gama Z-Wave (Shelly Wave)</li></ul></article>
+      <article class="eco reveal reveal-d1" style="--eco-c:#0ea5e9"><div class="eco__head"><span class="eco__logo">Sonoff</span><span class="eco__proto">Wi-Fi · Zigbee</span></div><p>Versatilidad y gran relación calidad-precio, con una gama Zigbee muy estable.</p><ul><li>Microinterruptores ZBMINI</li><li>Coordinadores Zigbee</li><li>Sensores y enchufes</li></ul></article>
+      <article class="eco reveal reveal-d2" style="--eco-c:#94a3b8"><div class="eco__head"><span class="eco__logo">Aqara</span><span class="eco__proto">Zigbee · Thread</span></div><p>Sensores elegantes con años de batería. La casa sabe qué está pasando.</p><ul><li>Presencia real mmWave</li><li>Puertas, fugas y temperatura</li><li>Cerraduras y cortinas</li></ul></article>
+      <article class="eco reveal reveal-d3" style="--eco-c:#00a3e0"><div class="eco__head"><span class="eco__logo">Airzone</span><span class="eco__proto">Clima por zonas</span></div><p>Zonificación del aire por conductos: cada habitación con su termostato.</p><ul><li>Termostatos y rejillas</li><li>Integración local</li><li>Horarios y modo eco</li></ul></article>
+      <article class="eco reveal" style="--eco-c:#3d8bff"><div class="eco__head"><span class="eco__logo">Legrand · Netatmo</span><span class="eco__proto">Zigbee</span></div><p>Mecanismos de diseño conectados: el interruptor de siempre, inteligente.</p><ul><li>Valena Next, Céliane, Mosaic</li><li>Reguladores y persianas</li><li><a class="link-arrow" href="interruptores-zigbee.html">Ver interruptores [[i:arrow]]</a></li></ul></article>
+      <article class="eco reveal reveal-d1" style="--eco-c:#d4202c"><div class="eco__head"><span class="eco__logo">Hikvision</span><span class="eco__proto">IP · PoE</span></div><p>Videoporteros y cámaras profesionales integrados en el panel de casa.</p><ul><li>Videoporteros con código y tarjeta</li><li>Cámaras exteriores con grabación</li><li>Llamadas en el panel y el móvil</li></ul></article>
+      <article class="eco reveal reveal-d2" style="--eco-c:#7c3aed"><div class="eco__head"><span class="eco__logo">Matter</span><span class="eco__proto">Thread · Wi-Fi</span></div><p>El estándar común de Apple, Google, Amazon y Samsung para que todo hable el mismo idioma.</p><ul><li>Eve, Nanoleaf, Aqara, Shelly</li><li>Apple Home y Google Home</li><li>Sin depender de una marca</li></ul></article>
+      <article class="eco reveal reveal-d3" style="--eco-c:#16a34a"><div class="eco__head"><span class="eco__logo">Z-Wave</span><span class="eco__proto">868 MHz</span></div><p>Red mallada en banda sub-GHz: gran alcance y sin interferencias con el Wi-Fi.</p><ul><li>Fibaro, Aeotec, Shelly Wave</li><li>Ideal en casas grandes y muros gruesos</li><li>Certificación de interoperabilidad</li></ul></article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PROTOCOLOS ============ -->
+<section class="section section--dark" id="protocolos">
+  <div class="container">
+    <div class="section-head section-head--split reveal">
+      <div><span class="eyebrow">Tecnología, explicada fácil</span><h2>Wi-Fi, Zigbee, Z-Wave, Thread, Matter o KNX: <em>elegimos por ti</em></h2></div>
+      <p class="lead">Cada protocolo tiene su sitio. Lo habitual es combinar varios y unirlos todos en Home Assistant, que habla con todos ellos a la vez.</p>
+    </div>
+    <div class="proto-grid">
+      <article class="proto reveal" style="--proto-c:#3d8bff"><div class="proto-bars"><i class="on"></i><i class="on"></i><i class="on"></i><i></i></div><div class="proto__name">Wi-Fi</div><span class="proto__band">2,4 GHz · red de casa</span><p>Dispositivos conectados directamente al router, sin pasarelas.</p><ul><li>Shelly, Sonoff</li><li>Luces, persianas, cuadro</li><li>Mide consumos</li></ul></article>
+      <article class="proto reveal reveal-d1" style="--proto-c:#f5b400"><div class="proto-bars"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></div><div class="proto__name">Zigbee</div><span class="proto__band">2,4 GHz · malla</span><p>Red mallada de bajo consumo: cada aparato con corriente repite la señal.</p><ul><li>Aqara, Legrand, Hue, Sonoff</li><li>Sensores con años de batería</li><li>Mecanismos de diseño</li></ul></article>
+      <article class="proto reveal reveal-d2" style="--proto-c:#22c55e"><div class="proto-bars"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></div><div class="proto__name">Z-Wave</div><span class="proto__band">868 MHz · malla</span><p>Banda sub-GHz con más alcance y atraviesa mejor los muros. Sin interferencias con el Wi-Fi.</p><ul><li>Fibaro, Aeotec, Shelly Wave</li><li>Chalets y muros gruesos</li><li>Interoperabilidad certificada</li></ul></article>
+      <article class="proto reveal reveal-d3" style="--proto-c:#a78bfa"><div class="proto-bars"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></div><div class="proto__name">Thread</div><span class="proto__band">2,4 GHz · malla IPv6</span><p>Red mallada de bajo consumo basada en IP, con router frontera (border router).</p><ul><li>Base de Matter sobre Thread</li><li>Respuesta muy rápida</li><li>Se repara sola si cae un nodo</li></ul></article>
+      <article class="proto reveal" style="--proto-c:#8b5cf6"><div class="proto-bars"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></div><div class="proto__name">Matter sobre Thread</div><span class="proto__band">Estándar + malla</span><p>El estándar común de las grandes marcas, sobre la red Thread. Ideal para sensores y pilas.</p><ul><li>Eve, Nanoleaf, Aqara</li><li>Apple Home, Google, Alexa</li><li>Funciona en local</li></ul></article>
+      <article class="proto reveal reveal-d1" style="--proto-c:#38bdf8"><div class="proto-bars"><i class="on"></i><i class="on"></i><i class="on"></i><i></i></div><div class="proto__name">Matter sobre Wi-Fi</div><span class="proto__band">Estándar + Wi-Fi</span><p>Dispositivos Matter que usan la red Wi-Fi: alta capacidad para enchufes, relés y cámaras.</p><ul><li>Shelly Gen4, TP-Link Tapo</li><li>Sin hub propietario</li><li>Multiplataforma</li></ul></article>
+      <article class="proto reveal reveal-d2" style="--proto-c:#34d3f0"><div class="proto-bars"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></div><div class="proto__name">KNX</div><span class="proto__band">Bus cableado</span><p>Estándar profesional cableado: máxima fiabilidad para obra nueva y reformas integrales.</p><ul><li>+500 fabricantes</li><li>Viviendas de alto nivel</li><li><a class="link-arrow" href="empresas-knx-dali.html">Más sobre KNX [[i:arrow]]</a></li></ul></article>
+      <article class="proto reveal reveal-d3" style="--proto-c:#ffffff;background:linear-gradient(140deg,rgba(61,139,255,.25),rgba(52,211,240,.08));border-color:rgba(61,139,255,.45)"><div class="proto__name">Home Assistant</div><span class="proto__band" style="color:#8ec0ff">Los une a todos</span><p>Coordinador Zigbee y Thread, controlador Z-Wave, Matter y KNX en un único sistema y una sola app.</p><ul><li>Control local y privado</li><li>Automatizaciones entre marcas</li><li>Sin cuotas obligatorias</li></ul></article>
+    </div>
+
+    <div class="table-wrap reveal mt-4">
+      <table class="compare">
+        <thead><tr><th>Protocolo</th><th>Red</th><th>Consumo</th><th>Alcance</th><th>Ideal para</th></tr></thead>
+        <tbody>
+          <tr><th>Wi-Fi</th><td>Estrella (router)</td><td class="mid">Alto</td><td>El del Wi-Fi</td><td>Relés, enchufes, cuadro eléctrico</td></tr>
+          <tr><th>Zigbee</th><td>Malla</td><td class="yes">Muy bajo</td><td class="yes">Crece con la malla</td><td>Sensores, mecanismos, iluminación</td></tr>
+          <tr><th>Z-Wave</th><td>Malla sub-GHz</td><td class="yes">Muy bajo</td><td class="yes">Mayor por nodo</td><td>Casas grandes, muros gruesos</td></tr>
+          <tr><th>Matter sobre Thread</th><td>Malla IPv6</td><td class="yes">Muy bajo</td><td class="yes">Crece con la malla</td><td>Dispositivos nuevos multiplataforma</td></tr>
+          <tr><th>Matter sobre Wi-Fi</th><td>Wi-Fi + estándar</td><td class="mid">Alto</td><td>El del Wi-Fi</td><td>Enchufes, relés, aparatos con corriente</td></tr>
+          <tr><th>KNX</th><td>Bus cableado</td><td class="yes">Bajo</td><td class="yes">Todo el edificio</td><td>Obra nueva y reformas integrales</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ============ AHORRO ============ -->
+<section class="section section--white">
+  <div class="container split">
+    <div class="reveal">
+      <span class="eyebrow">Eficiencia energética</span>
+      <h2>Tu casa también <em>ahorra por ti</em></h2>
+      <p class="lead">La domótica bien hecha se paga sola: menos horas de clima innecesario, luces que no se quedan encendidas y electrodomésticos que funcionan cuando la luz es más barata.</p>
+      <ul class="check-list">
+        <li><div><strong>Precio de la luz en tiempo real</strong><span>Home Assistant lee el PVPC y activa termo, lavadora o cargador en las horas valle.</span></div></li>
+        <li><div><strong>Autoconsumo solar optimizado</strong><span>Aprovecha los excedentes de tus placas antes de verterlos a la red.</span></div></li>
+        <li><div><strong>Clima que se apaga solo</strong><span>Si abres una ventana o sales de casa, la climatización se ajusta automáticamente.</span></div></li>
+      </ul>
+    </div>
+    <div class="grid grid-2 reveal reveal-d1">
+      <div class="card" style="background:var(--bg-dark);border:0"><span class="stat__num" style="color:var(--gold)">−30%</span><p style="color:var(--muted-dark)">hasta en climatización con zonificación y horarios*</p></div>
+      <div class="card"><span class="stat__num" style="color:var(--ink)">24/7</span><p>monitorización de consumos por circuito</p></div>
+      <div class="card"><span class="stat__num" style="color:var(--ink)">0 €</span><p>de cuotas obligatorias con Home Assistant</p></div>
+      <div class="card" style="background:var(--paper)"><span class="stat__num" style="color:var(--gold-3)">1 app</span><p>para clima, luz, energía y seguridad</p></div>
+      <p class="small" style="grid-column:1/-1;color:var(--muted)">*El ahorro depende de la vivienda, sus hábitos y la instalación de partida.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PACKS ============ -->
+<section class="section" id="packs">
+  <div class="container">
+    <div class="section-head section-head--center reveal">
+      <span class="eyebrow">Por dónde empezar</span>
+      <h2>Elige tu <em>punto de partida</em></h2>
+      <p class="lead">Tres niveles orientativos. Todos son ampliables y se adaptan a tu vivienda tras el estudio gratuito.</p>
+    </div>
+    <div class="packs">
+      <article class="pack reveal"><h3>Esencial</h3><p class="pack__for">Para pisos que quieren dar el primer paso.</p>
+        <ul class="check-list"><li>Home Assistant instalado y configurado</li><li>Iluminación principal y persianas</li><li>Sensores de puertas y fugas de agua</li><li>Control desde el móvil y por voz</li><li>Formación y documentación</li></ul>
+        <a class="btn btn--outline" href="contacto.html">Solicitar estudio</a></article>
+      <article class="pack pack--featured reveal reveal-d1"><span class="pack__badge">Más elegido</span><h3>Confort</h3><p class="pack__for">La experiencia completa para el día a día.</p>
+        <ul class="check-list"><li>Todo lo del pack Esencial</li><li>Clima por zonas (Airzone o splits)</li><li>Escenas: buenos días, salir, cine, noche</li><li>Detección de presencia por estancias</li><li>Monitorización de consumo energético</li><li>Alarma y avisos al móvil</li></ul>
+        <a class="btn btn--primary" href="contacto.html">Solicitar estudio [[i:arrow]]</a></article>
+      <article class="pack reveal reveal-d2"><h3>Premium</h3><p class="pack__for">Chalets, áticos y reformas integrales.</p>
+        <ul class="check-list"><li>Todo lo del pack Confort</li><li>Mecanismos de diseño Legrand with Netatmo o KNX</li><li>Placas solares, cargador y PVPC</li><li>Cámaras, videoportero y accesos</li><li>Riego, piscina y exterior</li><li>Plan de mantenimiento incluido</li></ul>
+        <a class="btn btn--outline" href="contacto.html">Solicitar estudio</a></article>
+    </div>
+  </div>
+</section>
+
+<section class="section section--tight">
+  <div class="container">
+    <div class="cta-band reveal">
+      <div><h2>Cuéntanos cómo es <em>tu casa</em></h2><p>Te proponemos la solución ideal y un presupuesto cerrado, sin compromiso.</p></div>
+      <div class="btn-row"><a class="btn btn--primary btn--lg" href="contacto.html">Estudio gratuito [[i:arrow]]</a><a class="btn btn--ghost btn--lg" href="https://wa.me/{{WA}}" target="_blank" rel="noopener">[[i:whatsapp]] WhatsApp</a></div>
+    </div>
+  </div>
+</section>

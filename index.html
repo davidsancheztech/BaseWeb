@@ -13,10 +13,11 @@
   <meta property="og:title" content="Domótica en Madrid | Home Assistant, Zigbee y KNX — Domótica Hogar Madrid">
   <meta property="og:description" content="Integradores de domótica en Madrid. Casas inteligentes con Home Assistant, Shelly, Aqara, Airzone e interruptores Legrand Netatmo. KNX y DALI para empresas. Estudio gratuito.">
   <meta property="og:url" content="https://domoticahogarmadrid.com/">
+  <meta property="og:image" content="https://domoticahogarmadrid.com/assets/img/logo-domotica-hogar-madrid.jpg">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
   <script type="application/ld+json">{"@context": "https://schema.org", "@type": "HomeAndConstructionBusiness", "name": "Domótica Hogar Madrid", "url": "https://domoticahogarmadrid.com/", "email": "info@domoticahogarmadrid.com", "telephone": "+34600000000", "areaServed": {"@type": "AdministrativeArea", "name": "Comunidad de Madrid"}, "address": {"@type": "PostalAddress", "addressLocality": "Madrid", "addressRegion": "Madrid", "addressCountry": "ES"}, "sameAs": ["https://www.instagram.com/domoticahogarmadrid/"], "knowsAbout": ["Domótica", "Home Assistant", "Zigbee", "KNX", "DALI", "Shelly", "Aqara", "Airzone", "Legrand Netatmo"]}</script>
 </head>
@@ -25,13 +26,12 @@
 <header class="site-header">
   <div class="container">
     <a class="logo" href="index.html" aria-label="Domótica Hogar Madrid, inicio">
-      <svg class="logo__mark" viewBox="0 0 40 40" aria-hidden="true">
-  <defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e6cd9f"/><stop offset="1" stop-color="#a8864e"/></linearGradient></defs>
-  <rect x="1" y="1" width="38" height="38" rx="11" fill="none" stroke="url(#lg)" stroke-width="1.5"/>
-  <path d="M10 20.5 20 12l10 8.5V29a1 1 0 0 1-1 1H11a1 1 0 0 1-1-1z" fill="none" stroke="url(#lg)" stroke-width="1.6" stroke-linejoin="round"/>
-  <path d="M16.5 23.5a5 5 0 0 1 7 0M18.4 25.8a2.2 2.2 0 0 1 3.2 0" fill="none" stroke="#5ee3c9" stroke-width="1.5" stroke-linecap="round"/>
+      <svg class="logo__mark" viewBox="0 0 48 44" aria-hidden="true">
+  <path d="M5 22.5 24 5.5l6.5 5.8V6.5h5.5v9.7l7 6.3h-4.6V40H9.6V22.5z" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"/>
+  <path d="M15.6 25.6a12 12 0 0 1 16.8 0M18.9 29a7.3 7.3 0 0 1 10.2 0" fill="none" stroke="#3d8bff" stroke-width="2.6" stroke-linecap="round"/>
+  <circle cx="24" cy="33.4" r="2" fill="#34d3f0"/>
 </svg>
-      <span class="logo__text">Domótica Hogar<small>Madrid</small></span>
+      <span class="logo__text">Domótica Hogar<small>Madrid · Tu casa inteligente</small></span>
     </a>
     <nav class="nav" id="nav" aria-label="Principal">
       <a class="nav__link is-active" href="index.html" aria-current="page">Inicio</a>
@@ -54,7 +54,7 @@
   <div class="hero__bg"><div class="hero__grid-lines"></div></div>
   <div class="container">
     <div class="reveal">
-      <span class="pill"><b>MADRID</b> <span class="dot-live"></span> Integradores Home Assistant · Zigbee · KNX</span>
+      <span class="pill"><b>MADRID</b> <span class="dot-live"></span> Home Assistant · Matter · Zigbee · Z-Wave · KNX</span>
       <h1>Tu casa, <em>inteligente.</em><br>Sin complicaciones.</h1>
       <p class="lead">Diseñamos e instalamos domótica a medida en Madrid: luces, persianas, clima, seguridad y energía, todo desde una sola app. Con las mejores marcas y sin depender de la nube.</p>
       <div class="btn-row">
@@ -69,51 +69,12 @@
     </div>
 
     <div class="hero__visual reveal reveal-d2">
-      <div class="mock" aria-label="Ejemplo de panel de control de Home Assistant">
-        <div class="mock__bar">
-          <div><b>Buenas tardes, Laura</b><br>Casa · 6 dispositivos activos</div>
-          <div class="mock__dots"><i></i><i></i><i></i></div>
-        </div>
-        <div class="mock__grid">
-          <div class="tile is-on" data-toggle data-on="Encendida · 70 %" data-off="Apagada">
-            <div class="tile__top"><span class="tile__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2V17h5v-1.1c0-.8.4-1.5 1-2A6 6 0 0 0 12 3z"/></svg></span><span class="toggle"></span></div>
-            <div><div class="tile__name">Salón</div><div class="tile__state">Encendida · 70 %</div></div>
-          </div>
-          <div class="tile" data-toggle data-on="Encendida" data-off="Apagada">
-            <div class="tile__top"><span class="tile__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2V17h5v-1.1c0-.8.4-1.5 1-2A6 6 0 0 0 12 3z"/></svg></span><span class="toggle"></span></div>
-            <div><div class="tile__name">Cocina</div><div class="tile__state">Apagada</div></div>
-          </div>
-          <div class="tile tile--climate">
-            <div class="tile__top"><span class="tile__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 14.8V5a2 2 0 0 0-4 0v9.8a4 4 0 1 0 4 0z"/><path d="M12 9v7"/></svg></span><small>Airzone</small></div>
-            <div><span class="temp">22<sup>°C</sup></span><div class="tile__state">Modo confort</div></div>
-          </div>
-          <div class="tile tile--wide tile--energy">
-            <div class="tile__top"><div><div class="tile__name" style="margin:0">Consumo hoy</div><div class="tile__state">3,4 kWh · −18 % vs ayer</div></div><span class="tile__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8z"/></svg></span></div>
-            <svg class="spark" viewBox="0 0 200 46" preserveAspectRatio="none" aria-hidden="true">
-              <defs><linearGradient id="sparkFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5ee3c9" stop-opacity=".45"/><stop offset="1" stop-color="#5ee3c9" stop-opacity="0"/></linearGradient></defs>
-              <path class="area" d="M0 38 L20 34 L40 36 L60 22 L80 26 L100 14 L120 20 L140 10 L160 18 L180 12 L200 16 L200 46 L0 46Z"/>
-              <path class="line" d="M0 38 L20 34 L40 36 L60 22 L80 26 L100 14 L120 20 L140 10 L160 18 L180 12 L200 16"/>
-            </svg>
-          </div>
-          <div class="tile">
-            <div class="tile__top"><span class="tile__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16M5 4v12M19 4v12M5 8h14M5 12h14M5 16h14M12 16v4"/><circle cx="12" cy="20.5" r=".5"/></svg></span><small>Shelly</small></div>
-            <div><div class="tile__name">Persianas</div><div class="blind-bar"><i></i></div></div>
-          </div>
-          <div class="tile tile--hide-sm" data-toggle data-on="Armada" data-off="Desarmada">
-            <div class="tile__top"><span class="tile__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 5 6v6c0 4.4 3 7.8 7 9 4-1.2 7-4.6 7-9V6l-7-3z"/><path d="m9 12 2 2 4-4"/></svg></span><span class="toggle"></span></div>
-            <div><div class="tile__name">Alarma</div><div class="tile__state">Desarmada</div></div>
-          </div>
-          <div class="tile tile--hide-sm" data-toggle data-on="Regando · 10 min" data-off="Programado 7:00">
-            <div class="tile__top"><span class="tile__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/></svg></span><span class="toggle"></span></div>
-            <div><div class="tile__name">Riego</div><div class="tile__state">Programado 7:00</div></div>
-          </div>
-          <div class="tile tile--hide-sm is-on" data-toggle data-on="Cerrada" data-off="Abierta">
-            <div class="tile__top"><span class="tile__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span><span class="toggle"></span></div>
-            <div><div class="tile__name">Puerta</div><div class="tile__state">Cerrada</div></div>
-          </div>
-        </div>
-        <div class="float-card float-card--a"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 19c0-9 6-14 15-14 0 9-5 15-14 15"/><path d="M5 19 14 10"/></svg></span><span><b>Hasta −30 % en clima</b>con horarios y presencia</span></div>
+      <div class="hero-media">
+        <div class="vframe"><video muted loop playsinline autoplay preload="auto" poster="assets/video/jardin-piscina.jpg" data-autoplay><source src="assets/video/jardin-piscina.mp4" type="video/mp4"></video></div>
+        <div class="vframe"><video muted loop playsinline autoplay preload="auto" poster="assets/video/panel-home-assistant.jpg" data-autoplay><source src="assets/video/panel-home-assistant.mp4" type="video/mp4"></video></div>
+        <div class="float-card float-card--a"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2V17h5v-1.1c0-.8.4-1.5 1-2A6 6 0 0 0 12 3z"/></svg></span><span><b>Jardín encendido</b>desde el móvil, en 1 segundo</span></div>
         <div class="float-card float-card--b"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></span><span><b>“Ok, modo cine”</b>Alexa · Google · Siri</span></div>
+        <div class="float-card float-card--c"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 5 6v6c0 4.4 3 7.8 7 9 4-1.2 7-4.6 7-9V6l-7-3z"/><path d="m9 12 2 2 4-4"/></svg></span><span><b>Alarma armada</b>Todo cerrado</span></div>
       </div>
     </div>
   </div>
@@ -136,6 +97,9 @@
       <span class="brand-word"><i></i>Zigbee</span>
       <span class="brand-word">Matter</span>
       <span class="brand-word serif">Philips Hue</span>
+      <span class="brand-word"><i></i>Thread</span>
+      <span class="brand-word caps">Z-Wave</span>
+      <span class="brand-word caps">Hikvision</span>
     </div>
     <div class="marquee__group" aria-hidden="true">
       <span class="brand-word"><i></i>Home Assistant</span>
@@ -150,6 +114,9 @@
       <span class="brand-word"><i></i>Zigbee</span>
       <span class="brand-word">Matter</span>
       <span class="brand-word serif">Philips Hue</span>
+      <span class="brand-word"><i></i>Thread</span>
+      <span class="brand-word caps">Z-Wave</span>
+      <span class="brand-word caps">Hikvision</span>
     </div>
   </div>
 </div>
@@ -169,29 +136,19 @@
       <article class="service-card reveal">
         <div class="service-card__visual">
           <span class="service-card__num">01 — HOGAR</span>
-          <div class="vis-home">
-            <svg class="house" viewBox="0 0 300 200" aria-hidden="true">
-              <path d="M20 200V95L150 20l130 75v105" fill="#141b24" stroke="rgba(255,255,255,.12)"/>
-              <rect x="55" y="110" width="50" height="40" rx="3" fill="#ffcf8a" opacity=".9"/>
-              <rect x="125" y="110" width="50" height="40" rx="3" fill="#ffcf8a" opacity=".55"/>
-              <rect x="195" y="110" width="50" height="40" rx="3" fill="#1e2a36"/>
-              <rect x="130" y="160" width="40" height="40" rx="2" fill="#0b0f14" stroke="rgba(201,166,107,.5)"/>
-              <circle cx="150" cy="70" r="12" fill="none" stroke="#5ee3c9" stroke-width="2" opacity=".8"/>
-              <path d="M143 70a7 7 0 0 1 14 0" stroke="#5ee3c9" stroke-width="2" fill="none"/>
-            </svg>
-          </div>
+          <video muted loop playsinline preload="none" poster="assets/video/pergola-led.jpg" data-autoplay style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"><source src="assets/video/pergola-led.mp4" type="video/mp4"></video>
         </div>
         <div class="service-card__body">
           <h3>Domótica para el hogar</h3>
           <p>Home Assistant como cerebro de la casa, con Shelly, Sonoff, Aqara y Airzone. Luces, persianas, clima, alarmas y consumo en una única app.</p>
-          <div class="tags"><span class="tag">Home Assistant</span><span class="tag">Shelly</span><span class="tag">Aqara</span><span class="tag">Airzone</span></div>
+          <div class="tags"><span class="tag">Home Assistant</span><span class="tag">Shelly</span><span class="tag">Aqara</span><span class="tag">Airzone</span><span class="tag">Matter</span></div>
           <a class="link-arrow" href="domotica-hogar.html">Descubrir domótica para el hogar <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
         </div>
       </article>
 
       <article class="service-card reveal reveal-d1">
         <div class="service-card__visual">
-          <span class="service-card__num" style="color:rgba(0,0,0,.5)">02 — DISEÑO</span>
+          <span class="service-card__num">02 — DISEÑO</span>
           <div class="vis-switch">
             <div style="display:flex;gap:18px;align-items:center">
               <div class="plate plate--white" style="width:120px"><div class="plate__keys"><span class="plate__key"></span><span class="plate__key is-off"></span></div></div>
@@ -201,8 +158,8 @@
         </div>
         <div class="service-card__body">
           <h3>Interruptores Zigbee de diseño</h3>
-          <p>Mecanismos Legrand with Netatmo y otras series Zigbee: el interruptor de siempre, ahora conectado, integrado en Home Assistant y con acabados premium.</p>
-          <div class="tags"><span class="tag">Legrand · Netatmo</span><span class="tag">Zigbee 3.0</span><span class="tag">Sin obras</span></div>
+          <p>Mecanismos Legrand with Netatmo y otras series Zigbee, Matter y Z-Wave: el interruptor de siempre, ahora conectado, integrado en Home Assistant y con acabados premium.</p>
+          <div class="tags"><span class="tag">Legrand · Netatmo</span><span class="tag">Zigbee 3.0</span><span class="tag">Matter · Thread</span><span class="tag">Z-Wave</span></div>
           <a class="link-arrow" href="interruptores-zigbee.html">Ver mecanismos y acabados <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
         </div>
       </article>
@@ -215,15 +172,15 @@
               <g stroke="rgba(255,255,255,.08)">
                 <path d="M0 60h300M0 120h300M0 180h300M60 0v240M120 0v240M180 0v240M240 0v240"/>
               </g>
-              <path class="bus" d="M30 120H270" stroke="#c9a66b" stroke-width="2" style="stroke-dasharray:8 6;animation:dash 2.4s linear infinite"/>
-              <path d="M30 180H270" stroke="#5ee3c9" stroke-width="2" style="stroke-dasharray:4 6;animation:dash 3s linear infinite"/>
-              <g fill="#0f1924" stroke="#c9a66b" stroke-width="1.5">
+              <path class="bus" d="M30 120H270" stroke="#3d8bff" stroke-width="2" style="stroke-dasharray:8 6;animation:dash 2.4s linear infinite"/>
+              <path d="M30 180H270" stroke="#34d3f0" stroke-width="2" style="stroke-dasharray:4 6;animation:dash 3s linear infinite"/>
+              <g fill="#0f1924" stroke="#3d8bff" stroke-width="1.5">
                 <rect x="50" y="95" width="40" height="50" rx="6"/><rect x="130" y="95" width="40" height="50" rx="6"/><rect x="210" y="95" width="40" height="50" rx="6"/>
               </g>
-              <g fill="#5ee3c9"><circle cx="70" cy="180" r="6"/><circle cx="120" cy="180" r="6"/><circle cx="170" cy="180" r="6"/><circle cx="220" cy="180" r="6"/></g>
-              <g fill="#e6cd9f" font-family="Inter" font-size="10" text-anchor="middle"><text x="70" y="124">KNX</text><text x="150" y="124">DALI</text><text x="230" y="124">HVAC</text></g>
-              <rect x="110" y="30" width="80" height="34" rx="8" fill="#c9a66b"/><text x="150" y="52" fill="#1a1408" font-family="Inter" font-size="11" font-weight="700" text-anchor="middle">BMS / SCADA</text>
-              <path d="M150 64v31" stroke="#c9a66b" stroke-width="1.5"/>
+              <g fill="#34d3f0"><circle cx="70" cy="180" r="6"/><circle cx="120" cy="180" r="6"/><circle cx="170" cy="180" r="6"/><circle cx="220" cy="180" r="6"/></g>
+              <g fill="#8ec0ff" font-family="Inter" font-size="10" text-anchor="middle"><text x="70" y="124">KNX</text><text x="150" y="124">DALI</text><text x="230" y="124">HVAC</text></g>
+              <rect x="110" y="30" width="80" height="34" rx="8" fill="#3d8bff"/><text x="150" y="52" fill="#ffffff" font-family="Inter" font-size="11" font-weight="700" text-anchor="middle">BMS / SCADA</text>
+              <path d="M150 64v31" stroke="#3d8bff" stroke-width="1.5"/>
             </svg>
           </div>
         </div>
@@ -237,6 +194,36 @@
     </div>
   </div>
 </section>
+
+<!-- ============ VÍDEOS / INSTAGRAM ============ -->
+<section class="section section--dark" id="videos">
+  <div class="container">
+    <div class="flex-between reveal" style="margin-bottom:40px">
+      <div class="insta-head">
+        <span class="insta-avatar"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".9" fill="currentColor"/></svg></span></span>
+        <div><span class="eyebrow" style="margin-bottom:6px">Instalaciones reales en vídeo</span><h2 class="mb-0" style="font-size:clamp(1.6rem,3.2vw,2.4rem)">@domoticahogarmadrid</h2></div>
+      </div>
+      <div class="btn-row">
+        <div class="t-nav"><button class="round-btn" data-vprev aria-label="Vídeos anteriores"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button><button class="round-btn" data-vnext aria-label="Más vídeos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
+        <a class="btn btn--primary" href="https://www.instagram.com/domoticahogarmadrid/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".9" fill="currentColor"/></svg> Síguenos</a>
+      </div>
+    </div>
+    <div class="insta-embeds" data-insta-embeds hidden></div>
+    <div class="v-track reveal" data-vtrack>
+      <figure class="vcard" data-video="assets/video/jardin-piscina.mp4" data-poster="assets/video/jardin-piscina.jpg" data-title="Jardín y piscina desde el móvil" tabindex="0" role="button" aria-label="Ver vídeo: Jardín y piscina desde el móvil"><video muted loop playsinline preload="none" poster="assets/video/jardin-piscina.jpg" data-autoplay><source src="assets/video/jardin-piscina.mp4" type="video/mp4"></video><span class="vcard__tag">Jardín</span><span class="vcard__expand"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg></span><figcaption><b>Jardín y piscina desde el móvil</b><small>Iluminación exterior con un toque</small></figcaption></figure>
+      <figure class="vcard" data-video="assets/video/panel-home-assistant.mp4" data-poster="assets/video/panel-home-assistant.jpg" data-title="Panel de pared con Home Assistant" tabindex="0" role="button" aria-label="Ver vídeo: Panel de pared con Home Assistant"><video muted loop playsinline preload="none" poster="assets/video/panel-home-assistant.jpg" data-autoplay><source src="assets/video/panel-home-assistant.mp4" type="video/mp4"></video><span class="vcard__tag">Control</span><span class="vcard__expand"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg></span><figcaption><b>Panel de pared con Home Assistant</b><small>Luces, persianas y clima en una pantalla</small></figcaption></figure>
+      <figure class="vcard" data-video="assets/video/videoportero-panel.mp4" data-poster="assets/video/videoportero-panel.jpg" data-title="Videoportero en el panel de casa" tabindex="0" role="button" aria-label="Ver vídeo: Videoportero en el panel de casa"><video muted loop playsinline preload="none" poster="assets/video/videoportero-panel.jpg" data-autoplay><source src="assets/video/videoportero-panel.mp4" type="video/mp4"></video><span class="vcard__tag">Accesos</span><span class="vcard__expand"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg></span><figcaption><b>Videoportero en el panel de casa</b><small>Atiende la llamada y abre desde la pantalla</small></figcaption></figure>
+      <figure class="vcard" data-video="assets/video/pergola-led.mp4" data-poster="assets/video/pergola-led.jpg" data-title="Pérgola con tira LED regulable" tabindex="0" role="button" aria-label="Ver vídeo: Pérgola con tira LED regulable"><video muted loop playsinline preload="none" poster="assets/video/pergola-led.jpg" data-autoplay><source src="assets/video/pergola-led.mp4" type="video/mp4"></video><span class="vcard__tag">Iluminación</span><span class="vcard__expand"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg></span><figcaption><b>Pérgola con tira LED regulable</b><small>Escena de exterior al anochecer</small></figcaption></figure>
+      <figure class="vcard" data-video="assets/video/videoportero-accesos.mp4" data-poster="assets/video/videoportero-accesos.jpg" data-title="Videoportero Hikvision con tarjeta" tabindex="0" role="button" aria-label="Ver vídeo: Videoportero Hikvision con tarjeta"><video muted loop playsinline preload="none" poster="assets/video/videoportero-accesos.jpg" data-autoplay><source src="assets/video/videoportero-accesos.mp4" type="video/mp4"></video><span class="vcard__tag">Accesos</span><span class="vcard__expand"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg></span><figcaption><b>Videoportero Hikvision con tarjeta</b><small>Apertura por código, tarjeta o móvil</small></figcaption></figure>
+      <figure class="vcard" data-video="assets/video/vivienda-recorrido.mp4" data-poster="assets/video/vivienda-recorrido.jpg" data-title="Recorrido por una vivienda domotizada" tabindex="0" role="button" aria-label="Ver vídeo: Recorrido por una vivienda domotizada"><video muted loop playsinline preload="none" poster="assets/video/vivienda-recorrido.jpg" data-autoplay><source src="assets/video/vivienda-recorrido.mp4" type="video/mp4"></video><span class="vcard__tag">Proyecto</span><span class="vcard__expand"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg></span><figcaption><b>Recorrido por una vivienda domotizada</b><small>Exterior, accesos e interiores</small></figcaption></figure>
+      <figure class="vcard" data-video="assets/video/camaras-seguridad.mp4" data-poster="assets/video/camaras-seguridad.jpg" data-title="Instalación de cámaras exteriores" tabindex="0" role="button" aria-label="Ver vídeo: Instalación de cámaras exteriores"><video muted loop playsinline preload="none" poster="assets/video/camaras-seguridad.jpg" data-autoplay><source src="assets/video/camaras-seguridad.mp4" type="video/mp4"></video><span class="vcard__tag">Seguridad</span><span class="vcard__expand"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg></span><figcaption><b>Instalación de cámaras exteriores</b><small>Vigilancia integrada en Home Assistant</small></figcaption></figure>
+      <figure class="vcard" data-video="assets/video/rack-cuadro.mp4" data-poster="assets/video/rack-cuadro.jpg" data-title="Rack de red y cuadro domótico" tabindex="0" role="button" aria-label="Ver vídeo: Rack de red y cuadro domótico"><video muted loop playsinline preload="none" poster="assets/video/rack-cuadro.jpg" data-autoplay><source src="assets/video/rack-cuadro.mp4" type="video/mp4"></video><span class="vcard__tag">Instalación</span><span class="vcard__expand"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg></span><figcaption><b>Rack de red y cuadro domótico</b><small>Infraestructura ordenada y documentada</small></figcaption></figure>
+      <figure class="vcard" data-video="assets/video/exterior-vivienda.mp4" data-poster="assets/video/exterior-vivienda.jpg" data-title="Exterior de vivienda domotizada" tabindex="0" role="button" aria-label="Ver vídeo: Exterior de vivienda domotizada"><video muted loop playsinline preload="none" poster="assets/video/exterior-vivienda.jpg" data-autoplay><source src="assets/video/exterior-vivienda.mp4" type="video/mp4"></video><span class="vcard__tag">Exterior</span><span class="vcard__expand"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg></span><figcaption><b>Exterior de vivienda domotizada</b><small>Fachada, patio y control exterior</small></figcaption></figure>
+    </div>
+    <p class="small" style="color:var(--muted-dark);margin-top:10px">Pulsa cualquier vídeo para verlo con sonido.</p>
+  </div>
+</section>
+
 
 <!-- ============ ESCENAS ============ -->
 <section class="section section--dark" id="escenas">
@@ -288,11 +275,11 @@
           <rect x="95" y="300" width="280" height="55" rx="18" fill="#7d6b57"/>
           <rect x="70" y="320" width="34" height="85" rx="14" fill="#5d4f40"/>
           <rect x="366" y="320" width="34" height="85" rx="14" fill="#5d4f40"/>
-          <rect x="150" y="315" width="60" height="40" rx="10" fill="#c9a66b" opacity=".85"/>
+          <rect x="150" y="315" width="60" height="40" rx="10" fill="#3d8bff" opacity=".85"/>
           <!-- lámpara de pie -->
           <circle class="lamp-glow" cx="745" cy="190" r="140" fill="url(#lampG)"/>
           <path d="M745 210v170M720 380h50" stroke="#2a313b" stroke-width="5"/>
-          <path d="M715 210h60l-12-50h-36z" fill="#efe1c4"/>
+          <path d="M715 210h60l-12-50h-36z" fill="#e6ecf3"/>
           <!-- planta -->
           <path d="M30 380 q-6-50 10-90 M30 380 q10-60 -20-80 M30 380 q20-40 40-70" stroke="#5f7d63" stroke-width="6" fill="none" stroke-linecap="round"/>
           <rect x="14" y="372" width="34" height="30" rx="4" fill="#2a313b"/>
@@ -362,24 +349,15 @@
   <div class="container">
     <div class="flex-between reveal" style="margin-bottom:48px">
       <div class="section-head mb-0">
-        <span class="eyebrow">Proyectos</span>
-        <h2 class="mb-0">Hogares y espacios <em>que ya funcionan solos</em></h2>
+        <span class="eyebrow">Trabajos reales</span>
+        <h2 class="mb-0">Así quedan <em>nuestras instalaciones</em></h2>
       </div>
       <a class="btn btn--outline" href="proyectos.html">Ver todos los proyectos <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
     </div>
-    <div class="projects">
-      <article class="project reveal">
-        <div class="project__visual"><span class="project__cat">Vivienda</span><div class="art art-1"></div><div class="art-svg"><svg viewBox="0 0 200 120" aria-hidden="true"><rect x="20" y="30" width="160" height="80" rx="6" fill="none" stroke="#e6cd9f" stroke-width="1.5"/><path d="M20 70h60M80 30v80M120 30v50M120 80h60" stroke="#e6cd9f" stroke-width="1.5"/><circle cx="50" cy="50" r="5" fill="#ffcf8a"/><circle cx="150" cy="55" r="5" fill="#ffcf8a"/><circle cx="100" cy="95" r="5" fill="#5ee3c9"/></svg></div></div>
-        <div class="project__body"><h3>Ático en Chamberí</h3><span class="project__loc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg> Madrid centro</span><p>Home Assistant, Shelly en toda la iluminación, persianas motorizadas y clima Airzone por estancias.</p><div class="tags"><span class="tag">Home Assistant</span><span class="tag">Airzone</span></div></div>
-      </article>
-      <article class="project reveal reveal-d1">
-        <div class="project__visual"><span class="project__cat">Reforma</span><div class="art art-6"></div><div class="art-svg"><svg viewBox="0 0 200 120" aria-hidden="true"><rect x="40" y="25" width="50" height="50" rx="10" fill="#f6f2ea"/><rect x="52" y="37" width="12" height="26" rx="2" fill="#fff"/><rect x="66" y="37" width="12" height="26" rx="2" fill="#fff"/><rect x="110" y="25" width="50" height="50" rx="10" fill="#1d1f22"/><rect x="122" y="37" width="26" height="26" rx="3" fill="#2a2d31"/><circle cx="135" cy="58" r="2" fill="#5ee3c9"/></svg></div></div>
-        <div class="project__body"><h3>Chalet en Pozuelo</h3><span class="project__loc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg> Pozuelo de Alarcón</span><p>Mecanismos Legrand with Netatmo en toda la casa, red Zigbee, riego inteligente y alarma integrada.</p><div class="tags"><span class="tag">Legrand · Netatmo</span><span class="tag">Zigbee</span></div></div>
-      </article>
-      <article class="project reveal reveal-d2">
-        <div class="project__visual"><span class="project__cat">Empresa</span><div class="art art-2"></div><div class="art-svg"><svg viewBox="0 0 200 120" aria-hidden="true"><g fill="none" stroke="#5ee3c9" stroke-width="1.5"><rect x="30" y="20" width="140" height="80" rx="4"/><path d="M30 60h140M77 20v80M123 20v80"/></g><g fill="#e6cd9f"><circle cx="53" cy="40" r="4"/><circle cx="100" cy="40" r="4"/><circle cx="147" cy="40" r="4"/><circle cx="53" cy="80" r="4"/><circle cx="100" cy="80" r="4"/><circle cx="147" cy="80" r="4"/></g></svg></div></div>
-        <div class="project__body"><h3>Oficinas en Castellana</h3><span class="project__loc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg> Madrid · Chamartín</span><p>Iluminación DALI-2 con sensores de presencia y luz natural, control KNX de clima y visualización centralizada.</p><div class="tags"><span class="tag">KNX</span><span class="tag">DALI-2</span></div></div>
-      </article>
+    <div class="video-grid">
+      <div class="reveal"><figure class="vcard" data-video="assets/video/videoportero-panel.mp4" data-poster="assets/video/videoportero-panel.jpg" data-title="Videoportero en el panel de casa" tabindex="0" role="button" aria-label="Ver vídeo: Videoportero en el panel de casa"><video muted loop playsinline preload="none" poster="assets/video/videoportero-panel.jpg" data-autoplay><source src="assets/video/videoportero-panel.mp4" type="video/mp4"></video><span class="vcard__tag">Accesos</span><span class="vcard__expand"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg></span><figcaption><b>Videoportero en el panel de casa</b><small>Atiende la llamada y abre desde la pantalla</small></figcaption></figure></div>
+      <div class="reveal reveal-d1"><figure class="vcard" data-video="assets/video/pergola-led.mp4" data-poster="assets/video/pergola-led.jpg" data-title="Pérgola con tira LED regulable" tabindex="0" role="button" aria-label="Ver vídeo: Pérgola con tira LED regulable"><video muted loop playsinline preload="none" poster="assets/video/pergola-led.jpg" data-autoplay><source src="assets/video/pergola-led.mp4" type="video/mp4"></video><span class="vcard__tag">Iluminación</span><span class="vcard__expand"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg></span><figcaption><b>Pérgola con tira LED regulable</b><small>Escena de exterior al anochecer</small></figcaption></figure></div>
+      <div class="reveal reveal-d2"><figure class="vcard" data-video="assets/video/videoportero-accesos.mp4" data-poster="assets/video/videoportero-accesos.jpg" data-title="Videoportero Hikvision con tarjeta" tabindex="0" role="button" aria-label="Ver vídeo: Videoportero Hikvision con tarjeta"><video muted loop playsinline preload="none" poster="assets/video/videoportero-accesos.jpg" data-autoplay><source src="assets/video/videoportero-accesos.mp4" type="video/mp4"></video><span class="vcard__tag">Accesos</span><span class="vcard__expand"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg></span><figcaption><b>Videoportero Hikvision con tarjeta</b><small>Apertura por código, tarjeta o móvil</small></figcaption></figure></div>
     </div>
   </div>
 </section>
@@ -404,28 +382,6 @@
       <figure class="t-card"><div class="t-stars"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3L2.9 9.5l6.3-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3L2.9 9.5l6.3-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3L2.9 9.5l6.3-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3L2.9 9.5l6.3-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3L2.9 9.5l6.3-.9z"/></svg></div><blockquote class="t-quote">“Migramos la iluminación de la oficina a DALI con sensores. Menos consumo, mejor luz y por fin un único panel para todo el edificio.”</blockquote><figcaption class="t-person"><span class="avatar">AL</span><span><b>Ana L.</b><small>Facility manager · Oficinas en Madrid</small></span></figcaption></figure>
       <figure class="t-card"><div class="t-stars"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3L2.9 9.5l6.3-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3L2.9 9.5l6.3-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3L2.9 9.5l6.3-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3L2.9 9.5l6.3-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3L2.9 9.5l6.3-.9z"/></svg></div><blockquote class="t-quote">“Me explicaron cada opción sin venderme de más. Empezamos con luces y clima y ahora vamos ampliando poco a poco. Muy profesionales.”</blockquote><figcaption class="t-person"><span class="avatar">CP</span><span><b>Carlos P.</b><small>Vivienda en Las Rozas · Shelly + Aqara</small></span></figcaption></figure>
       <figure class="t-card"><div class="t-stars"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3L2.9 9.5l6.3-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3L2.9 9.5l6.3-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3L2.9 9.5l6.3-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3L2.9 9.5l6.3-.9z"/></svg><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3L2.9 9.5l6.3-.9z"/></svg></div><blockquote class="t-quote">“En el hotel controlamos clima e iluminación de cada habitación según ocupación. El ahorro se notó desde el primer mes.”</blockquote><figcaption class="t-person"><span class="avatar">LM</span><span><b>Lucía M.</b><small>Dirección · Hotel boutique en Madrid</small></span></figcaption></figure>
-    </div>
-  </div>
-</section>
-
-
-
-<!-- ============ INSTAGRAM ============ -->
-<section class="section section--dark">
-  <div class="container">
-    <div class="flex-between reveal" style="margin-bottom:44px">
-      <div class="insta-head">
-        <span class="insta-avatar"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".9" fill="currentColor"/></svg></span></span>
-        <div><span class="eyebrow" style="margin-bottom:6px">Síguenos en Instagram</span><h2 class="mb-0" style="font-size:clamp(1.8rem,3.4vw,2.6rem)">@domoticahogarmadrid</h2></div>
-      </div>
-      <a class="btn btn--ghost" href="https://www.instagram.com/domoticahogarmadrid/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".9" fill="currentColor"/></svg> Ver más vídeos</a>
-    </div>
-    <div class="insta-embeds" data-insta-embeds hidden></div>
-    <div class="insta-grid" data-insta-fallback>
-      <a class="reel reveal" href="https://www.instagram.com/domoticahogarmadrid/" target="_blank" rel="noopener"><span class="reel__bg art-1"></span><span class="reel__visual"><svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="40" r="18" fill="none" stroke="#ffcf8a" stroke-width="2"/><path d="M42 62h16M44 68h12" stroke="#ffcf8a" stroke-width="2"/></svg></span><span class="reel__tag">Reel</span><span class="reel__play"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg></span><span class="reel__meta"><b>Escena “Buenos días” en un ático de Chamberí</b><small><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg> Ver en Instagram</small></span></a>
-      <a class="reel reveal reveal-d1" href="https://www.instagram.com/domoticahogarmadrid/" target="_blank" rel="noopener"><span class="reel__bg art-6"></span><span class="reel__visual"><svg viewBox="0 0 100 100" aria-hidden="true"><rect x="25" y="25" width="50" height="50" rx="10" fill="#f6f2ea"/><rect x="36" y="36" width="13" height="28" rx="2" fill="#fff"/><rect x="51" y="36" width="13" height="28" rx="2" fill="#fff"/></svg></span><span class="reel__tag">Antes / después</span><span class="reel__play"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg></span><span class="reel__meta"><b>Mecanismos Legrand with Netatmo sin obras</b><small><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg> Ver en Instagram</small></span></a>
-      <a class="reel reveal reveal-d2" href="https://www.instagram.com/domoticahogarmadrid/" target="_blank" rel="noopener"><span class="reel__bg art-5"></span><span class="reel__visual"><svg viewBox="0 0 100 100" aria-hidden="true"><rect x="28" y="15" width="44" height="70" rx="8" fill="none" stroke="#9fb8ff" stroke-width="2"/><rect x="34" y="26" width="14" height="14" rx="3" fill="#9fb8ff"/><rect x="52" y="26" width="14" height="14" rx="3" fill="#9fb8ff" opacity=".5"/><rect x="34" y="44" width="32" height="14" rx="3" fill="#9fb8ff" opacity=".7"/></svg></span><span class="reel__tag">Tutorial</span><span class="reel__play"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg></span><span class="reel__meta"><b>Así es un panel de Home Assistant bien hecho</b><small><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg> Ver en Instagram</small></span></a>
-      <a class="reel reveal reveal-d3" href="https://www.instagram.com/domoticahogarmadrid/" target="_blank" rel="noopener"><span class="reel__bg art-2"></span><span class="reel__visual"><svg viewBox="0 0 100 100" aria-hidden="true"><path d="M15 55h70" stroke="#c9a66b" stroke-width="2" stroke-dasharray="5 4"/><g fill="#5ee3c9"><circle cx="25" cy="55" r="5"/><circle cx="50" cy="55" r="5"/><circle cx="75" cy="55" r="5"/></g><rect x="35" y="22" width="30" height="16" rx="3" fill="#c9a66b"/><path d="M50 38v17" stroke="#c9a66b" stroke-width="2"/></svg></span><span class="reel__tag">Obra</span><span class="reel__play"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg></span><span class="reel__meta"><b>Cuadro KNX y DALI en unas oficinas</b><small><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg> Ver en Instagram</small></span></a>
     </div>
   </div>
 </section>
@@ -472,12 +428,11 @@
   <div class="container">
     <div class="footer-grid">
       <div class="footer-brand">
-        <a class="logo" href="index.html"><svg class="logo__mark" viewBox="0 0 40 40" aria-hidden="true">
-  <defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e6cd9f"/><stop offset="1" stop-color="#a8864e"/></linearGradient></defs>
-  <rect x="1" y="1" width="38" height="38" rx="11" fill="none" stroke="url(#lg)" stroke-width="1.5"/>
-  <path d="M10 20.5 20 12l10 8.5V29a1 1 0 0 1-1 1H11a1 1 0 0 1-1-1z" fill="none" stroke="url(#lg)" stroke-width="1.6" stroke-linejoin="round"/>
-  <path d="M16.5 23.5a5 5 0 0 1 7 0M18.4 25.8a2.2 2.2 0 0 1 3.2 0" fill="none" stroke="#5ee3c9" stroke-width="1.5" stroke-linecap="round"/>
-</svg><span class="logo__text">Domótica Hogar<small>Madrid</small></span></a>
+        <a class="logo" href="index.html"><svg class="logo__mark" viewBox="0 0 48 44" aria-hidden="true">
+  <path d="M5 22.5 24 5.5l6.5 5.8V6.5h5.5v9.7l7 6.3h-4.6V40H9.6V22.5z" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"/>
+  <path d="M15.6 25.6a12 12 0 0 1 16.8 0M18.9 29a7.3 7.3 0 0 1 10.2 0" fill="none" stroke="#3d8bff" stroke-width="2.6" stroke-linecap="round"/>
+  <circle cx="24" cy="33.4" r="2" fill="#34d3f0"/>
+</svg><span class="logo__text">Domótica Hogar<small>Madrid · Tu casa inteligente</small></span></a>
         <p>Integradores de domótica en Madrid: Home Assistant, Zigbee, KNX y DALI. Diseñamos, instalamos y mantenemos hogares y edificios inteligentes.</p>
         <div class="socials">
           <a href="https://www.instagram.com/domoticahogarmadrid/" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".9" fill="currentColor"/></svg></a>
@@ -521,6 +476,7 @@
     </div>
   </div>
 </footer>
+<div class="lightbox" hidden role="dialog" aria-modal="true" aria-label="Vídeo"><button class="lightbox__close" aria-label="Cerrar vídeo">×</button><div><video controls playsinline></video><p class="lightbox__caption"></p></div></div>
 <a class="wa-float" href="https://wa.me/34600000000?text=Hola%2C%20me%20interesa%20domotizar%20mi%20casa" target="_blank" rel="noopener" aria-label="Escríbenos por WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.4.1-.2 0-.3 0-.5l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.1 5.1 0 0 0 1.1 2.7 11.7 11.7 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.2 2.2 2.2 0 0 0 .1-1.3c0-.1-.2-.2-.5-.3z"/></svg><span class="wa-float__tip">¿Hablamos por WhatsApp?</span></a>
 <script src="js/main.js" defer></script>
 </body>
