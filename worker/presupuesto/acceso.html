@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Acceso — Domótica Hogar Madrid</title>
+<link rel="icon" href="/assets/img/favicon.png" type="image/png">
+<style>
+  :root{ --navy:#1c2b3a; --amber:#c8791f; --amber-light:#e3a355; --line:#e4ddd1; --ink:#232323; --ink-soft:#6b6459; --red:#b23a3a; }
+  *{box-sizing:border-box;}
+  body{margin:0;min-height:100vh;display:grid;place-items:center;padding:24px 16px;font-family:'Segoe UI',Roboto,Arial,sans-serif;background:radial-gradient(circle at 30% 20%,#28405a,#1c2b3a 60%);color:var(--ink);}
+  .box{width:100%;max-width:380px;background:#fff;border-radius:18px;padding:30px 26px;box-shadow:0 30px 60px -30px rgba(0,0,0,.6);}
+  .logo{display:block;margin:0 auto 18px;height:84px;width:auto;background:var(--navy);border-radius:14px;padding:10px 14px;}
+  h1{font-size:19px;margin:0 0 6px;text-align:center;}
+  p{font-size:14px;color:var(--ink-soft);text-align:center;margin:0 0 20px;}
+  label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;}
+  input{width:100%;font:inherit;font-size:16px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;}
+  input:focus{outline:2px solid var(--amber-light);border-color:var(--amber);}
+  button{width:100%;margin-top:14px;font:inherit;font-weight:600;font-size:15px;padding:13px;border:0;border-radius:999px;background:var(--amber);color:#fff;cursor:pointer;}
+  button:hover{background:var(--amber-light);}
+  .err{color:var(--red);font-size:14px;text-align:center;margin:14px 0 0;}
+</style>
+</head>
+<body>
+<form class="box" method="post" action="/acceso">
+  <img class="logo" src="/assets/img/logo-full.png" alt="Domótica Hogar Madrid">
+  <h1>Zona de presupuestos</h1>
+  <p>Introduce la clave. Este navegador la recordará durante 6 meses.</p>
+  <label for="clave">Clave</label>
+  <input id="clave" name="clave" type="password" autocomplete="current-password" required autofocus>
+  <input type="hidden" name="volver" value="{{VOLVER}}">
+  <button type="submit">Entrar</button>
+  {{ERROR}}
+</form>
+</body>
+</html>

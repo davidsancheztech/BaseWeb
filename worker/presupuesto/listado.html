@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Presupuestos — Domótica Hogar Madrid</title>
+<link rel="icon" href="/assets/img/favicon.png" type="image/png">
+<style>
+  :root{
+    --navy:#1c2b3a; --navy-light:#28405a; --amber:#c8791f; --amber-light:#e3a355;
+    --cream:#faf7f2; --paper:#ffffff; --line:#e4ddd1; --ink:#232323; --ink-soft:#6b6459; --red:#b23a3a;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:'Segoe UI',Roboto,Arial,sans-serif;background:var(--cream);color:var(--ink);}
+  header{position:sticky;top:0;z-index:5;background:var(--navy);color:#fff;padding:14px max(16px,env(safe-area-inset-right)) 14px max(16px,env(safe-area-inset-left));display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+  header img{height:30px;width:auto;}
+  header h1{font-size:17px;margin:0;font-weight:600;letter-spacing:.2px;flex:1;min-width:160px;}
+  header a, header button{font:inherit;font-size:14px;color:#fff;text-decoration:none;background:none;border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:8px 14px;cursor:pointer;}
+  header .new{background:var(--amber);border-color:var(--amber);font-weight:600;}
+  header .new:hover{background:var(--amber-light);}
+  main{max-width:1100px;margin:0 auto;padding:20px max(16px,env(safe-area-inset-right)) 40px max(16px,env(safe-area-inset-left));}
+  .tools{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;}
+  .tools input{flex:1;min-width:220px;font:inherit;padding:11px 14px;border:1px solid var(--line);border-radius:10px;background:var(--paper);}
+  .tools input:focus{outline:2px solid var(--amber-light);border-color:var(--amber);}
+  .chips{display:flex;gap:6px;flex-wrap:wrap;}
+  .chip{font:inherit;font-size:13px;padding:8px 12px;border-radius:999px;border:1px solid var(--line);background:var(--paper);cursor:pointer;color:var(--ink-soft);}
+  .chip.on{background:var(--navy);border-color:var(--navy);color:#fff;}
+  .count{font-size:13px;color:var(--ink-soft);margin:0 0 10px;}
+  .table-wrap{background:var(--paper);border:1px solid var(--line);border-radius:14px;overflow-x:auto;}
+  table{width:100%;border-collapse:collapse;min-width:640px;font-size:14px;}
+  th{text-align:left;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);font-weight:600;padding:12px 14px;border-bottom:1px solid var(--line);background:#fcfaf6;}
+  td{padding:13px 14px;border-bottom:1px solid #f0ebe2;vertical-align:top;}
+  tr.row{cursor:pointer;}
+  tr.row:hover td{background:#fdf8ef;}
+  tr:last-child td{border-bottom:0;}
+  .id{font-weight:700;color:var(--navy);white-space:nowrap;}
+  .ref{display:block;font-size:12px;color:var(--ink-soft);margin-top:2px;}
+  .num{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums;}
+  .estado{display:inline-block;font-size:12px;font-weight:600;padding:4px 10px;border-radius:999px;background:#eef1f5;color:var(--navy-light);white-space:nowrap;}
+  .estado.aceptado,.estado.aprobado,.estado.ganado{background:#e7f5ec;color:#1d6b3a;}
+  .estado.presupuestado,.estado.enviado{background:#fdf1e1;color:#8a520f;}
+  .estado.rechazado,.estado.perdido{background:#f9e7e7;color:var(--red);}
+  .msg{padding:40px 20px;text-align:center;color:var(--ink-soft);}
+  .msg.err{color:var(--red);}
+  @media (max-width:640px){ header h1{font-size:15px;} }
+</style>
+</head>
+<body>
+<header>
+  <img src="/assets/img/logo-wordmark.png" alt="Domótica Hogar Madrid" onerror="this.style.display='none'">
+  <h1>Presupuestos</h1>
+  <a class="new" href="/presupuesto">+ Nuevo presupuesto</a>
+  <a href="/calculadora-presupuesto" target="_blank" rel="noopener">Calculadora</a>
+  <a href="/salir">Cerrar sesión</a>
+</header>
+<main>
+  <div class="tools">
+    <input id="q" type="search" placeholder="Buscar por cliente, número, teléfono…" autocomplete="off">
+    <div class="chips" id="chips"></div>
+  </div>
+  <p class="count" id="count"></p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Nº</th><th>Cliente</th><th>Fecha</th><th>Estado</th><th>Origen</th><th class="num">Total</th></tr></thead>
+      <tbody id="rows"><tr><td colspan="6" class="msg">Cargando presupuestos…</td></tr></tbody>
+    </table>
+  </div>
+</main>
+<script>
+const $ = (s) => document.querySelector(s);
+const esc = (v) => String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+const pick = (o, ...keys) => { for (const k of keys) { const v = k.split(".").reduce((a, p) => (a == null ? a : a[p]), o); if (v !== undefined && v !== null && v !== "") return v; } return ""; };
+let all = [];
+let estadoSel = "";
+
+// n8n puede devolver la lista de varias formas: [ ... ], { data: [ ... ] }, [{ json: {...} }]...
+function normalize(payload) {
+  let list = payload;
+  if (list && !Array.isArray(list)) list = list.data || list.presupuestos || list.items || [list];
+  if (!Array.isArray(list)) return [];
+  if (list.length === 1 && Array.isArray(list[0]?.data)) list = list[0].data;
+  return list.map((it) => (it && it.json ? it.json : it)).map((p) => ({
+    id: pick(p, "id_presupuesto", "numero_presupuesto", "presupuesto.id_presupuesto", "id"),
+    nombre: pick(p, "nombre", "ficha.nombre", "cliente", "presupuesto.nombre"),
+    telefono: pick(p, "telefono", "ficha.telefono"),
+    referencia: pick(p, "referencia", "presupuesto.referencia"),
+    fecha: pick(p, "fecha_presupuesto", "ficha.fecha_presupuesto", "fecha", "presupuesto.fecha"),
+    estado: pick(p, "estado", "ficha.estado"),
+    origen: pick(p, "origen", "ficha.origen"),
+    total: pick(p, "total", "importe", "total_presupuesto", "precio_total"),
+  }));
+}
+
+function fmtFecha(v) {
+  if (!v) return "";
+  const d = new Date(v);
+  return isNaN(d) ? esc(v) : d.toLocaleDateString("es-ES", { day: "2-digit", month: "2-digit", year: "numeric" });
+}
+function fmtTotal(v) {
+  if (v === "") return "";
+  const n = typeof v === "number" ? v : parseFloat(String(v).replace(/\./g, "").replace(",", "."));
+  return isNaN(n) ? esc(v) : n.toLocaleString("es-ES", { style: "currency", currency: "EUR", maximumFractionDigits: 0 });
+}
+
+function render() {
+  const q = $("#q").value.trim().toLowerCase();
+  const list = all.filter((p) => (!estadoSel || String(p.estado).toLowerCase() === estadoSel) &&
+    (!q || [p.id, p.nombre, p.telefono, p.referencia, p.origen].join(" ").toLowerCase().includes(q)));
+  $("#count").textContent = `${list.length} de ${all.length} presupuestos`;
+  $("#rows").innerHTML = list.length ? list.map((p) => `
+    <tr class="row" data-id="${esc(p.id)}" tabindex="0">
+      <td class="id">${esc(p.id)}${p.referencia ? `<span class="ref">${esc(p.referencia)}</span>` : ""}</td>
+      <td>${esc(p.nombre)}${p.telefono ? `<span class="ref">${esc(p.telefono)}</span>` : ""}</td>
+      <td>${fmtFecha(p.fecha)}</td>
+      <td>${p.estado ? `<span class="estado ${esc(String(p.estado).toLowerCase())}">${esc(p.estado)}</span>` : ""}</td>
+      <td>${esc(p.origen)}</td>
+      <td class="num">${fmtTotal(p.total)}</td>
+    </tr>`).join("") : `<tr><td colspan="6" class="msg">No hay presupuestos que coincidan.</td></tr>`;
+}
+
+function renderChips() {
+  const estados = [...new Set(all.map((p) => String(p.estado).trim()).filter(Boolean))];
+  $("#chips").innerHTML = ["", ...estados].map((e) =>
+    `<button class="chip${(e.toLowerCase() === estadoSel) ? " on" : ""}" data-e="${esc(e.toLowerCase())}">${e ? esc(e) : "Todos"}</button>`).join("");
+}
+
+$("#chips").addEventListener("click", (ev) => {
+  const b = ev.target.closest(".chip"); if (!b) return;
+  estadoSel = b.dataset.e; renderChips(); render();
+});
+$("#q").addEventListener("input", render);
+const open = (tr) => tr && tr.dataset.id && (location.href = "/presupuesto?id=" + encodeURIComponent(tr.dataset.id));
+$("#rows").addEventListener("click", (ev) => open(ev.target.closest("tr.row")));
+$("#rows").addEventListener("keydown", (ev) => ev.key === "Enter" && open(ev.target.closest("tr.row")));
+
+(async () => {
+  try {
+    const res = await fetch("/api/presupuestos?action=presupuestos_lista", { credentials: "same-origin" });
+    if (res.status === 401) { location.href = "/acceso?volver=/presupuestos"; return; }
+    const text = await res.text();
+    if (!res.ok) throw new Error(text || "HTTP " + res.status);
+    all = normalize(text.trim() ? JSON.parse(text) : []);
+    all.sort((a, b) => String(b.fecha).localeCompare(String(a.fecha)) || String(b.id).localeCompare(String(a.id)));
+    renderChips(); render();
+  } catch (err) {
+    $("#rows").innerHTML = `<tr><td colspan="6" class="msg err">No se ha podido cargar el listado: ${esc(err.message)}</td></tr>`;
+  }
+})();
+</script>
+</body>
+</html>

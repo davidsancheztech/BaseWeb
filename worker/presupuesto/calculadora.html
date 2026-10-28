@@ -1,0 +1,2754 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="color-scheme" content="light only">
+<meta name="theme-color" content="#f7f8fc">
+<meta name="supported-color-schemes" content="light">
+<title>Calculadora domótica</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════
+   Calculadora domótica — diseño v4
+   Mismas clases e IDs que antes: solo cambia el aspecto.
+═══════════════════════════════════════════════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+button,a,[onclick]{touch-action:manipulation}
+
+:root{
+  color-scheme: light only;
+  --blue:#1a6cf6;--blue-dark:#0b4fd1;--blue-light:#eef4ff;--blue-ring:rgba(26,108,246,.14);
+  --green:#12a66a;--green-light:#e8f8f0;
+  --amber:#f59e0b;--amber-light:#fffaeb;
+  --surface:#f4f6fb;--card:#fff;--border:#e4e8f1;--border-strong:#d3d9e6;
+  --text:#0f1729;--muted:#5b6478;--muted-light:#98a1b3;
+  --shadow:0 1px 2px rgba(15,23,41,.04),0 6px 20px rgba(15,23,41,.05);
+  --shadow-lg:0 12px 40px rgba(15,23,41,.12);
+  --radius:20px;--radius-sm:14px;
+  --font:'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+
+/* Forzar tema claro aunque el sistema esté en modo oscuro */
+html,body{color-scheme:light only;background:#f4f6fb!important;color:#0f1729!important}
+@media (prefers-color-scheme: dark){
+  html,body{background:#f4f6fb!important;color:#0f1729!important}
+  .card,.cam-card,.cam-body,.success-screen{background:#fff!important;color:#0f1729!important}
+  .opt,.chk{background:#fff!important;color:#0f1729!important}
+  .opt.sel,.chk.sel{background:#eef4ff!important}
+  .opt.nls{background:#fff!important;color:#8a4b08!important}
+  .opt.nls.sel{background:#fffaeb!important}
+  .f-input,.f-textarea{background:#fff!important;color:#0f1729!important;border-color:#e4e8f1!important}
+  .c-btn,.cam-q-btn{background:#eef4ff!important;color:#1a6cf6!important}
+  .c-val,.cam-q-val{background:#fff!important;color:#0f1729!important}
+  .progress-bar{background:rgba(255,255,255,.92)!important}
+  .sum-card,.sum-sec-head,.sum-row{background:#fff!important;color:#0f1729!important}
+}
+
+body{font-family:var(--font);background:var(--surface);color:var(--text);-webkit-font-smoothing:antialiased;line-height:1.45}
+@media(max-width:640px){.section{animation:none!important}}
+
+/* ── BIENVENIDA ─────────────────────────────── */
+.welcome{min-height:100vh;min-height:100svh;display:flex;align-items:center;justify-content:center;text-align:center;padding:48px 20px;position:relative;overflow:hidden;
+  background:radial-gradient(1200px 600px at 80% -10%,#3b82f6 0%,transparent 60%),radial-gradient(900px 500px at -10% 110%,#0a3fa8 0%,transparent 55%),linear-gradient(160deg,#1a6cf6 0%,#0b47c2 55%,#062a80 100%)}
+.welcome::before{content:'';position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.08) 1px,transparent 1px);background-size:22px 22px;mask-image:linear-gradient(to bottom,#000 30%,transparent 90%);-webkit-mask-image:linear-gradient(to bottom,#000 30%,transparent 90%)}
+.welcome-inner{position:relative;max-width:560px;width:100%}
+.welcome-badge{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:7px 14px;font-size:12px;color:#fff;font-weight:700;letter-spacing:.04em;display:inline-flex;align-items:center;gap:6px;margin-bottom:22px;backdrop-filter:blur(6px)}
+.welcome h1{font-family:var(--font);font-weight:800;font-size:clamp(30px,7vw,44px);letter-spacing:-.02em;color:#fff;line-height:1.1;margin-bottom:16px}
+.welcome h1 em{font-style:normal;background:linear-gradient(90deg,#bfe0ff,#ffffff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.welcome p{font-size:16px;color:rgba(255,255,255,.85);line-height:1.6;max-width:440px;margin:0 auto 30px}
+.btn-start{background:#fff;color:var(--blue);border:none;border-radius:16px;height:58px;padding:0 34px;font-family:var(--font);font-size:17px;font-weight:800;cursor:pointer;box-shadow:0 10px 30px rgba(0,0,0,.25);-webkit-tap-highlight-color:transparent;display:inline-flex;align-items:center;gap:10px;transition:transform .15s,box-shadow .15s}
+.btn-start:hover{transform:translateY(-1px);box-shadow:0 14px 34px rgba(0,0,0,.3)}
+.btn-start:active{transform:scale(.97)}
+.welcome-trust{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 16px;margin-top:22px;font-size:13px;color:rgba(255,255,255,.85);font-weight:600}
+.welcome-cats{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:30px}
+.welcome-cats span{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);color:#fff;font-size:13px;font-weight:600;padding:8px 12px;border-radius:999px}
+.welcome-note{margin-top:16px;font-size:12px;color:rgba(255,255,255,.6)}
+
+/* ── CABECERA DE PROGRESO ───────────────────── */
+.progress-bar{background:rgba(255,255,255,.92);backdrop-filter:saturate(1.4) blur(10px);-webkit-backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;padding:12px 16px 0}
+.pb-inner{max-width:680px;margin:0 auto}
+.progress-info{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px}
+.progress-counter{font-size:12px;font-weight:800;color:var(--blue);text-transform:uppercase;letter-spacing:.08em}
+.progress-step-label{font-size:13px;font-weight:600;color:var(--muted);margin-top:1px}
+.hdr-amt{text-align:right;background:var(--blue-light);border-radius:12px;padding:6px 12px;flex-shrink:0}
+.hdr-amt span{display:block;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.hdr-amt strong{display:block;font-size:17px;font-weight:800;color:var(--blue);line-height:1.15}
+.progress-steps{height:4px;background:var(--border);border-radius:999px;overflow:hidden;margin:0 -16px;border-radius:0}
+.p-fill{height:100%;background:linear-gradient(90deg,#1a6cf6,#4f9bff);border-radius:0 999px 999px 0;transition:width .35s ease}
+
+/* ── LAYOUT ─────────────────────────────────── */
+.form-container{padding:20px 16px 8px;max-width:680px;margin:0 auto}
+.section{display:none}
+.section.active{display:block;animation:fadeUp .3s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.step-title{margin:4px 0 18px}
+.step-eyebrow{display:block;font-size:12px;font-weight:800;color:var(--blue);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+.step-name{display:block;font-size:clamp(22px,5.5vw,28px);font-weight:800;color:var(--text);letter-spacing:-.02em;line-height:1.15}
+
+/* ── TARJETAS ───────────────────────────────── */
+.card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:18px;margin-bottom:12px;box-shadow:var(--shadow)}
+.card-header{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.card-icon{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.card-title{font-size:16px;font-weight:800;letter-spacing:-.01em}
+.card-subtitle{font-size:13px;color:var(--muted);margin-top:2px;line-height:1.45}
+.field{margin-bottom:16px}
+.field:last-child{margin-bottom:0}
+.label{display:block;font-size:14px;font-weight:700;color:var(--text);margin-bottom:8px;line-height:1.35}
+.label-hint{font-size:12px;color:var(--muted);font-weight:500;display:block;margin-top:3px}
+.divider{height:1px;background:var(--border);margin:16px 0}
+
+/* ── OPCIONES (radio) ───────────────────────── */
+.opts{display:flex;flex-direction:column;gap:8px}
+.opts.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.opt{background:#fff;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:13px 14px;min-height:52px;cursor:pointer;display:flex;align-items:center;gap:12px;font-size:14px;font-weight:600;color:var(--text);text-align:left;width:100%;-webkit-tap-highlight-color:transparent;font-family:var(--font);line-height:1.35;transition:border-color .15s,background .15s,box-shadow .15s}
+.opt:hover{border-color:var(--border-strong);background:#fbfcfe}
+.opt:active{transform:scale(.995)}
+.opt.sel{background:var(--blue-light);border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-ring);color:var(--text)}
+.opt.nls{background:#fff;border-style:dashed;border-color:#e9d3a2;color:#8a4b08;font-weight:600}
+.opt.nls:hover{background:#fffdf6}
+.opt.nls.sel{background:var(--amber-light);border-style:solid;border-color:var(--amber);box-shadow:0 0 0 3px rgba(245,158,11,.15);color:#7a3e05}
+.opt-dot{width:22px;height:22px;border-radius:50%;border:2px solid #c9d0de;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s;background:#fff}
+.opt.sel .opt-dot{border-color:var(--blue);background:var(--blue)}
+.opt.sel .opt-dot::after{content:'';width:8px;height:8px;border-radius:50%;background:#fff}
+.opt.nls .opt-dot{border-color:#e0b860}
+.opt.nls.sel .opt-dot{border-color:var(--amber);background:var(--amber)}
+
+/* ── CASILLAS (multi) ───────────────────────── */
+.chk{background:#fff;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:13px 14px;min-height:52px;cursor:pointer;display:flex;align-items:center;gap:12px;font-size:14px;font-weight:600;color:var(--text);-webkit-tap-highlight-color:transparent;font-family:var(--font);transition:border-color .15s,background .15s,box-shadow .15s}
+.chk:hover{border-color:var(--border-strong);background:#fbfcfe}
+.chk.sel{background:var(--blue-light);border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-ring);color:var(--text)}
+.chk:active{transform:scale(.995)}
+.chk-box{width:22px;height:22px;min-width:22px;border-radius:7px;border:2px solid #c9d0de;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s;background:#fff}
+.chk.sel .chk-box{background:var(--blue);border-color:var(--blue)}
+.chk.sel .chk-box::after{content:'✓';color:#fff;font-size:12px;font-weight:900}
+.chk-info{flex:1;min-width:0}
+.chk-name{font-size:14px;font-weight:700}
+.chk-desc{font-size:12.5px;color:var(--muted);margin-top:2px;font-weight:500;line-height:1.4}
+.chk.sel .chk-desc{color:#3d5a8f}
+
+/* Paso "¿Qué quieres automatizar?": mosaico de tarjetas */
+.tiles{display:grid!important;grid-template-columns:1fr 1fr;gap:10px!important}
+.tiles .chk.tile{flex-direction:column;align-items:flex-start;gap:8px;padding:14px;min-height:128px;position:relative}
+.tiles .chk.tile .chk-box{position:absolute;top:12px;right:12px}
+.tile-ico{width:44px;height:44px;border-radius:12px;background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:22px;transition:background .15s}
+.chk.tile.sel .tile-ico{background:#fff}
+.tiles .chk.tile .chk-name{font-size:15px;padding-right:24px}
+.tiles #int-todo{grid-column:1/-1;justify-content:center;font-weight:800;color:var(--blue);min-height:56px;border-color:#bcd2fb}
+.tiles-sep{grid-column:1/-1;display:flex;align-items:center;gap:10px;font-size:13px;font-weight:600;color:var(--muted);margin:4px 0}
+.tiles-sep::before,.tiles-sep::after{content:"";flex:1;height:1px;background:var(--border)}
+@media(max-width:360px){.tiles{grid-template-columns:1fr}}
+
+.step-sub{font-size:15px;color:var(--muted);margin:-8px 0 16px}
+.tiles.tiles3{grid-template-columns:repeat(3,1fr)}
+.tiles.tiles3 .chk.tile{min-height:104px;align-items:center;text-align:center;padding:14px 8px}
+.tiles.tiles3 .chk.tile .chk-name{padding-right:0;font-size:14px}
+.tiles.tiles3 .chk.tile .chk-box{top:8px;right:8px;width:20px;height:20px;min-width:20px}
+.sub-panel{padding:14px;background:var(--surface);border-radius:12px;border:1px solid var(--border)}
+
+/* Opciones avanzadas (plegadas) */
+details.adv{margin-bottom:12px;border:1px dashed var(--border-strong);border-radius:var(--radius);background:#fff}
+details.adv>summary{list-style:none;cursor:pointer;padding:16px 18px;font-size:15px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:8px}
+details.adv>summary::-webkit-details-marker{display:none}
+details.adv>summary span{font-weight:500;color:var(--muted);font-size:13px}
+details.adv>summary::after{content:'▾';margin-left:auto;color:var(--muted);transition:transform .2s}
+details.adv[open]>summary::after{transform:rotate(180deg)}
+.adv-body{padding:0 12px 4px}
+.adv-body .card{box-shadow:none}
+
+/* "Continuar" se ilumina cuando ya está todo respondido */
+@keyframes pulseNext{0%{box-shadow:0 8px 20px rgba(26,108,246,.3),0 0 0 0 rgba(26,108,246,.45)}100%{box-shadow:0 8px 20px rgba(26,108,246,.3),0 0 0 14px rgba(26,108,246,0)}}
+.btn-next.pulse{animation:pulseNext .9s ease-out 2}
+
+/* ── CONTADORES ─────────────────────────────── */
+.counter-wrap{display:inline-flex;align-items:center;border:1.5px solid var(--border);border-radius:14px;overflow:hidden;background:#fff}
+.c-btn{width:48px;height:48px;border:none;background:var(--blue-light);cursor:pointer;font-size:22px;font-weight:600;color:var(--blue);display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;font-family:var(--font);transition:background .1s}
+.c-btn:hover{background:#e2ecff}
+.c-btn:active{background:#d4e3ff}
+.c-val{min-width:60px;text-align:center;font-size:18px;font-weight:800;color:var(--text);background:#fff;height:48px;line-height:48px}
+
+.mini-ctr{display:flex;align-items:center;border:1.5px solid var(--border);border-radius:12px;overflow:hidden;background:#fff}
+.m-btn{width:38px;height:36px;border:none;background:var(--blue-light);cursor:pointer;font-size:18px;color:var(--blue);display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;font-family:var(--font)}
+.m-btn:active{background:#d4e3ff}
+.m-val{min-width:40px;text-align:center;font-size:15px;font-weight:800;color:var(--text);height:36px;line-height:36px}
+
+/* ── SENSORES ───────────────────────────────── */
+.sensor-block{border:1.5px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;transition:border-color .15s,box-shadow .15s;margin-bottom:8px;background:#fff}
+.sensor-block.sel{border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-ring)}
+.sensor-head{padding:13px 14px;cursor:pointer;display:flex;align-items:flex-start;gap:12px;background:#fff;-webkit-tap-highlight-color:transparent}
+.sensor-block.sel .sensor-head{background:var(--blue-light)}
+.s-box{width:22px;height:22px;min-width:22px;border-radius:7px;border:2px solid #c9d0de;display:flex;align-items:center;justify-content:center;transition:all .15s;margin-top:1px;flex-shrink:0;background:#fff}
+.sensor-block.sel .s-box{background:var(--blue);border-color:var(--blue)}
+.sensor-block.sel .s-box::after{content:'✓';color:#fff;font-size:12px;font-weight:900}
+.sensor-qty{display:none;align-items:center;justify-content:space-between;padding:10px 14px 12px;background:#fff;border-top:1px solid rgba(26,108,246,.15)}
+.sensor-block.sel .sensor-qty{display:flex}
+.s-price-tag{font-size:12px;font-weight:800;color:var(--blue);margin-top:4px}
+
+/* ── AVISOS ─────────────────────────────────── */
+.info-box{border-radius:var(--radius-sm);padding:12px 14px;font-size:13.5px;line-height:1.55;border:1px solid}
+.info-box.blue{background:#f3f7ff;border-color:#d8e5ff;color:#1e3f7a}
+.info-box.amber{background:var(--amber-light);border-color:#f7e2ad;color:#7a3e05}
+.info-box.green{background:var(--green-light);border-color:#c5ecd8;color:#05603f}
+
+/* ── CAMPOS ─────────────────────────────────── */
+.f-textarea{width:100%;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;font-family:var(--font);font-size:16px;color:var(--text);background:#fff;resize:none;outline:none;transition:border-color .15s,box-shadow .15s}
+.f-textarea:focus,.f-input:focus{border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-ring)}
+.f-textarea::placeholder,.f-input::placeholder{color:var(--muted-light)}
+.f-input{width:100%;height:52px;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:0 14px;font-family:var(--font);font-size:16px;color:var(--text);background:#fff;outline:none;transition:border-color .15s,box-shadow .15s}
+.f-input.err{border-color:#ef4444;background:#fff7f7}
+.f-select{width:100%;height:52px;border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:0 14px;font-family:var(--font);font-size:16px;color:var(--text);background:#fff;outline:none;appearance:none}
+
+.f-err{display:none;font-size:13px;font-weight:600;color:#c02626;margin-top:8px;padding:8px 12px;background:#fef2f2;border-radius:10px;border:1px solid #fecaca}
+.f-err.show{display:block}
+
+/* ── NAVEGACIÓN (fija abajo en móvil) ───────── */
+.nav-row{display:flex;gap:10px;margin-top:8px;position:sticky;bottom:0;z-index:60;padding:14px 0 calc(14px + env(safe-area-inset-bottom));background:linear-gradient(to top,var(--surface) 75%,rgba(244,246,251,0))}
+.btn-back{flex:0 0 auto;height:54px;padding:0 18px;border:1.5px solid var(--border);background:#fff;border-radius:16px;font-family:var(--font);font-size:15px;font-weight:700;color:var(--muted);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:border-color .15s,color .15s}
+.btn-back:hover{border-color:var(--border-strong);color:var(--text)}
+.btn-next{flex:1;height:54px;border:none;background:linear-gradient(135deg,#1a6cf6,#0b4fd1);border-radius:16px;font-family:var(--font);font-size:16px;font-weight:800;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 8px 20px rgba(26,108,246,.3);-webkit-tap-highlight-color:transparent;transition:transform .15s,box-shadow .15s}
+.btn-next:hover{box-shadow:0 10px 26px rgba(26,108,246,.38)}
+.btn-next:active{transform:scale(.98)}
+.btn-full{width:100%;height:58px;border:none;background:linear-gradient(135deg,#1a6cf6,#0b4fd1);border-radius:16px;font-family:var(--font);font-size:17px;font-weight:800;color:#fff;cursor:pointer;margin-top:16px;box-shadow:0 10px 26px rgba(26,108,246,.35);-webkit-tap-highlight-color:transparent}
+.btn-full:disabled{opacity:.7;cursor:wait}
+
+/* En "Tus datos" el botón de enviar va en el formulario: "Atrás" no debe flotar encima */
+#sec-contacto .nav-row{position:static;background:none;padding-top:4px}
+
+/* La estimación en vivo ahora va en la cabecera */
+.live-bar{display:none!important}
+
+/* ── RESUMEN / ESTIMACIÓN ───────────────────── */
+.sum-hero{text-align:center;padding:12px 0 18px}
+.sum-check{width:64px;height:64px;background:var(--blue-light);border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 14px}
+.sum-hero h2{font-family:var(--font);font-weight:800;font-size:26px;letter-spacing:-.02em;margin-bottom:4px}
+.sum-hero p{font-size:14px;color:var(--muted)}
+.sum-card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;margin-bottom:10px;box-shadow:var(--shadow)}
+.sum-sec-head{background:#f8f9fc;padding:11px 16px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border);border-top:1px solid var(--border)}
+.sum-card .sum-sec-head:first-child{border-top:none}
+.sum-row{display:flex;align-items:flex-start;padding:11px 16px;border-bottom:1px solid #f0f2f7}
+.sum-row:last-child{border-bottom:none}
+.sum-row-name{flex:1;font-size:14px;font-weight:700;color:var(--text);line-height:1.35}
+.sum-row-detail{font-size:12px;color:var(--muted);margin-top:2px}
+.sum-row-price{font-size:15px;font-weight:800;color:var(--text);flex-shrink:0;margin-left:12px}
+.sum-row-info{font-size:13px;color:var(--muted);flex-shrink:0;margin-left:12px;text-align:right;max-width:60%}
+.sum-row.info-row .sum-row-name{font-size:13px;font-weight:600;color:var(--muted)}
+.sum-row.nls-row{background:#fffbf0}
+.sum-row.nls-row .sum-row-name{color:#8a4b08;font-size:13px}
+
+.price-range-card{background:radial-gradient(500px 200px at 100% 0%,#4f9bff 0%,transparent 60%),linear-gradient(135deg,#1a6cf6,#0a3fa8);border-radius:var(--radius);padding:26px 22px;color:#fff;text-align:center;margin:16px 0 12px;box-shadow:0 14px 34px rgba(26,108,246,.3)}
+.prc-label{font-size:11px;font-weight:800;opacity:.8;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px}
+.prc-range{font-family:var(--font);font-weight:800;font-size:clamp(28px,7vw,36px);letter-spacing:-.02em;line-height:1.1}
+.prc-note{font-size:12px;opacity:.75;margin-top:8px}
+.ub-wrap{margin-top:16px}
+.ub-label{font-size:12px;opacity:.85;margin-bottom:6px}
+.ub-track{height:6px;background:rgba(255,255,255,.22);border-radius:999px;overflow:hidden}
+.ub-fill{height:100%;background:#fff;border-radius:999px;transition:width .5s}
+.disclaimer{font-size:12.5px;color:#7a3e05;line-height:1.6;padding:12px 14px;background:var(--amber-light);border-radius:var(--radius-sm);border:1px solid #f7e2ad;margin-bottom:12px}
+.btn-add{width:100%;justify-content:center!important;font-weight:800!important;color:var(--blue)!important;border-style:dashed!important;border-color:#bcd2fb!important;background:#fff!important;margin:2px 0 12px}
+
+/* ── ÉXITO ──────────────────────────────────── */
+.success-screen{display:none;text-align:center;padding:28px 0 40px}
+.success-screen.show{display:block;animation:fadeUp .35s ease}
+.success-icon{width:80px;height:80px;background:var(--green-light);border-radius:24px;display:flex;align-items:center;justify-content:center;font-size:38px;margin:0 auto 18px}
+.success-screen h2{font-family:var(--font);font-weight:800;font-size:26px;letter-spacing:-.02em;margin-bottom:10px}
+.success-screen p{font-size:15px;color:var(--muted);line-height:1.6;margin-bottom:22px}
+.success-detail{background:#fff;border-radius:var(--radius);padding:16px 18px;text-align:left;margin-bottom:18px;border:1px solid var(--border);box-shadow:var(--shadow)}
+.sd-row{display:flex;justify-content:space-between;gap:12px;font-size:14px;padding:7px 0;border-bottom:1px solid #f0f2f7}
+.sd-row:last-child{border-bottom:none}
+.sd-row span:first-child{color:var(--muted)}
+.sd-row span:last-child{font-weight:700;text-align:right;word-break:break-word}
+.sd-total{font-size:15px;font-weight:800;color:var(--blue);border-top:1px solid var(--border);margin-top:10px;padding-top:12px}
+.btn-wa{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;height:56px;border:none;background:#25d366;border-radius:16px;font-family:var(--font);font-size:16px;font-weight:800;color:#fff;cursor:pointer;text-decoration:none;box-shadow:0 8px 20px rgba(37,211,102,.3);-webkit-tap-highlight-color:transparent;margin-top:12px}
+.wa-icon{width:24px;height:24px;flex-shrink:0}
+.privacy-note{font-size:12px;color:var(--muted);line-height:1.5;margin-top:14px;padding:10px 12px;background:var(--surface);border-radius:10px}
+
+.next-steps{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:18px;text-align:left;margin:0 0 18px;box-shadow:var(--shadow)}
+.ns-title{font-size:13px;font-weight:800;color:var(--blue);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px}
+.ns-item{display:flex;gap:12px;align-items:flex-start;font-size:14px;color:var(--muted);line-height:1.45;padding:8px 0}
+.ns-item strong{color:var(--text)}
+.ns-num{width:28px;height:28px;border-radius:50%;background:var(--blue-light);color:var(--blue);font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.wa-hint{font-size:14px!important;margin:0 0 -4px!important;color:var(--muted)}
+.sd-title{font-size:12px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;text-align:left;margin:26px 0 8px}
+
+/* ── CÁMARAS ────────────────────────────────── */
+.cam-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:4px}
+.cam-grid>div[id^="camwrap-"]{display:contents}
+.cam-grid>div[id^="camwrap-"][style*="display:none"]{display:none!important}
+.cam-card{border:1.5px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;cursor:pointer;transition:border-color .15s,box-shadow .15s;background:#fff;-webkit-tap-highlight-color:transparent}
+.cam-card.sel{border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-ring)}
+.cam-img{width:100%;aspect-ratio:1/1;background:#f0f4f8 center/cover no-repeat;position:relative}
+.cam-check-dot{position:absolute;top:8px;right:8px;width:24px;height:24px;border-radius:8px;border:2px solid #c9d0de;background:rgba(255,255,255,.92);transition:all .15s}
+.cam-card.sel .cam-check-dot{background:var(--blue);border-color:var(--blue)}
+.cam-card.sel .cam-check-dot::after{content:'✓';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#fff;font-size:12px;font-weight:900}
+.cam-badge-img{position:absolute;bottom:8px;left:8px;background:#ff6b00;color:#fff;font-size:10px;font-weight:800;padding:3px 9px;border-radius:999px;text-transform:uppercase;letter-spacing:.04em}
+.cam-body{padding:10px 10px 10px}
+.cam-name{font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;line-height:1.3}
+.cam-price{font-size:14px;font-weight:800;color:var(--blue)}
+.cam-qty-row{display:flex;align-items:center;margin-top:8px;border:1.5px solid var(--border);border-radius:10px;overflow:hidden}
+.cam-q-btn{flex:1;height:34px;border:none;background:var(--blue-light);cursor:pointer;font-size:17px;color:var(--blue);display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;font-family:var(--font)}
+.cam-q-btn:active{background:#d4e3ff}
+.cam-q-val{min-width:34px;text-align:center;font-size:14px;font-weight:800;color:var(--text);background:#fff;height:34px;line-height:34px}
+
+/* ── ICONOS SVG Y FOTOS ─────────────────────── */
+.ic{width:22px;height:22px;flex-shrink:0;display:inline-block;vertical-align:middle;color:inherit}
+.card-icon{background:var(--blue-light)!important;color:var(--blue);border:1px solid #dbe7ff}
+.card-icon .ic{width:22px;height:22px}
+.sen-ic{width:38px;height:38px;border-radius:10px;background:var(--blue-light);color:var(--blue);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sensor-block.sel .sen-ic{background:#fff}
+.sum-check .ic{width:30px;height:30px;color:var(--blue)}
+.success-icon .ic{width:40px;height:40px;color:var(--green)}
+.sum-sec-head .ic{width:16px;height:16px;color:var(--blue)}
+.btn-add .ic,details.adv>summary .ic{width:18px;height:18px;color:var(--blue)}
+
+/* Portada con foto de fondo (la foto la pone JS desde img/portada.jpg o el JSON) */
+.welcome.has-photo{background:#0b2a6b center 60%/cover no-repeat}
+/* Portada a pantalla completa en móvil y ordenador (gana también a la regla del shortcode del plugin) */
+#screen-welcome.welcome{min-height:100vh;min-height:100lvh}
+/* Ocultar el botón "volver arriba" del tema Astra: tapa los botones fijos de la calculadora */
+#ast-scroll-top{display:none!important}
+.welcome.has-photo::before{background:linear-gradient(180deg,rgba(6,22,64,.55) 0%,rgba(6,22,64,.72) 55%,rgba(6,22,64,.92) 100%);mask-image:none;-webkit-mask-image:none}
+.welcome-badge .ic{width:16px;height:16px}
+.welcome-logo{display:block;width:min(230px,60vw);height:auto;margin:0 auto 26px;filter:drop-shadow(0 2px 12px rgba(0,0,0,.35))}
+.welcome-cats span{display:inline-flex;align-items:center;gap:7px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.welcome-cats .ic{width:17px;height:17px;opacity:.95}
+
+/* Tarjetas con icono (mismo estilo de línea que la portada) */
+.tiles .chk.tile{padding:16px 14px 14px;gap:12px;min-height:150px}
+.tiles .chk.tile .tile-ico{width:52px;height:52px;border-radius:14px;background:var(--blue-light);border:1px solid #dbe7ff;color:var(--blue);display:flex;align-items:center;justify-content:center;transition:background .15s,color .15s}
+.tiles .chk.tile .tile-ico .ic{width:28px;height:28px}
+.tiles .chk.tile.sel .tile-ico{background:var(--blue);border-color:var(--blue);color:#fff}
+.tiles .chk.tile .chk-info{padding:0}
+.tiles .chk.tile .chk-box{top:12px;right:12px}
+.tiles.tiles3 .chk.tile{min-height:118px;align-items:center;text-align:center;padding:16px 8px 12px}
+.tiles.tiles3 .chk.tile .chk-box{top:8px;right:8px}
+
+/* Avisos con icono en lugar de emoji */
+.info-box,.disclaimer{position:relative;padding-left:40px!important}
+.info-box::before,.disclaimer::before{content:'';position:absolute;left:13px;top:13px;width:18px;height:18px;background:currentColor;opacity:.8;
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='9.5'/%3E%3Cpath d='M12 11v5.5M12 7.5h.01'/%3E%3C/svg%3E") center/contain no-repeat;
+          mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='9.5'/%3E%3Cpath d='M12 11v5.5M12 7.5h.01'/%3E%3C/svg%3E") center/contain no-repeat}
+
+/* ── COLORES POR CATEGORÍA ─────────────────────
+   Tonos sobrios: trazo en tono oscuro y fondo muy suave. El azul de marca se reserva
+   para lo seleccionado, botones y progreso. (--c icono · --cb fondo · --cbd borde · --cf relleno · --cl portada) */
+.c-ilu{--c:#b45309;--cb:#fdf5e6;--cbd:#f6e3bf;--cf:#c96f0a;--cl:#fcd38d}
+.c-cli{--c:#c2410c;--cb:#fdf0ea;--cbd:#f8d9c8;--cf:#d4561a;--cl:#fdba8c}
+.c-per{--c:#0f766e;--cb:#eaf6f4;--cbd:#c7e7e2;--cf:#11887f;--cl:#7fd6cb}
+.c-cam{--c:#4338ca;--cb:#eff0fd;--cbd:#d9dcfa;--cf:#4f46d8;--cl:#aab6fc}
+.c-sen{--c:#b91c1c;--cb:#fcefef;--cbd:#f5d4d4;--cf:#c72a2a;--cl:#f9a8a8}
+.c-acc{--c:#6d28d9;--cb:#f4effd;--cbd:#e3d7fa;--cf:#7537dc;--cl:#c7b8fd}
+.c-jar{--c:#15803d;--cb:#ebf6ee;--cbd:#cbe8d4;--cf:#1a8f46;--cl:#86d9a3}
+.c-frio{--c:#1d4ed8;--cb:#eef3fe;--cbd:#d3e0fc;--cf:#2563eb;--cl:#93b4fd} /* aire acondicionado (frío) dentro de Climatización */
+.c-pis{--c:#0369a1;--cb:#e9f3fa;--cbd:#c8e1f1;--cf:#0b78b5;--cl:#8ccdf3}
+/* Tarjetas de "¿Qué quieres automatizar?" */
+.tiles .chk.tile[class*="c-"] .tile-ico{background:var(--cb);border-color:var(--cbd);color:var(--c)}
+.tiles .chk.tile[class*="c-"].sel .tile-ico{background:var(--cf);border-color:var(--cf);color:#fff}
+/* Iconos de las preguntas de cada paso */
+.section[class*="c-"] .card-icon,.card[class*="c-"] .card-icon{background:var(--cb)!important;border-color:var(--cbd);color:var(--c)}
+.section[class*="c-"] .tiles .chk.tile .tile-ico{background:var(--cb);border-color:var(--cbd);color:var(--c)}
+.section[class*="c-"] .tiles .chk.tile.sel .tile-ico{background:var(--cf);border-color:var(--cf);color:#fff}
+.section[class*="c-"] .sen-ic{background:var(--cb);color:var(--c)}
+/* Etiquetas de la portada: solo el icono en tono claro sobre la foto */
+.welcome-cats span[class*="c-"] .ic{color:var(--cl);opacity:1}
+
+/* ── PROTECCIÓN FRENTE AL TEMA DE WORDPRESS ────
+   Muchos temas cambian el color/fondo de los <button> al pasar el ratón
+   (p. ej. texto blanco). Fijamos aquí nuestros colores en todos los estados. */
+#screen-form .opt,#screen-form .opt:hover,#screen-form .opt:focus,#screen-form .opt:active{color:var(--text)!important;text-decoration:none!important;text-transform:none!important;letter-spacing:normal!important}
+#screen-form .opt:not(.sel):not(.nls):hover,#screen-form .opt:not(.sel):not(.nls):focus{background:#fbfcfe!important}
+#screen-form .opt:not(.sel):not(.nls){background:#fff!important}
+#screen-form .opt.sel,#screen-form .opt.sel:hover,#screen-form .opt.sel:focus{background:var(--blue-light)!important;color:var(--text)!important}
+#screen-form .opt.nls,#screen-form .opt.nls:hover,#screen-form .opt.nls:focus{color:#8a4b08!important;background:#fff!important}
+#screen-form .opt.nls.sel,#screen-form .opt.nls.sel:hover,#screen-form .opt.nls.sel:focus{color:#7a3e05!important;background:var(--amber-light)!important}
+#screen-form .btn-add,#screen-form .btn-add:hover,#screen-form .btn-add:focus{color:var(--blue)!important;background:#fff!important}
+#screen-form .tiles #int-todo,#screen-form .tiles #int-todo:hover{color:var(--blue)!important}
+#screen-form .btn-next,#screen-form .btn-next:hover,#screen-form .btn-next:focus,#screen-form .btn-next:active,
+#screen-form .btn-full,#screen-form .btn-full:hover,#screen-form .btn-full:focus{color:#fff!important;background:linear-gradient(135deg,#1a6cf6,#0b4fd1)!important;text-decoration:none!important}
+#screen-form .btn-back,#screen-form .btn-back:focus{color:var(--muted)!important;background:#fff!important}
+#screen-form .btn-back:hover{color:var(--text)!important;background:#fff!important}
+#screen-form .c-btn,#screen-form .c-btn:hover,#screen-form .c-btn:focus,
+#screen-form .m-btn,#screen-form .m-btn:hover,#screen-form .m-btn:focus,
+#screen-form .cam-q-btn,#screen-form .cam-q-btn:hover,#screen-form .cam-q-btn:focus{color:var(--blue)!important;background:var(--blue-light)!important}
+#screen-form .c-btn:active,#screen-form .m-btn:active,#screen-form .cam-q-btn:active{background:#d4e3ff!important}
+#screen-form .btn-wa,#screen-form .btn-wa:hover,#screen-form .btn-wa:focus{color:#fff!important;background:#25d366!important;text-decoration:none!important}
+#screen-welcome .btn-start,#screen-welcome .btn-start:hover,#screen-welcome .btn-start:focus{color:var(--blue)!important;background:#fff!important;text-decoration:none!important}
+#screen-form button,#screen-welcome button{text-shadow:none!important;outline-offset:2px}
+
+/* ── ESCRITORIO ─────────────────────────────── */
+@media(min-width:700px){
+  .form-container{padding-top:32px}
+  .card{padding:22px}
+}
+</style>
+</head>
+<body>
+<!-- Iconos SVG (estilo línea). Uso: <svg class="ic"><use href="#i-nombre"/></svg> -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="i-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/></symbol>
+<symbol id="i-layers" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 9 5-9 5-9-5 9-5Z"/><path d="m3 12.5 9 5 9-5"/><path d="m3 17 9 5 9-5"/></symbol>
+<symbol id="i-ruler" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 8.5h4M3 14h4M8.5 3v4M14 3v4"/></symbol>
+<symbol id="i-tree" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22v-6"/><path d="M7 16h10a4 4 0 0 0 .6-7.96A5.5 5.5 0 0 0 6.6 8.2 4 4 0 0 0 7 16Z"/></symbol>
+<symbol id="i-cpu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="5" width="14" height="14" rx="2"/><rect x="9" y="9" width="6" height="6" rx="1"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"/></symbol>
+<symbol id="i-sliders" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h9M17 6h3M4 12h3M11 12h9M4 18h11M19 18h1"/><circle cx="15" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="18" r="2"/></symbol>
+<symbol id="i-wifi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8.8a15 15 0 0 1 20 0"/><path d="M5.2 12.4a10.5 10.5 0 0 1 13.6 0"/><path d="M8.6 15.9a5.5 5.5 0 0 1 6.8 0"/><path d="M12 19.5h.01" stroke-width="2.6"/></symbol>
+<symbol id="i-plug" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2v5M15 2v5"/><path d="M6 7h12v4.5a6 6 0 0 1-12 0V7Z"/><path d="M12 17.5V22"/></symbol>
+<symbol id="i-shutter" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3.5h18"/><rect x="4.5" y="3.5" width="15" height="17" rx="1"/><path d="M4.5 7.5h15M4.5 11h15M4.5 14.5h15"/><path d="M10.5 17.5h3"/></symbol>
+<symbol id="i-blind" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h18"/><path d="M5 4v11.5h14V4"/><path d="M5 15.5h14"/><path d="M12 15.5V20"/><circle cx="12" cy="20.8" r=".9"/></symbol>
+<symbol id="i-awning" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5h18"/><path d="M4.5 5 3 11h18l-1.5-6"/><path d="M3 11a2.25 2.25 0 0 0 4.5 0 2.25 2.25 0 0 0 4.5 0 2.25 2.25 0 0 0 4.5 0 2.25 2.25 0 0 0 4.5 0"/><path d="M5 13.5V21M19 13.5V21"/></symbol>
+<symbol id="i-flame" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22a7 7 0 0 0 7-7c0-3.5-2-6-4-8.5-.5 2-1.5 3.5-3 4 0-3-1-5.5-3.5-8.5C8 6 5 9.5 5 15a7 7 0 0 0 7 7Z"/></symbol>
+<symbol id="i-snow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M3.3 7l17.4 10M3.3 17 20.7 7"/><path d="m9.5 3.5 2.5 2 2.5-2M9.5 20.5l2.5-2 2.5 2M4 10.6l3.1-.4L6 7.3M20 13.4l-3.1.4 1.1 2.9M4 13.4l3.1.4L6 16.7M20 10.6l-3.1-.4L18 7.3"/></symbol>
+<symbol id="i-thermo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 14.8V4.5a2 2 0 0 0-4 0v10.3a4 4 0 1 0 4 0Z"/><path d="M12 9v8"/></symbol>
+<symbol id="i-bulb" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21.5h4"/><path d="M12 2.5a6.5 6.5 0 0 0-3.8 11.8c.5.4.8 1 .8 1.7v2h6v-2c0-.7.3-1.3.8-1.7A6.5 6.5 0 0 0 12 2.5Z"/></symbol>
+<symbol id="i-droplet" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.7c3 3.6 6 7 6 10.8a6 6 0 0 1-12 0c0-3.8 3-7.2 6-10.8Z"/></symbol>
+<symbol id="i-cctv" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.2 6.3 15.9 3a1 1 0 0 1 1.2.7l1.6 5.9a1 1 0 0 1-.7 1.2L5.3 14.2a1 1 0 0 1-1.2-.7L2.5 7.6a1 1 0 0 1 .7-1.3Z"/><path d="m18.3 7.2 3.2-.9.9 3.5-3.2.8"/><path d="M9.5 12.6 11 17H6"/><path d="M6 14v7"/></symbol>
+<symbol id="i-video" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="m16 10.5 6-3.5v10l-6-3.5"/></symbol>
+<symbol id="i-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10.5" width="16" height="11" rx="2"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/><path d="M12 15v2.5"/></symbol>
+<symbol id="i-garage" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V9l9-6 9 6v12"/><path d="M7 21v-8.5h10V21"/><path d="M7 15.5h10M7 18.5h10"/></symbol>
+<symbol id="i-pool" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 15V5.5a2 2 0 0 1 4 0M16 15V5.5a2 2 0 0 1 4 0"/><path d="M8 8.5h8M8 12h8"/><path d="M2 19c1.5 0 2.5-1 4-1s2.5 1 4 1 2.5-1 4-1 2.5 1 4 1 2.5-1 4-1"/></symbol>
+<symbol id="i-paw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="5.5" cy="10.5" r="2"/><circle cx="9" cy="5.5" r="2"/><circle cx="15" cy="5.5" r="2"/><circle cx="18.5" cy="10.5" r="2"/><path d="M12 12.5c-3 0-5.5 3.3-5.5 5.8 0 1.6 1.3 2.7 2.9 2.7 1 0 1.6-.5 2.6-.5s1.6.5 2.6.5c1.6 0 2.9-1.1 2.9-2.7 0-2.5-2.5-5.8-5.5-5.8Z"/></symbol>
+<symbol id="i-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
+<symbol id="i-message" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.5 8.5 0 0 1-12.3 7.6L3.5 20.5l1.4-4.7A8.5 8.5 0 1 1 21 11.5Z"/></symbol>
+<symbol id="i-chart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m7 15 4-4 3 3 6-6"/><path d="M16 8h4v4"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="m7.5 12.5 3 3 6-6.5"/></symbol>
+<symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5 4.5 5.5v6c0 5 3.3 8.6 7.5 10 4.2-1.4 7.5-5 7.5-10v-6L12 2.5Z"/><path d="m9 12 2 2 4-4.5"/></symbol>
+<symbol id="i-presence" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="3"/><path d="M6.5 21v-1.5a5.5 5.5 0 0 1 11 0V21"/><path d="M3.5 4.5a9 9 0 0 0 0 6M20.5 4.5a9 9 0 0 1 0 6"/></symbol>
+<symbol id="i-motion" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="4" r="2"/><path d="m9 21 2.5-5.5 2.5 2V21"/><path d="m11.5 15.5 1-6.5 3.5 3 3 .8"/><path d="m7 11 3.5-2.5 2 .5"/></symbol>
+<symbol id="i-smoke" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="7"/><circle cx="12" cy="9" r="2"/><path d="M8 21c0-1.3.9-2 2-2s2 .7 2 2 .9 2 2 2 2-.7 2-2"/></symbol>
+<symbol id="i-door" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 4h4a1 1 0 0 1 1 1v15"/><path d="M3 20h18"/><path d="M13 4.2v16.3L6 19V5.6a1 1 0 0 1 .8-1L12 3.4a.8.8 0 0 1 1 .8Z"/><path d="M10.5 12v.5"/></symbol>
+<symbol id="i-bell" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8.5a6 6 0 0 1 12 0c0 6.5 2.5 8.5 2.5 8.5h-17S6 15 6 8.5Z"/><path d="M10.3 20.5a2 2 0 0 0 3.4 0"/></symbol>
+<symbol id="i-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M12 11v5.5M12 7.5h.01"/></symbol>
+<symbol id="i-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 2.4 17.6A2 2 0 0 0 4.1 20.6h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4.5M12 17h.01"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></symbol>
+<symbol id="i-grid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5"/></symbol>
+<symbol id="i-send" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2.5 10.5 13.5"/><path d="m21.5 2.5-7 19-4-8-8-4 19-7Z"/></symbol>
+</defs></svg>
+
+<!-- BIENVENIDA -->
+<div class="welcome" id="screen-welcome">
+  <div class="welcome-inner">
+    <img class="welcome-logo" id="welcome-logo" alt="Domótica Hogar Madrid — Tu casa inteligente" width="730" height="498">
+    <h1>¿Cuánto cuesta hacer tu casa <em>inteligente</em>?</h1>
+    <p>Elige qué quieres automatizar y obtén una estimación orientativa al momento. Después, un técnico te prepara una propuesta a medida.</p>
+    <button class="btn-start" onclick="startForm()">Calcular mi presupuesto →</button>
+    <div class="welcome-trust"><span>✓ Gratis y sin compromiso</span><span>✓ 2–5 minutos</span><span>✓ Respuesta en 24–48 h</span></div>
+    <div class="welcome-cats"><span class="c-ilu"><svg class="ic" aria-hidden="true"><use href="#i-bulb"/></svg>Iluminación</span><span class="c-per"><svg class="ic" aria-hidden="true"><use href="#i-shutter"/></svg>Persianas</span><span class="c-cli"><svg class="ic" aria-hidden="true"><use href="#i-thermo"/></svg>Clima</span><span class="c-cam"><svg class="ic" aria-hidden="true"><use href="#i-cctv"/></svg>Cámaras</span><span class="c-acc"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg>Accesos</span><span class="c-sen"><svg class="ic" aria-hidden="true"><use href="#i-shield"/></svg>Alarma</span></div>
+  </div>
+</div>
+
+<!-- FORMULARIO -->
+<div id="screen-form" style="display:none">
+
+  <div class="progress-bar">
+    <div class="pb-inner">
+      <div class="progress-info">
+        <div>
+          <div class="progress-counter" id="progressCounter">Paso 1</div>
+          <div class="progress-step-label" id="progressLabel">Tu vivienda</div>
+        </div>
+        <div class="hdr-amt" id="hdrAmt" style="display:none"><span>Estimación</span><strong id="hdrAmtVal">—</strong></div>
+      </div>
+      <div class="progress-steps" id="progressSteps"></div>
+    </div>
+  </div>
+
+  <div class="form-container">
+
+  <!-- S1: VIVIENDA -->
+  <div class="section active" id="sec-vivienda">
+    <div class="step-title">Paso 1 · Cuéntanos sobre tu vivienda</div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon"><svg class="ic" aria-hidden="true"><use href="#i-home"/></svg></div>
+        <div><div class="card-title">¿Qué tipo de vivienda quieres domotizar?</div></div>
+      </div>
+      <div class="opts" id="tipo_vivienda">
+        <button class="opt" data-v="piso" onclick="selOpt('tipo_vivienda',this);onTipoChange()"><span class="opt-dot"></span>Piso / Apartamento</button>
+        <button class="opt" data-v="chalet" onclick="selOpt('tipo_vivienda',this);onTipoChange()"><span class="opt-dot"></span>Chalet / Casa</button>
+        <button class="opt" data-v="local" onclick="selOpt('tipo_vivienda',this);onTipoChange()"><span class="opt-dot"></span>Local / Oficina</button>
+        <button class="opt" data-v="otro" onclick="selOpt('tipo_vivienda',this);onTipoChange()"><span class="opt-dot"></span>Otro tipo</button>
+      </div>
+      <div id="otro_tipo_wrap" style="display:none;margin-top:10px">
+        <textarea class="f-textarea" rows="2" id="otro_tipo_desc" placeholder="Ej: nave, local comercial, vivienda turística…"></textarea>
+      </div>
+      <div class="f-err" id="err_tipo">Selecciona el tipo de vivienda</div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon"><svg class="ic" aria-hidden="true"><use href="#i-layers"/></svg></div>
+        <div><div class="card-title">Número de plantas</div><div class="card-subtitle">Incluye sótano, buhardilla o garaje si los quieres automatizar</div></div>
+      </div>
+      <div class="counter-wrap">
+        <button class="c-btn" onclick="ctr('plantas',-1)">−</button>
+        <div class="c-val" id="plantas-val">1</div>
+        <button class="c-btn" onclick="ctr('plantas',1)">+</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon"><svg class="ic" aria-hidden="true"><use href="#i-ruler"/></svg></div>
+        <div><div class="card-title">Metros cuadrados interiores</div></div>
+      </div>
+      <div class="opts grid2" id="metros">
+        <button class="opt" data-v="70" onclick="selOpt('metros',this);clearErr('err_metros')"><span class="opt-dot"></span>Hasta 70 m²</button>
+        <button class="opt" data-v="120" onclick="selOpt('metros',this);clearErr('err_metros')"><span class="opt-dot"></span>70 – 120 m²</button>
+        <button class="opt" data-v="200" onclick="selOpt('metros',this);clearErr('err_metros')"><span class="opt-dot"></span>120 – 200 m²</button>
+        <button class="opt" data-v="300" onclick="selOpt('metros',this);clearErr('err_metros')"><span class="opt-dot"></span>+ de 200 m²</button>
+        <button class="opt nls" data-v="nls" onclick="selOpt('metros',this);clearErr('err_metros');nls()" style="grid-column:span 2"><span class="opt-dot"></span>No lo sé</button>
+      </div>
+      <div class="f-err" id="err_metros">Selecciona la superficie</div>
+    </div>
+
+    <!-- Zonas exteriores (inline, se muestra al seleccionar tipo) -->
+    <div id="ext-piso" style="display:none;margin-top:4px">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon"><svg class="ic" aria-hidden="true"><use href="#i-tree"/></svg></div>
+          <div><div class="card-title">¿Tienes terraza, patio o zona exterior?</div></div>
+        </div>
+        <div class="opts" id="terraza_piso">
+          <button class="opt" data-v="no" onclick="selOpt('terraza_piso',this)"><span class="opt-dot"></span>No tengo zona exterior</button>
+          <button class="opt" data-v="terraza_pequeña" onclick="selOpt('terraza_piso',this)"><span class="opt-dot"></span>Sí, terraza pequeña</button>
+          <button class="opt" data-v="terraza_grande" onclick="selOpt('terraza_piso',this)"><span class="opt-dot"></span>Sí, terraza grande / ático</button>
+          <button class="opt" data-v="patio" onclick="selOpt('terraza_piso',this)"><span class="opt-dot"></span>Sí, patio</button>
+          <button class="opt nls" data-v="nls" onclick="selOpt('terraza_piso',this);nls()"><span class="opt-dot"></span>No lo sé</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="ext-chalet" style="display:none;margin-top:4px">
+      <div class="card" id="metros-ext-card">
+        <div class="card-header">
+          <div class="card-icon"><svg class="ic" aria-hidden="true"><use href="#i-ruler"/></svg></div>
+          <div><div class="card-title">Superficie exterior aproximada</div></div>
+        </div>
+        <div class="opts grid2" id="metros_ext">
+          <button class="opt" data-v="50" onclick="selOpt('metros_ext',this)"><span class="opt-dot"></span>Hasta 50 m²</button>
+          <button class="opt" data-v="150" onclick="selOpt('metros_ext',this)"><span class="opt-dot"></span>50 – 150 m²</button>
+          <button class="opt" data-v="300" onclick="selOpt('metros_ext',this)"><span class="opt-dot"></span>150 – 300 m²</button>
+          <button class="opt" data-v="300plus" onclick="selOpt('metros_ext',this)"><span class="opt-dot"></span>+ de 300 m²</button>
+          <button class="opt nls" data-v="nls" onclick="selOpt('metros_ext',this);nls()" style="grid-column:span 2"><span class="opt-dot"></span>No lo sé</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-row" style="margin-top:16px">
+      <button class="btn-next" style="flex:1" onclick="goNext()">Continuar →</button>
+    </div>
+
+  </div><!-- /sec-vivienda -->
+
+  <!-- S2: INTERESES — decide qué pasos se muestran -->
+  <div class="section" id="sec-intereses">
+    <div class="step-title">Paso · ¿Qué quieres automatizar?</div>
+
+    <p style="font-size:15px;color:var(--muted);margin:-8px 0 16px">Marca todo lo que te interese. Solo te preguntaremos por eso.</p>
+    <div class="tiles" id="intereses-lista">
+      <button class="opt" id="int-todo" onclick="selTodoIntereses()"><span class="opt-dot"></span>Quiero verlo todo</button>
+      <div class="tiles-sep">o elige solo lo que te interese</div>
+      <div class="chk tile c-ilu" id="int-iluminacion" onclick="togInteres('iluminacion')">
+        <div class="tile-ico"><svg class="ic" aria-hidden="true"><use href="#i-bulb"/></svg></div><div class="chk-box"></div>
+        <div class="chk-info"><div class="chk-name">Iluminación</div><div class="chk-desc">Luces desde el móvil o por horarios</div></div>
+      </div>
+      <div class="chk tile c-per" id="int-persianas" onclick="togInteres('persianas')">
+        <div class="tile-ico"><svg class="ic" aria-hidden="true"><use href="#i-shutter"/></svg></div><div class="chk-box"></div>
+        <div class="chk-info"><div class="chk-name">Persianas y toldos</div><div class="chk-desc">Motorizar o integrar las que tienes</div></div>
+      </div>
+      <div class="chk tile c-cli" id="int-clima" onclick="togInteres('clima')">
+        <div class="tile-ico"><svg class="ic" aria-hidden="true"><use href="#i-thermo"/></svg></div><div class="chk-box"></div>
+        <div class="chk-info"><div class="chk-name">Climatización</div><div class="chk-desc">Calefacción, suelo radiante o aire</div></div>
+      </div>
+      <div class="chk tile c-cam" id="int-camaras" onclick="togInteres('camaras')">
+        <div class="tile-ico"><svg class="ic" aria-hidden="true"><use href="#i-cctv"/></svg></div><div class="chk-box"></div>
+        <div class="chk-info"><div class="chk-name">Cámaras</div><div class="chk-desc">Vigilancia con avisos al móvil</div></div>
+      </div>
+      <div class="chk tile c-sen" id="int-sensores" onclick="togInteres('sensores')">
+        <div class="tile-ico"><svg class="ic" aria-hidden="true"><use href="#i-shield"/></svg></div><div class="chk-box"></div>
+        <div class="chk-info"><div class="chk-name">Sensores y alarma</div><div class="chk-desc">Movimiento, humo, agua, apertura</div></div>
+      </div>
+      <div class="chk tile c-acc" id="int-accesos" onclick="togInteres('accesos')">
+        <div class="tile-ico"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg></div><div class="chk-box"></div>
+        <div class="chk-info"><div class="chk-name">Accesos</div><div class="chk-desc">Cerradura, videoportero, garaje</div></div>
+      </div>
+      <div class="chk tile c-jar" id="int-jardin" onclick="togInteres('jardin')">
+        <div class="tile-ico"><svg class="ic" aria-hidden="true"><use href="#i-tree"/></svg></div><div class="chk-box"></div>
+        <div class="chk-info"><div class="chk-name">Jardín y riego</div><div class="chk-desc">Riego y enchufes exteriores</div></div>
+      </div>
+      <div class="chk tile c-pis" id="int-piscina" onclick="togInteres('piscina')">
+        <div class="tile-ico"><svg class="ic" aria-hidden="true"><use href="#i-pool"/></svg></div><div class="chk-box"></div>
+        <div class="chk-info"><div class="chk-name">Piscina</div><div class="chk-desc">Depuradora e iluminación</div></div>
+      </div>
+    </div>
+    <div class="f-err" id="err_intereses">Marca al menos una opción para continuar</div>
+
+    <div class="nav-row">
+      <button class="btn-back" onclick="goBack()">← Atrás</button>
+      <button class="btn-next" onclick="goNext()">Continuar →</button>
+    </div>
+  </div>
+
+  <!-- S3: SISTEMA CENTRAL -->
+  <div class="section" id="sec-sistema">
+    <div class="step-title">Paso · Sistema central y conectividad</div>
+
+    <!-- Plataforma -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon"><svg class="ic" aria-hidden="true"><use href="#i-cpu"/></svg></div>
+        <div><div class="card-title">¿Cómo quieres controlar tu vivienda?</div><div class="card-subtitle">Es el "cerebro" que controla todo lo anterior. Si no lo tienes claro, deja la opción recomendada</div></div>
+      </div>
+      <div class="opts" id="plataforma">
+        <button class="opt" data-v="local" onclick="selOpt('plataforma',this);show('sis-local-wrap',true);show('sis-cloud-info',false);autoSelCentral()">
+          <span class="opt-dot"></span>
+          <div><div style="font-weight:700">Sistema local inteligente · <span style="color:var(--blue)" id="lbl-central-price">640€</span></div><div style="font-size:12px;color:var(--muted);margin-top:2px">Control desde móvil, automatizaciones, escenas y avisos. Funciona sin internet y <strong>también se sincroniza con Google Home o Alexa</strong> para controlarlo por voz. <strong>Recomendado</strong></div></div>
+        </button>
+        <button class="opt" data-v="cloud" onclick="selOpt('plataforma',this);show('sis-local-wrap',true);show('sis-cloud-info',true);setCloudPlat()">
+          <span class="opt-dot"></span>
+          <div><div style="font-weight:700">Google Home / Alexa / Apple Casa (HomeKit) · <span style="color:var(--blue)" id="lbl-cloud-price">120€</span></div><div style="font-size:12px;color:var(--muted);margin-top:2px">Integración básica con voz (Google, Alexa o Siri). Requiere internet y tiene limitaciones</div></div>
+        </button>
+        <button class="opt nls" data-v="nls" onclick="selOpt('plataforma',this);show('sis-local-wrap',false);show('sis-cloud-info',false);clearSistema();nls()"><span class="opt-dot"></span>No lo sé / Necesito asesoramiento</button>
+      </div>
+      <div id="sis-cloud-info" style="display:none;margin-top:10px">
+        <div class="info-box amber">Google Home, Alexa y Apple Casa tienen <strong>funcionalidades limitadas</strong>: no permiten automatizaciones complejas, dependen de internet y no todos los dispositivos son compatibles.</div>
+      </div>
+    </div>
+
+    <!-- WiFi / Conectividad -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon"><svg class="ic" aria-hidden="true"><use href="#i-wifi"/></svg></div>
+        <div><div class="card-title">Cobertura WiFi en la vivienda</div><div class="card-subtitle">¿Tienes buena cobertura en toda la casa y zonas exteriores?</div></div>
+      </div>
+      <div class="opts" id="wifi_cobertura">
+        <button class="opt" data-v="ok" onclick="selOpt('wifi_cobertura',this);show('wifi-det',false);updateLive()"><span class="opt-dot"></span>Sí, tengo buena cobertura en toda la vivienda</button>
+        <button class="opt" data-v="mejora_int" onclick="selOpt('wifi_cobertura',this);show('wifi-det',true);updateLive()"><span class="opt-dot"></span>Necesito mejorar la cobertura interior · <span style="color:var(--blue);font-weight:700" id="lbl-wifi-int">250€/planta</span></button>
+        <button class="opt" data-v="mejora_ext" onclick="selOpt('wifi_cobertura',this);show('wifi-det',true);updateLive()"><span class="opt-dot"></span>Necesito cobertura en zonas exteriores · <span style="color:var(--blue);font-weight:700" id="lbl-wifi-ext">200€ exterior</span></button>
+        <button class="opt" data-v="mejora_todo" onclick="selOpt('wifi_cobertura',this);show('wifi-det',true);updateLive()"><span class="opt-dot"></span>Necesito mejorar interior y exterior · <span style="color:var(--blue);font-weight:700" id="lbl-wifi-todo">250€/planta + 200€ exterior</span></button>
+        <button class="opt nls" data-v="nls" onclick="selOpt('wifi_cobertura',this);show('wifi-det',false);nls()"><span class="opt-dot"></span>No lo sé</button>
+      </div>
+      <div id="wifi-det" style="display:none;margin-top:10px">
+        <div class="info-box blue">Instalamos puntos de acceso WiFi Mesh para cobertura garantizada en toda la vivienda y exteriores.</div>
+      </div>
+    </div>
+
+    <div id="sis-local-wrap" style="display:none">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon"><svg class="ic" aria-hidden="true"><use href="#i-sliders"/></svg></div>
+          <div><div class="card-title">¿Qué componentes adicionales necesitas?</div><div class="card-subtitle">Opcionales — puedes seleccionar varios</div></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div class="chk" id="sis-auto" onclick="togSistema('sis-auto','automatizaciones',P.automatizaciones||100)">
+            <div class="chk-box"></div>
+            <div class="chk-info">
+              <div class="chk-name">Pack de automatizaciones básicas · <span style="color:var(--blue);font-weight:700" id="lbl-auto-price">100€</span></div>
+              <div class="chk-desc">Hasta 4 escenas: modo noche, salir de casa, simulación presencia</div>
+            </div>
+          </div>
+          <div class="chk" id="sis-wall" onclick="togSistema('sis-wall','wallpanel',P.wallpanel||380)">
+            <div class="chk-box"></div>
+            <div class="chk-info">
+              <div class="chk-name">Pantalla táctil de pared · <span style="color:var(--blue);font-weight:700" id="lbl-wall-price">380€</span></div>
+              <div class="chk-desc">Control local sin móvil. Opcional</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon"><svg class="ic" aria-hidden="true"><use href="#i-plug"/></svg></div>
+        <div><div class="card-title">¿Ya tienes algún dispositivo inteligente?</div><div class="card-subtitle">Opcional — nos ayuda a planificar la integración</div></div>
+      </div>
+      <textarea class="f-textarea" rows="2" id="dispositivos_existentes" placeholder="Ej: bombillas Philips Hue, termostato Nest, altavoz Alexa, enchufes TP-Link…"></textarea>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn-back" onclick="goBack()">← Atrás</button>
+      <button class="btn-next" onclick="goNext()">Continuar →</button>
+    </div>
+  </div>
+  <div class="section c-per" id="sec-persianas">
+    <div class="step-title">Paso · Persianas, estores y toldos</div>
+    <p class="step-sub">¿Qué tienes en casa? Marca uno o varios.</p>
+
+    <!-- Elegir qué tiene: solo se abren las tarjetas de lo marcado -->
+    <div class="tiles tiles3" id="pers-tipos">
+      <div class="chk tile" id="pt-persianas" onclick="togPersTipo('persianas')">
+        <div class="tile-ico"><svg class="ic" aria-hidden="true"><use href="#i-shutter"/></svg></div><div class="chk-box"></div>
+        <div class="chk-info"><div class="chk-name">Persianas</div></div>
+      </div>
+      <div class="chk tile" id="pt-estores" onclick="togPersTipo('estores')">
+        <div class="tile-ico"><svg class="ic" aria-hidden="true"><use href="#i-blind"/></svg></div><div class="chk-box"></div>
+        <div class="chk-info"><div class="chk-name">Estores</div></div>
+      </div>
+      <div class="chk tile" id="pt-toldos" onclick="togPersTipo('toldos')">
+        <div class="tile-ico"><svg class="ic" aria-hidden="true"><use href="#i-awning"/></svg></div><div class="chk-box"></div>
+        <div class="chk-info"><div class="chk-name">Toldos / Pérgolas</div></div>
+      </div>
+    </div>
+    <div class="f-err" id="err_pers_tipos">Marca al menos una opción para continuar</div>
+
+    <!-- PERSIANAS -->
+    <div class="card" id="persianas-card" style="display:none;margin-top:12px">
+      <div class="card-header">
+        <div class="card-icon"><svg class="ic" aria-hidden="true"><use href="#i-shutter"/></svg></div>
+        <div><div class="card-title">Persianas</div><div class="card-subtitle">Si tienes de los dos tipos, marca las dos opciones</div></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div class="chk" id="pm-motor" onclick="togPersOpcion('motor')">
+          <div class="chk-box"></div>
+          <div class="chk-info"><div class="chk-name">Ya están motorizadas y quiero hacerlas inteligentes <span style="color:var(--blue)" id="lbl-pers-motor">· 135€/ud.</span></div><div class="chk-desc">Ahora suben y bajan con un interruptor o mando. Las conectamos para controlarlas desde el móvil, por horarios o por voz</div></div>
+        </div>
+        <div id="pers-motor-wrap" class="sub-panel" style="display:none">
+          <label class="label">¿Cuántas persianas motorizadas quieres hacer inteligentes?</label>
+          <div class="counter-wrap">
+            <button class="c-btn" onclick="ctr('pers_motor',-1)">−</button>
+            <div class="c-val" id="pers_motor-val">1</div>
+            <button class="c-btn" onclick="ctr('pers_motor',1)">+</button>
+          </div>
+        </div>
+        <div class="chk" id="pm-manual" onclick="togPersOpcion('manual')">
+          <div class="chk-box"></div>
+          <div class="chk-info"><div class="chk-name">Son manuales y quiero motorizarlas y hacerlas inteligentes <span style="color:var(--blue)" id="lbl-pers-manual">· 220€/ud.</span></div><div class="chk-desc">Ahora suben y bajan con cinta o manivela. Instalamos el motor y quedan controlables desde el móvil, por horarios o por voz</div></div>
+        </div>
+        <div id="pers-manual-wrap" class="sub-panel" style="display:none">
+          <label class="label">¿Cuántas persianas manuales quieres motorizar?</label>
+          <div class="counter-wrap" style="margin-bottom:14px">
+            <button class="c-btn" onclick="ctr('pers_manuales',-1)">−</button>
+            <div class="c-val" id="pers_manuales-val">1</div>
+            <button class="c-btn" onclick="ctr('pers_manuales',1)">+</button>
+          </div>
+          <div id="instalacion-wrap">
+            <label class="label">¿Cómo llega la electricidad a la persiana?</label>
+            <div class="opts" id="tipo_instalacion">
+              <button class="opt" data-v="canaleta" onclick="selOpt('tipo_instalacion',this)"><span class="opt-dot"></span>Por canaleta en superficie</button>
+              <button class="opt" data-v="roza" onclick="selOpt('tipo_instalacion',this)"><span class="opt-dot"></span>Empotrada en la pared (roza) <span style="font-size:12px;color:var(--blue);font-weight:700;margin-left:4px"><span id="lbl-roza-price">+90€</span>/ud.</span></button>
+              <button class="opt nls" data-v="nls" onclick="selOpt('tipo_instalacion',this);nls()"><span class="opt-dot"></span>No lo sé</button>
+            </div>
+          </div>
+        </div>
+        <button class="opt nls" id="pm-nls" onclick="selPersNls()"><span class="opt-dot"></span>No sé qué tipo tengo</button>
+      </div>
+      <!-- compatibilidad: estos grupos ya no se muestran, el estado se fija desde togPersOpcion -->
+      <div id="tiene_pers_motor" style="display:none"></div>
+      <div id="tiene_pers_manuales" style="display:none"></div>
+    </div>
+
+    <!-- ESTORES -->
+    <div class="card" id="estores-card" style="display:none">
+      <div class="card-header">
+        <div class="card-icon"><svg class="ic" aria-hidden="true"><use href="#i-blind"/></svg></div>
+        <div><div class="card-title">Estores</div></div>
+      </div>
+      <div class="opts" id="tiene_estores">
+        <button class="opt" data-v="manuales" onclick="selOpt('tiene_estores',this);show('estores-wrap',true);document.getElementById('estores-price-label').textContent='· 180€/ud.';updateLive()"><span class="opt-dot"></span>Son manuales y quiero motorizarlos y hacerlos inteligentes · <span style="color:var(--blue);font-weight:700" id="lbl-estor-manual">180€/ud.</span></button>
+        <button class="opt" data-v="motorizados" onclick="selOpt('tiene_estores',this);show('estores-wrap',true);document.getElementById('estores-price-label').textContent='· 131€/ud.';updateLive()"><span class="opt-dot"></span>Ya están motorizados y quiero hacerlos inteligentes · <span style="color:var(--blue);font-weight:700" id="lbl-estor-int">131€/ud.</span></button>
+        <button class="opt nls" data-v="nls" onclick="selOpt('tiene_estores',this);show('estores-wrap',false);nls()"><span class="opt-dot"></span>No lo sé</button>
+      </div>
+      <div id="estores-wrap" class="sub-panel" style="display:none;margin-top:12px">
+        <label class="label">Nº de estores <span style="font-size:12px;color:var(--muted);font-weight:500" id="estores-price-label">· 131€/ud.</span></label>
+        <div class="counter-wrap" style="margin-bottom:12px">
+          <button class="c-btn" onclick="ctr('estores_num',-1)">−</button>
+          <div class="c-val" id="estores_num-val">1</div>
+          <button class="c-btn" onclick="ctr('estores_num',1)">+</button>
+        </div>
+        <label class="label">Marca <span class="label-hint">Opcional · nos ayuda a comprobar la compatibilidad</span></label>
+        <textarea class="f-textarea" rows="1" id="marca_estores" placeholder="Ej: Somfy, Velux…"></textarea>
+      </div>
+    </div>
+
+    <!-- TOLDOS -->
+    <div class="card" id="toldos-card" style="display:none">
+      <div class="card-header">
+        <div class="card-icon"><svg class="ic" aria-hidden="true"><use href="#i-awning"/></svg></div>
+        <div><div class="card-title">Toldos / Pérgolas motorizados</div><div class="card-subtitle">Los hacemos inteligentes · <span id="lbl-toldo">180€/ud.</span></div></div>
+      </div>
+      <!-- compatibilidad: al marcar "Toldos" se fija tiene_toldos='integrar' -->
+      <div id="tiene_toldos" style="display:none"></div>
+      <div id="toldos-wrap">
+        <label class="label">Nº de toldos / pérgolas <span style="font-size:12px;color:var(--muted);font-weight:500">· <span id="lbl-toldo-label">180€</span>/ud.</span></label>
+        <div class="counter-wrap" style="margin-bottom:14px">
+          <button class="c-btn" onclick="ctr('toldos_num',-1)">−</button>
+          <div class="c-val" id="toldos_num-val">1</div>
+          <button class="c-btn" onclick="ctr('toldos_num',1)">+</button>
+        </div>
+        <label class="label">¿Quieres que se recojan solos con viento o sol?</label>
+        <div class="opts grid2" id="sensor_viento">
+          <button class="opt" data-v="si" onclick="selOpt('sensor_viento',this);updateLive()"><span class="opt-dot"></span>Sí · <span style="color:var(--blue);font-weight:700" id="lbl-sensor-viento">+70€</span></button>
+          <button class="opt" data-v="no" onclick="selOpt('sensor_viento',this);updateLive()"><span class="opt-dot"></span>No</button>
+        </div>
+        <label class="label" style="margin-top:14px">Marca <span class="label-hint">Opcional · nos ayuda a comprobar la compatibilidad</span></label>
+        <textarea class="f-textarea" rows="1" id="toldos_comentarios" placeholder="Ej: Somfy, Simu, Velux…"></textarea>
+      </div>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn-back" onclick="goBack()">← Atrás</button>
+      <button class="btn-next" onclick="goNext()">Continuar →</button>
+    </div>
+  </div>
+
+  <!-- S5: CLIMA -->
+  <div class="section c-cli" id="sec-clima">
+    <div class="step-title">Paso · Climatización</div>
+
+    <!-- CALEFACCIÓN -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon"><svg class="ic" aria-hidden="true"><use href="#i-flame"/></svg></div>
+        <div><div class="card-title">Calefacción</div><div class="card-subtitle">¿Qué sistema de calefacción tienes?</div></div>
+      </div>
+      <div class="opts" id="calefaccion">
+        <button class="opt" data-v="suelo_calor" onclick="selOpt('calefaccion',this);show('termostatos-wrap',true);show('suelo-info',true)"><span class="opt-dot"></span>Suelo radiante (solo calor)</button>
+        <button class="opt" data-v="suelo_clima" onclick="selOpt('calefaccion',this);show('termostatos-wrap',true);show('suelo-info',true)"><span class="opt-dot"></span>Suelo radiante (frío / calor)</button>
+        <button class="opt" data-v="caldera" onclick="selOpt('calefaccion',this);show('termostatos-wrap',true);show('suelo-info',false)"><span class="opt-dot"></span>Caldera gas / gasóil</button>
+        <button class="opt" data-v="no" onclick="selOpt('calefaccion',this);show('termostatos-wrap',false);show('suelo-info',false)"><span class="opt-dot"></span>No tengo / No quiero controlarla</button>
+        <button class="opt nls" data-v="nls" onclick="selOpt('calefaccion',this);show('termostatos-wrap',false);show('suelo-info',false);nls()"><span class="opt-dot"></span>No lo sé</button>
+      </div>
+      <div id="suelo-info" style="display:none;margin-top:14px">
+        <div class="info-box blue"><strong>En suelo radiante, cada termostato debe ser inteligente.</strong> Es el que controla la válvula de recirculación de su zona en el colector. Por eso se necesita <strong>un termostato por cada zona</strong> (normalmente, una por habitación) que quieras controlar por separado.</div>
+      </div>
+      <div id="termostatos-wrap" style="display:none;margin-top:14px;padding:14px;background:var(--surface);border-radius:10px;border:1px solid var(--border)">
+        <label class="label">Nº de zonas / termostatos <span style="font-size:12px;color:var(--muted);font-weight:400">· <span id="lbl-termostato">99€</span>/zona</span></label>
+        <div class="counter-wrap">
+          <button class="c-btn" onclick="ctr('termostatos',-1)">−</button>
+          <div class="c-val" id="termostatos-val">1</div>
+          <button class="c-btn" onclick="ctr('termostatos',1)">+</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- AIRE ACONDICIONADO -->
+    <div class="card c-frio">
+      <div class="card-header">
+        <div class="card-icon"><svg class="ic" aria-hidden="true"><use href="#i-snow"/></svg></div>
+        <div><div class="card-title">Aire acondicionado</div><div class="card-subtitle">¿Qué tipo de aire acondicionado tienes?</div></div>
+      </div>
+      <div class="opts" id="aire">
+        <button class="opt" data-v="splits" onclick="selOpt('aire',this);setAireLabel();show('aire-wrap',true)"><span class="opt-dot"></span>Aire acondicionado por splits</button>
+        <button class="opt" data-v="conductos" onclick="selOpt('aire',this);setAireLabel();show('aire-wrap',true)"><span class="opt-dot"></span>Aire acondicionado por conductos</button>
+        <button class="opt" data-v="no" onclick="selOpt('aire',this);show('aire-wrap',false)"><span class="opt-dot"></span>No tengo / No quiero controlarlo</button>
+        <button class="opt nls" data-v="nls" onclick="selOpt('aire',this);show('aire-wrap',false);nls()"><span class="opt-dot"></span>No lo sé</button>
+      </div>
+      <div id="aire-wrap" style="display:none;margin-top:14px;padding:14px;background:var(--surface);border-radius:10px;border:1px solid var(--border)">
+        <label class="label"><span id="aire-num-label">Nº de splits</span> <span style="font-size:12px;color:var(--muted);font-weight:400">· <span id="lbl-aire">99€</span>/ud.</span></label>
+        <div class="counter-wrap">
+          <button class="c-btn" onclick="ctr('aire_num',-1)">−</button>
+          <div class="c-val" id="aire_num-val">1</div>
+          <button class="c-btn" onclick="ctr('aire_num',1)">+</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn-back" onclick="goBack()">← Atrás</button>
+      <button class="btn-next" onclick="goNext()">Continuar →</button>
+    </div>
+  </div>
+
+  <!-- S5b: ILUMINACIÓN -->
+  <div class="section c-ilu" id="sec-iluminacion">
+    <div class="step-title">Paso · Iluminación</div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon"><svg class="ic" aria-hidden="true"><use href="#i-bulb"/></svg></div>
+        <div><div class="card-title">Iluminación</div><div class="card-subtitle">Interior y exterior</div></div>
+      </div>
+
+      <label class="label">Iluminación interior</label>
+      <div style="padding:14px;background:var(--surface);border-radius:10px;border:1px solid var(--border);margin-bottom:16px" id="interruptores-wrap">
+        <label class="label">Nº de interruptores / circuitos <span style="font-size:12px;color:var(--muted);font-weight:400">· <span id="lbl-interruptor">125€</span>/ud.</span></label>
+        <label class="label-hint">Un circuito es un grupo de luces que se encienden juntas</label>
+        <div class="counter-wrap" style="margin-top:8px;margin-bottom:12px">
+          <button class="c-btn" onclick="ctr('interruptores',-1)">−</button>
+          <div class="c-val" id="interruptores-val">0</div>
+          <button class="c-btn" onclick="ctr('interruptores',1)">+</button>
+        </div>
+        <label class="label">Comentarios <span class="label-hint">Zonas específicas…</span></label>
+        <textarea class="f-textarea" rows="2" id="ilum_comentarios" placeholder="Ej: salón, pasillos, habitaciones, iluminación indirecta…"></textarea>
+      </div>
+
+      <div class="divider" id="ilum-ext-divider"></div>
+      <div id="ilum-ext-card">
+        <label class="label" id="ilum-ext-label">Iluminación exterior</label>
+        <div id="ilum-ext-zonas" style="flex-direction:column;gap:8px">
+          <div style="padding:14px;background:var(--surface);border-radius:10px;border:1px solid var(--border)">
+            <label class="label">Nº de zonas de iluminación exterior <span style="font-size:12px;color:var(--muted);font-weight:400">· <span id="lbl-ilum-ext-zona">125€</span>/zona</span></label>
+            <label class="label-hint">Una zona es un grupo de luces del exterior (jardín, fachada, terraza…)</label>
+            <div class="counter-wrap" style="margin-top:8px;margin-bottom:12px">
+              <button class="c-btn" onclick="ctr('ilum_ext_num',-1)">−</button>
+              <div class="c-val" id="ilum_ext_num-val">0</div>
+              <button class="c-btn" onclick="ctr('ilum_ext_num',1)">+</button>
+            </div>
+            <label class="label">Comentarios <span class="label-hint">Zonas específicas…</span></label>
+            <textarea class="f-textarea" rows="2" id="ilum_ext_notas" placeholder="Ej: jardín, fachada, piscina, terraza…"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn-back" onclick="goBack()">← Atrás</button>
+      <button class="btn-next" onclick="goNext()">Continuar →</button>
+    </div>
+  </div>
+
+  <!-- S6: JARDÍN (condicional) -->
+  <div class="section c-jar" id="sec-jardin">
+    <div class="step-title">Paso · Jardín y exterior</div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon"><svg class="ic" aria-hidden="true"><use href="#i-droplet"/></svg></div>
+        <div><div class="card-title">Riego inteligente</div></div>
+      </div>
+      <div class="opts" id="riego">
+        <button class="opt" data-v="no" onclick="selOpt('riego',this);show('riego-wrap',false)"><span class="opt-dot"></span>No tengo riego</button>
+        <button class="opt" data-v="integrar" onclick="selOpt('riego',this);show('riego-wrap',true)"><span class="opt-dot"></span>Tengo riego, quiero hacerlo inteligente · <span style="color:var(--blue);font-weight:700" id="lbl-riego-zona">190€/zona</span></button>
+        <button class="opt nls" data-v="nls" onclick="selOpt('riego',this);show('riego-wrap',false);nls()"><span class="opt-dot"></span>No lo sé</button>
+      </div>
+      <div id="riego-wrap" style="display:none;margin-top:14px;padding:14px;background:var(--surface);border-radius:10px;border:1px solid var(--border)">
+        <label class="label">Nº de zonas de riego <span style="font-size:12px;color:var(--muted);font-weight:400">· <span id="lbl-riego-zona-label">190€</span>/zona</span></label>
+        <div class="counter-wrap" style="margin-bottom:12px">
+          <button class="c-btn" onclick="ctr('riego_zonas_num',-1)">−</button>
+          <div class="c-val" id="riego_zonas_num-val">1</div>
+          <button class="c-btn" onclick="ctr('riego_zonas_num',1)">+</button>
+        </div>
+        <label class="label">¿Sensor de lluvia o humedad?</label>
+        <div class="opts" id="sensor_lluvia">
+          <button class="opt" data-v="si" onclick="selOpt('sensor_lluvia',this);updateLive()"><span class="opt-dot"></span>Sí · <span style="color:var(--blue);font-weight:700" id="lbl-sensor-lluvia">80€</span></button>
+          <button class="opt" data-v="no" onclick="selOpt('sensor_lluvia',this);updateLive()"><span class="opt-dot"></span>No</button>
+          <button class="opt nls" data-v="nls" onclick="selOpt('sensor_lluvia',this);nls()"><span class="opt-dot"></span>No lo sé</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon"><svg class="ic" aria-hidden="true"><use href="#i-plug"/></svg></div>
+        <div><div class="card-title">Enchufes exteriores inteligentes</div><div class="card-subtitle">Para luces decorativas, fuentes, bombas o equipos exteriores · <strong><span id="lbl-enchufe-ext">175€</span>/ud.</strong></div></div>
+      </div>
+      <div class="opts" id="enchufes_yn">
+        <button class="opt" data-v="no" onclick="selOpt('enchufes_yn',this);show('enchufes-num-wrap',false);S.enchufes_num=0;updateLive()"><span class="opt-dot"></span>No necesito</button>
+        <button class="opt" data-v="si" onclick="selOpt('enchufes_yn',this);show('enchufes-num-wrap',true);updateLive()"><span class="opt-dot"></span>Sí, quiero enchufes exteriores</button>
+        <button class="opt nls" data-v="nls" onclick="selOpt('enchufes_yn',this);show('enchufes-num-wrap',false);nls()"><span class="opt-dot"></span>No lo sé</button>
+      </div>
+      <div id="enchufes-num-wrap" style="display:none;margin-top:14px;padding:14px;background:var(--surface);border-radius:10px;border:1px solid var(--border)">
+        <label class="label">Nº de enchufes exteriores <span style="font-size:12px;color:var(--muted);font-weight:400">· <span id="lbl-enchufe-label">175€</span>/ud.</span></label>
+        <div class="counter-wrap">
+          <button class="c-btn" onclick="ctr('enchufes_num',-1)">−</button>
+          <div class="c-val" id="enchufes_num-val">1</div>
+          <button class="c-btn" onclick="ctr('enchufes_num',1)">+</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn-back" onclick="goBack()">← Atrás</button>
+      <button class="btn-next" onclick="goNext()">Continuar →</button>
+    </div>
+  </div>
+
+  <!-- S7: CÁMARAS -->
+  <div class="section c-cam" id="sec-camaras">
+    <div class="step-title">Paso · Seguridad y cámaras</div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon"><svg class="ic" aria-hidden="true"><use href="#i-cctv"/></svg></div>
+        <div><div class="card-title">¿Dónde quieres instalar cámaras?</div></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div class="chk" id="cam-exterior" onclick="togCam('cam-exterior','exterior')">
+          <div class="chk-box"></div>
+          <div class="chk-info">
+            <div class="chk-name">Exterior</div>
+            <div class="chk-desc">Vigilancia de accesos, jardín, fachada o garaje</div>
+          </div>
+        </div>
+        <div class="chk" id="cam-interior" onclick="togCam('cam-interior','interior')">
+          <div class="chk-box"></div>
+          <div class="chk-info">
+            <div class="chk-name">Interior</div>
+            <div class="chk-desc">Supervisión de estancias o zonas de paso</div>
+          </div>
+        </div>
+        <button class="opt" id="cam-no" onclick="selNoCam()" style="display:none"><!-- oculto: si no quiere cámaras, desmarca el interés --><span class="opt-dot"></span>No quiero cámaras</button>
+        <button class="opt nls" id="cam-nls" onclick="selNlsCam()" style="width:100%"><span class="opt-dot"></span>No lo sé / Quiero asesoramiento</button>
+      </div>
+    </div>
+
+    <div id="cam-detalle" style="display:none">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon"><svg class="ic" aria-hidden="true"><use href="#i-video"/></svg></div>
+          <div><div class="card-title">Modelo de cámara</div><div class="card-subtitle">Incluye suministro, instalación y configuración</div></div>
+        </div>
+
+        <!-- Camera image grid — multi-select with qty -->
+        <!-- Grid de cámaras generado dinámicamente por buildCamGrid() desde CAM_CONFIG (JSON) -->
+        <div class="cam-grid" id="cam-grid-dynamic"></div>
+
+        <div class="divider"></div>
+
+        <label class="label">¿Qué tipo de grabación prefieres?</label>
+        <div class="opts" id="cam_grabacion">
+          <button class="opt sel" data-v="microsd" onclick="selOpt('cam_grabacion',this);show('nvr-info',false);updateLive()">
+            <span class="opt-dot"></span>
+            <div>
+              <div style="font-weight:600">Grabación en microSD — incluida ⭐</div>
+              <div style="font-size:12px;color:var(--muted);margin-top:2px">Cada cámara guarda detecciones de movimiento en su tarjeta microSD incluida.</div>
+              <div style="font-size:11px;color:var(--green);font-weight:700;margin-top:3px">Incluida en el precio</div>
+            </div>
+          </button>
+          <button class="opt" data-v="nvr" onclick="selOpt('cam_grabacion',this);show('nvr-info',true);updateLive()">
+            <span class="opt-dot"></span>
+            <div>
+              <div style="font-weight:600">Grabación con NVR — +<span id="lbl-nvr-title">180€</span></div>
+              <div style="font-size:12px;color:var(--muted);margin-top:2px">Grabación centralizada en grabador NVR. Permite grabar detecciones de movimiento o grabación continua 24/7.</div>
+              <div style="font-size:11px;color:var(--blue);font-weight:700;margin-top:3px">+<span id="lbl-nvr">180€</span></div>
+            </div>
+          </button>
+          <button class="opt" data-v="no" onclick="selOpt('cam_grabacion',this);show('nvr-info',false);updateLive()">
+            <span class="opt-dot"></span>
+            <div>
+              <div style="font-weight:600">No quiero grabación, solo avisos al móvil</div>
+              <div style="font-size:12px;color:var(--muted);margin-top:2px">Recibiré notificaciones cuando haya detección, sin guardar vídeos.</div>
+              <div style="font-size:11px;color:var(--muted);font-weight:600;margin-top:3px">Sin coste adicional</div>
+            </div>
+          </button>
+          <button class="opt nls" data-v="nls" onclick="selOpt('cam_grabacion',this);show('nvr-info',false);nls()">
+            <span class="opt-dot"></span>No lo sé, quiero asesoramiento
+          </button>
+        </div>
+        <div id="nvr-info" style="display:none">
+          <div class="info-box blue" style="margin-top:10px"><strong>Grabador NVR</strong> — Gestión centralizada de todas las cámaras, sin depender de la nube ni suscripciones.</div>
+        </div>
+        <div class="info-box blue" style="margin-top:10px">La grabación en microSD está incluida con las cámaras y es suficiente para guardar eventos por detección de movimiento. El NVR se recomienda si quieres grabación continua 24/7, más capacidad o gestión centralizada de varias cámaras.</div>
+      </div>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn-back" onclick="goBack()">← Atrás</button>
+      <button class="btn-next" onclick="goNext()">Continuar →</button>
+    </div>
+  </div>
+
+  <!-- S8: SENSORES -->
+  <div class="section c-sen" id="sec-sensores">
+    <div class="step-title">Paso · Sensores inteligentes</div>
+    <div class="info-box blue" style="margin-bottom:14px">Selecciona los que te interesen. Añaden avisos y automatizaciones en tiempo real.</div>
+
+    <div class="card">
+      <div id="sensores-lista">
+        <div class="sensor-block" id="sen-presencia">
+          <div class="sensor-head" onclick="togSensor('sen-presencia')">
+            <div class="s-box"></div><div class="sen-ic"><svg class="ic" aria-hidden="true"><use href="#i-presence"/></svg></div>
+            <div style="flex:1"><div style="font-size:14px;font-weight:600">Sensor de Presencia</div><div style="font-size:12px;color:var(--muted)">Detecta presencia real, ideal para automatizaciones precisas</div><div class="s-price-tag">89€/ud.</div></div>
+          </div>
+          <div class="sensor-qty">
+            <span style="font-size:12px;font-weight:600;color:var(--blue)">Unidades</span>
+            <div style="display:flex;align-items:center;gap:8px">
+              <div class="mini-ctr"><button class="m-btn" onclick="senCtr('sen-presencia',0,-1)">−</button><div class="m-val" id="sen-presencia-val">1</div><button class="m-btn" onclick="senCtr('sen-presencia',0,1)">+</button></div>
+              <span style="font-size:13px;font-weight:700;color:var(--blue)" id="sen-presencia-sub">89€</span>
+            </div>
+          </div>
+        </div>
+        <div class="sensor-block" id="sen-movimiento">
+          <div class="sensor-head" onclick="togSensor('sen-movimiento')">
+            <div class="s-box"></div><div class="sen-ic"><svg class="ic" aria-hidden="true"><use href="#i-motion"/></svg></div>
+            <div style="flex:1"><div style="font-size:14px;font-weight:600">Sensor de Movimiento</div><div style="font-size:12px;color:var(--muted)">Ideal para pasillos, entradas o garajes</div><div class="s-price-tag">65€/ud.</div></div>
+          </div>
+          <div class="sensor-qty">
+            <span style="font-size:12px;font-weight:600;color:var(--blue)">Unidades</span>
+            <div style="display:flex;align-items:center;gap:8px">
+              <div class="mini-ctr"><button class="m-btn" onclick="senCtr('sen-movimiento',0,-1)">−</button><div class="m-val" id="sen-movimiento-val">1</div><button class="m-btn" onclick="senCtr('sen-movimiento',0,1)">+</button></div>
+              <span style="font-size:13px;font-weight:700;color:var(--blue)" id="sen-movimiento-sub">65€</span>
+            </div>
+          </div>
+        </div>
+        <div class="sensor-block" id="sen-humo">
+          <div class="sensor-head" onclick="togSensor('sen-humo')">
+            <div class="s-box"></div><div class="sen-ic"><svg class="ic" aria-hidden="true"><use href="#i-smoke"/></svg></div>
+            <div style="flex:1"><div style="font-size:14px;font-weight:600">Detector de Humo Inteligente</div><div style="font-size:12px;color:var(--muted)">Alerta al móvil ante humo o incendio</div><div class="s-price-tag">79€/ud.</div></div>
+          </div>
+          <div class="sensor-qty">
+            <span style="font-size:12px;font-weight:600;color:var(--blue)">Unidades</span>
+            <div style="display:flex;align-items:center;gap:8px">
+              <div class="mini-ctr"><button class="m-btn" onclick="senCtr('sen-humo',0,-1)">−</button><div class="m-val" id="sen-humo-val">1</div><button class="m-btn" onclick="senCtr('sen-humo',0,1)">+</button></div>
+              <span style="font-size:13px;font-weight:700;color:var(--blue)" id="sen-humo-sub">79€</span>
+            </div>
+          </div>
+        </div>
+        <div class="sensor-block" id="sen-inundacion">
+          <div class="sensor-head" onclick="togSensor('sen-inundacion')">
+            <div class="s-box"></div><div class="sen-ic"><svg class="ic" aria-hidden="true"><use href="#i-droplet"/></svg></div>
+            <div style="flex:1"><div style="font-size:14px;font-weight:600">Detector de Inundación</div><div style="font-size:12px;color:var(--muted)">Detecta fugas antes de que el daño sea mayor</div><div class="s-price-tag">59€/ud.</div></div>
+          </div>
+          <div class="sensor-qty">
+            <span style="font-size:12px;font-weight:600;color:var(--blue)">Unidades</span>
+            <div style="display:flex;align-items:center;gap:8px">
+              <div class="mini-ctr"><button class="m-btn" onclick="senCtr('sen-inundacion',0,-1)">−</button><div class="m-val" id="sen-inundacion-val">1</div><button class="m-btn" onclick="senCtr('sen-inundacion',0,1)">+</button></div>
+              <span style="font-size:13px;font-weight:700;color:var(--blue)" id="sen-inundacion-sub">59€</span>
+            </div>
+          </div>
+        </div>
+        <div class="sensor-block" id="sen-apertura">
+          <div class="sensor-head" onclick="togSensor('sen-apertura')">
+            <div class="s-box"></div><div class="sen-ic"><svg class="ic" aria-hidden="true"><use href="#i-door"/></svg></div>
+            <div style="flex:1"><div style="font-size:14px;font-weight:600">Sensor de Apertura Puerta/Ventana</div><div style="font-size:12px;color:var(--muted)">Detecta si se abre o cierra</div><div class="s-price-tag">49€/ud.</div></div>
+          </div>
+          <div class="sensor-qty">
+            <span style="font-size:12px;font-weight:600;color:var(--blue)">Unidades</span>
+            <div style="display:flex;align-items:center;gap:8px">
+              <div class="mini-ctr"><button class="m-btn" onclick="senCtr('sen-apertura',0,-1)">−</button><div class="m-val" id="sen-apertura-val">1</div><button class="m-btn" onclick="senCtr('sen-apertura',0,1)">+</button></div>
+              <span style="font-size:13px;font-weight:700;color:var(--blue)" id="sen-apertura-sub">49€</span>
+            </div>
+          </div>
+        </div>
+        <div class="sensor-block" id="sen-sirena">
+          <div class="sensor-head" onclick="togSensor('sen-sirena')">
+            <div class="s-box"></div><div class="sen-ic"><svg class="ic" aria-hidden="true"><use href="#i-bell"/></svg></div>
+            <div style="flex:1"><div style="font-size:14px;font-weight:600">Sirena Interior</div><div style="font-size:12px;color:var(--muted)">Alarma sonora y luminosa</div><div class="s-price-tag">89€/ud.</div></div>
+          </div>
+          <div class="sensor-qty">
+            <span style="font-size:12px;font-weight:600;color:var(--blue)">Unidades</span>
+            <div style="display:flex;align-items:center;gap:8px">
+              <div class="mini-ctr"><button class="m-btn" onclick="senCtr('sen-sirena',0,-1)">−</button><div class="m-val" id="sen-sirena-val">1</div><button class="m-btn" onclick="senCtr('sen-sirena',0,1)">+</button></div>
+              <span style="font-size:13px;font-weight:700;color:var(--blue)" id="sen-sirena-sub">89€</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
+        <button class="opt" id="sen-no" onclick="selNoSensores()" style="display:none"><!-- oculto: si no quiere sensores, desmarca el interés --><span class="opt-dot"></span>No quiero sensores</button>
+        <button class="opt nls" id="sen-nls" onclick="selNlsSensores()" style="width:100%"><span class="opt-dot"></span>No lo sé / Quiero asesoramiento</button>
+      </div>
+    </div>
+
+    <div class="card" id="mascotas-card" style="display:none">
+      <div class="card-header">
+        <div class="card-icon"><svg class="ic" aria-hidden="true"><use href="#i-paw"/></svg></div>
+        <div><div class="card-title">¿Hay mascotas en casa?</div><div class="card-subtitle">Importante para configurar bien los sensores de movimiento</div></div>
+      </div>
+      <div class="opts" id="mascotas">
+        <button class="opt" data-v="si" onclick="selOpt('mascotas',this)"><span class="opt-dot"></span>Sí</button>
+        <button class="opt" data-v="no" onclick="selOpt('mascotas',this)"><span class="opt-dot"></span>No</button>
+      </div>
+    </div>
+
+
+    <div class="nav-row">
+      <button class="btn-back" onclick="goBack()">← Atrás</button>
+      <button class="btn-next" onclick="goNext()">Continuar →</button>
+    </div>
+  </div>
+
+  <!-- S9: PISCINA + ACCESOS (condicional) -->
+  <div class="section" id="sec-piscina">
+    <div class="step-title">Paso · Piscina y accesos</div>
+
+    <!-- PISCINA -->
+    <div class="card c-pis" id="piscina-card">
+      <div class="card-header">
+        <div class="card-icon"><svg class="ic" aria-hidden="true"><use href="#i-pool"/></svg></div>
+        <div><div class="card-title">Piscina</div><div class="card-subtitle">Control inteligente de depuradora e iluminación</div></div>
+      </div>
+      <div class="opts" id="piscina_control">
+        <button class="opt" data-v="no" onclick="selOpt('piscina_control',this)"><span class="opt-dot"></span>No me interesa por ahora</button>
+        <button class="opt" data-v="depuradora" onclick="selOpt('piscina_control',this)"><span class="opt-dot"></span>Control depuradora · <span style="color:var(--blue);font-weight:700" id="lbl-pisc-dep">175€</span></button>
+        <button class="opt" data-v="iluminacion" onclick="selOpt('piscina_control',this)"><span class="opt-dot"></span>Control iluminación · <span style="color:var(--blue);font-weight:700" id="lbl-pisc-ilum">130€</span></button>
+        <button class="opt" data-v="completo" onclick="selOpt('piscina_control',this)"><span class="opt-dot"></span>Control completo · <span style="color:var(--blue);font-weight:700" id="lbl-pisc-comp">290€</span></button>
+        <button class="opt nls" data-v="nls" onclick="selOpt('piscina_control',this);nls()"><span class="opt-dot"></span>No lo sé</button>
+      </div>
+    </div>
+
+    <div class="divider" id="piscina-divider" style="margin:8px 0"></div>
+
+    <!-- ACCESOS -->
+    <div class="card c-acc" id="accesos-card">
+      <div class="card-header">
+        <div class="card-icon"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg></div>
+        <div><div class="card-title">Accesos y videoportero</div><div class="card-subtitle">¿Qué accesos quieres controlar?</div></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div class="chk" id="acc-garaje" onclick="togAcceso('acc-garaje','garaje')">
+          <div class="chk-box"></div>
+          <div class="chk-info">
+            <div class="chk-name">Puerta de garaje</div>
+            <div class="chk-desc">Control inteligente de apertura/cierre</div>
+          </div>
+        </div>
+        <div class="chk" id="acc-puerta" onclick="togAcceso('acc-puerta','puerta_principal')">
+          <div class="chk-box"></div>
+          <div class="chk-info">
+            <div class="chk-name">Puerta principal · <span style="color:var(--blue);font-weight:700" id="lbl-cerradura-piso">380€</span></div>
+            <div class="chk-desc">Cerradura inteligente Nuki — sujeta a compatibilidad con puerta y bombín</div>
+          </div>
+        </div>
+        <div class="chk" id="acc-video" onclick="togAcceso('acc-video','videoportero')">
+          <div class="chk-box"></div>
+          <div class="chk-info">
+            <div class="chk-name">Videoportero</div>
+            <div class="chk-desc">Ver y hablar con visitas desde el móvil</div>
+          </div>
+        </div>
+        <button class="opt" id="acc-no" onclick="selNoAccesos()" style="width:100%"><span class="opt-dot"></span>No necesito accesos inteligentes</button>
+        <button class="opt nls" id="acc-nls" onclick="selNlsAccesos()" style="width:100%"><span class="opt-dot"></span>No lo sé</button>
+      </div>
+    </div>
+
+    <!-- Garaje: numeric counter -->
+    <div class="card c-acc" id="acc-garaje-det" style="display:none">
+      <div class="card-header">
+        <div class="card-icon"><svg class="ic" aria-hidden="true"><use href="#i-garage"/></svg></div>
+        <div><div class="card-title">Nº de puertas de garaje</div><div class="card-subtitle"><span id="lbl-garaje-1">220€</span> primera puerta · <span id="lbl-garaje-adic">160€</span> puerta adicional</div></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+        <div class="counter-wrap">
+          <button class="c-btn" onclick="ctr('garaje_num_cnt',-1)">−</button>
+          <div class="c-val" id="garaje_num_cnt-val">1</div>
+          <button class="c-btn" onclick="ctr('garaje_num_cnt',1)">+</button>
+        </div>
+        <div style="font-size:14px;font-weight:700;color:var(--blue)" id="garaje-precio-label">220€</div>
+      </div>
+    </div>
+
+    <div class="card c-acc" id="acc-cerradura-det" style="display:none">
+      <div class="info-box blue"><strong>Cerradura inteligente Nuki</strong> — Control desde el móvil, apertura por app, Bluetooth o código. Requiere revisión previa de compatibilidad con tu puerta y bombín. <strong>380€</strong></div>
+    </div>
+
+    <div class="card c-acc" id="acc-video-det" style="display:none">
+      <div class="card-header">
+        <div class="card-icon"><svg class="ic" aria-hidden="true"><use href="#i-video"/></svg></div>
+        <div><div class="card-title">Tipo de videoportero</div></div>
+      </div>
+      <div class="opts" id="vp_tipo">
+        <button class="opt" data-v="basico" onclick="selOpt('vp_tipo',this)">
+          <span class="opt-dot"></span>
+          <div><div>EZVIZ WiFi Básico · <strong style="color:var(--blue)" id="lbl-vp-basico">350€</strong></div><div style="font-size:11px;color:var(--muted)">Apertura desde móvil + tarjeta de acceso</div></div>
+        </button>
+        <button class="opt" data-v="poe4k" onclick="selOpt('vp_tipo',this)">
+          <span class="opt-dot"></span>
+          <div><div>EZVIZ HP7 Pro 4K ⭐ · <strong style="color:var(--blue)" id="lbl-vp-poe4k">550€</strong></div><div style="font-size:11px;color:var(--muted)">Apertura desde móvil + tarjeta de acceso + código PIN</div></div>
+        </button>
+        <button class="opt" data-v="pantalla" onclick="selOpt('vp_tipo',this)">
+          <span class="opt-dot"></span>
+          <div><div>Hikvision PoE · <strong style="color:var(--blue)" id="lbl-vp-pantalla">750€</strong></div><div style="font-size:11px;color:var(--muted)">Apertura desde móvil + tarjeta de acceso + código PIN. Requiere cable de red disponible o instalación de cableado</div></div>
+        </button>
+        <button class="opt nls" data-v="nls" onclick="selOpt('vp_tipo',this);nls()"><span class="opt-dot"></span>No lo sé, recomendadme</button>
+      </div>
+      <div class="divider"></div>
+      <label class="label">¿Vives en comunidad o vivienda independiente?</label>
+      <div class="opts" id="comunidad">
+        <button class="opt" data-v="independiente" onclick="selOpt('comunidad',this)"><span class="opt-dot"></span>Vivienda independiente</button>
+        <button class="opt" data-v="comunidad" onclick="selOpt('comunidad',this)"><span class="opt-dot"></span>Comunidad de vecinos</button>
+        <button class="opt nls" data-v="nls" onclick="selOpt('comunidad',this);nls()"><span class="opt-dot"></span>No lo sé</button>
+      </div>
+      <div class="info-box amber" style="margin-top:10px">En comunidades puede ser necesario revisar compatibilidades o limitaciones.</div>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn-back" onclick="goBack()">← Atrás</button>
+      <button class="btn-next" onclick="goNext()">Continuar →</button>
+    </div>
+  </div>
+
+  <!-- S11: RESUMEN -->
+  <div class="section" id="sec-resumen">
+    <div class="sum-hero">
+      <div class="sum-check"><svg class="ic" aria-hidden="true"><use href="#i-chart"/></svg></div>
+      <h2>Tu estimación orientativa</h2>
+      <p>Basada en las opciones que has configurado</p>
+    </div>
+    <div class="price-range-card">
+      <div class="prc-label">ESTIMACIÓN ORIENTATIVA</div>
+      <div class="prc-range" id="prc-range">—</div>
+      <div class="prc-note">Precio orientativo · IVA no incluido</div>
+      <div class="ub-wrap" id="ub-wrap" style="display:none">
+        <div class="ub-label" id="ub-label">Precisión de la estimación</div>
+        <div class="ub-track"><div class="ub-fill" id="ub-fill" style="width:80%"></div></div>
+      </div>
+    </div>
+    <div id="resumen-content"></div>
+    <button class="opt btn-add" onclick="goTo('sec-intereses')"><svg class="ic" aria-hidden="true"><use href="#i-plus"/></svg> Añadir o quitar cosas</button>
+    <div class="disclaimer">El precio mostrado es aproximado. Puede variar según cableado, compatibilidades, estado de la vivienda, distancias y necesidades reales. Nuestro equipo revisará tu caso y te enviará una propuesta personalizada.</div>
+
+    <div class="card" style="margin-top:12px">
+      <div class="card-header">
+        <div class="card-icon"><svg class="ic" aria-hidden="true"><use href="#i-message"/></svg></div>
+        <div><div class="card-title">¿Algo que quieras añadir?</div><div class="card-subtitle">Comentarios, dudas o detalles sobre tu vivienda. Opcional.</div></div>
+      </div>
+      <textarea class="f-textarea" rows="3" id="res_comentarios" placeholder="Ej: tengo una vivienda antigua, me interesa especialmente el riego, quiero cámaras en zona concreta…" oninput="syncComentarios()"></textarea>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn-back" onclick="goBack()">← Modificar</button>
+      <button class="btn-next" onclick="goNext()">Solicitar propuesta →</button>
+    </div>
+  </div>
+
+  <!-- S12: CONTACTO -->
+  <div class="section" id="sec-contacto">
+    <div class="step-title">Último paso · Tus datos</div>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon"><svg class="ic" aria-hidden="true"><use href="#i-user"/></svg></div>
+        <div><div class="card-title">¿A quién enviamos la propuesta?</div><div class="card-subtitle">Solo te contactaremos para revisar tu propuesta</div></div>
+      </div>
+      <div class="field">
+        <label class="label">Nombre completo <span style="color:var(--blue);font-size:11px">*</span></label>
+        <input class="f-input" type="text" id="ct_nombre" placeholder="Ej: María García López" autocomplete="name">
+        <div class="f-err" id="err_nombre">Campo obligatorio</div>
+      </div>
+      <div class="field">
+        <label class="label">Teléfono <span style="color:var(--blue);font-size:11px">*</span></label>
+        <input class="f-input" type="tel" id="ct_telefono" placeholder="Ej: 612 345 678" autocomplete="tel">
+        <div class="f-err" id="err_telefono">Campo obligatorio</div>
+      </div>
+      <div class="field">
+        <label class="label">Correo electrónico <span style="color:var(--blue);font-size:11px">*</span></label>
+        <input class="f-input" type="email" id="ct_email" placeholder="tu@email.com" autocomplete="email" oninput="validateEmail(this)">
+        <div class="f-err" id="err_email">Introduce un email válido</div>
+      </div>
+      <div class="field">
+        <label class="label">Ciudad <span style="color:var(--blue);font-size:11px">*</span></label>
+        <input class="f-input" type="text" id="ct_localidad" placeholder="Ej: Madrid, Pozuelo, Las Rozas…">
+        <div class="f-err" id="err_localidad">Campo obligatorio</div>
+      </div>
+      <div class="field">
+        <label class="label">¿Cuándo te gustaría instalarlo?</label>
+        <div class="opts" id="timing">
+          <button class="opt" data-v="urgente" onclick="selOpt('timing',this)"><span class="opt-dot"></span>Lo antes posible</button>
+          <button class="opt" data-v="semanas" onclick="selOpt('timing',this)"><span class="opt-dot"></span>En las próximas semanas</button>
+          <button class="opt" data-v="meses" onclick="selOpt('timing',this)"><span class="opt-dot"></span>En 1-3 meses</button>
+          <button class="opt" data-v="despues" onclick="selOpt('timing',this)"><span class="opt-dot"></span>Más adelante</button>
+          <button class="opt" data-v="info" onclick="selOpt('timing',this)"><span class="opt-dot"></span>Solo me estoy informando</button>
+        </div>
+      </div>
+      <div class="field">
+        <label class="label">Comentarios adicionales <span class="label-hint">Opcional</span></label>
+        <textarea class="f-textarea" rows="3" id="ct_comentarios" placeholder="Cuéntanos cualquier detalle adicional sobre tu vivienda o lo que te gustaría automatizar…"></textarea>
+      </div>
+      <div class="privacy-note">Tus datos se usarán únicamente para enviarte la propuesta. No los compartimos con terceros ni hacemos spam. Más información en nuestra <a href="/privacidad" target="_blank" rel="noopener">política de privacidad</a>.</div>
+    </div>
+
+    <div class="cf-turnstile" data-sitekey="0x4AAAAAAFqQ7O5PoiyJBuwj" data-language="es" data-size="flexible" style="margin:16px 0 4px"></div>
+    <button class="btn-full" id="btn-send" onclick="sendBudget()">Solicitar propuesta personalizada</button>
+    <div id="send-feedback" style="display:none;margin-top:14px;border-radius:14px;padding:16px;text-align:center;font-size:14px;font-weight:600"></div>
+
+    <div class="nav-row" style="margin-top:12px">
+      <button class="btn-back" onclick="goBack()">← Atrás</button>
+    </div>
+  </div>
+
+  <!-- SUCCESS -->
+  <div class="success-screen" id="success-screen">
+    <div class="success-icon"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></div>
+    <h2 id="success-title">¡Solicitud recibida!</h2>
+    <p id="success-body">Hemos registrado tu configuración. Un técnico de nuestro equipo revisará tu presupuesto y se pondrá en contacto contigo en menos de <strong>24–48 horas</strong> para prepararte una propuesta personalizada.</p>
+    <div class="next-steps">
+      <div class="ns-title">¿Qué pasa ahora?</div>
+      <div class="ns-item"><span class="ns-num">1</span><div><strong>Revisamos tu configuración</strong><br>Un técnico analiza lo que has elegido.</div></div>
+      <div class="ns-item"><span class="ns-num">2</span><div><strong>Te llamamos en 24–48 h</strong><br>Resolvemos dudas y confirmamos detalles de tu vivienda.</div></div>
+      <div class="ns-item"><span class="ns-num">3</span><div><strong>Recibes tu propuesta a medida</strong><br>Sin compromiso.</div></div>
+    </div>
+    <p class="wa-hint">¿Tienes prisa o alguna duda? Escríbenos ahora:</p>
+    <a class="btn-wa" id="sc-whatsapp" href="#" target="_blank" rel="noopener">
+      <svg class="wa-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      Contactar por WhatsApp
+    </a>
+    <div class="sd-title">Tus datos</div>
+    <div class="success-detail">
+      <div class="sd-row"><span>Nombre</span><span id="sc-nombre">—</span></div>
+      <div class="sd-row"><span>Teléfono</span><span id="sc-telefono">—</span></div>
+      <div class="sd-row"><span>Email</span><span id="sc-email">—</span></div>
+      <div class="sd-row"><span>Localidad</span><span id="sc-localidad">—</span></div>
+      <div class="sd-total">Tu estimación orientativa: <span id="sc-total">—</span></div>
+    </div>
+
+  </div>
+
+  </div><!-- /form-container -->
+</div><!-- /screen-form -->
+
+<!-- LIVE BAR -->
+<div class="live-bar" id="liveBar">
+  <div>
+    <div class="lb-label">Estimación hasta ahora</div>
+    <div class="lb-amount" id="liveAmt">—</div>
+  </div>
+  <div style="text-align:right">
+    <div style="font-size:10px;color:var(--muted)">Orientativo · sin IVA</div>
+    <div style="font-size:11px;color:var(--muted)" id="liveMax"></div>
+  </div>
+</div>
+
+<script>
+// ═══ PRECIOS — todos desde window.P (domotica-config.json via PHP) ═══
+// Si no hay window.P (acceso directo sin PHP), usar objeto vacío → initPriceLabels mostrará 0
+const P = window.P || {};
+
+// ═══ ESTADO ═══
+const S = {
+  tipo:null,plantas:1,metros:null,
+  terraza_piso:null,zonas_ext:[],metros_ext:null,
+  sistema:[],
+  intereses:[],
+  pers_tipos:[],
+  tiene_pers_motor:null,pers_motor:1,
+  tiene_pers_manuales:null,pers_manuales:1,
+  tipo_instalacion:null,
+  tiene_estores:null,estores_num:1,
+  tiene_toldos:null,toldos_num:1,sensor_viento:null,
+  calefaccion:null,termostatos:1,aire:null,aire_num:1,
+  ilum_interior:null,interruptores:0,ilum_exterior_yn:null,ilum_ext_num:0,
+  ilum_ext:[],
+  riego:null,riego_zonas:null,sensor_lluvia:null,
+  enchufes_yn:null,enchufes_num:1,enchufes_ext:null,wifi_ext:null,cable_ext:null,
+  riego_zonas_num:1,
+  cam_zonas:[],cam_tipo:null,cam_num:1,cam_cable:null,cam_grabacion:'microsd',
+  no_cam:false,nls_cam:false,
+  sensores:{},no_sensores:false,mascotas:null,
+  piscina_control:null,piscina_cuadro:null,
+  accesos:[],garaje_num:'1',garaje_num_cnt:1,vp_tipo:null,comunidad:null,no_accesos:false,
+  plataforma:null,wifi_cobertura:null,
+  riego_zonas_num:1,
+  contacto_pref:null,timing:null,presupuesto_previsto:null,
+  utm:'',nls_count:0
+};
+const chk={};
+
+// ═══ FLOW ═══
+const LABELS={'sec-vivienda':'Tu vivienda','sec-intereses':'Qué automatizar',
+  'sec-sistema':'Sistema central','sec-persianas':'Persianas y toldos',
+  'sec-clima':'Climatización','sec-iluminacion':'Iluminación','sec-jardin':'Jardín y exterior',
+  'sec-camaras':'Cámaras','sec-sensores':'Sensores',
+  'sec-piscina':'Piscina y accesos','sec-resumen':'Estimación','sec-contacto':'Tus datos'};
+
+// Solo se muestran los pasos de lo que el cliente marcó en "¿Qué quieres automatizar?"
+function computeFlow(){
+  const f=['sec-vivienda','sec-intereses'];
+  if(wants('iluminacion')) f.push('sec-iluminacion');
+  if(wants('persianas'))   f.push('sec-persianas');
+  if(wants('clima'))       f.push('sec-clima');
+  if(wants('jardin'))      f.push('sec-jardin');
+  if(wants('camaras'))     f.push('sec-camaras');
+  if(wants('sensores'))    f.push('sec-sensores');
+  if(wants('piscina')||wants('accesos')) f.push('sec-piscina');
+  f.push('sec-sistema','sec-resumen','sec-contacto');
+  return f;
+}
+function needsJardin(){
+  if(S.tipo==='piso'||S.tipo==='local') return false; // piso y local sin jardín
+  return true;
+}
+function needsPiscina(){
+  return S.tipo!=='piso'&&S.tipo!=='local';
+}
+// ¿Ha marcado este interés? (jardín y piscina solo cuentan si el tipo de vivienda los admite)
+function wants(k){
+  if(!S.intereses.includes(k)) return false;
+  if(k==='jardin')  return needsJardin();
+  if(k==='piscina') return needsPiscina();
+  return true;
+}
+
+// ═══ INTERESES ═══
+function togInteres(k){
+  if(S.intereses.includes(k)) S.intereses=S.intereses.filter(x=>x!==k);
+  else S.intereses.push(k);
+  document.getElementById('int-'+k)?.classList.toggle('sel',S.intereses.includes(k));
+  syncTodoIntereses();
+  clearErr('err_intereses');
+  flow=computeFlow(); updateProgress(); updateLive();
+}
+// 'Quiero verlo todo' aparece marcado solo si están todas las opciones marcadas
+function syncTodoIntereses(){
+  const v=visibleIntereses();
+  document.getElementById('int-todo')?.classList.toggle('sel',v.length>0&&v.every(k=>S.intereses.includes(k)));
+}
+function selTodoIntereses(){
+  // Si ya estaba todo marcado, al pulsar de nuevo se desmarca todo
+  const v=visibleIntereses();
+  S.intereses=v.every(k=>S.intereses.includes(k))?[]:v;
+  document.querySelectorAll('#intereses-lista .chk').forEach(el=>{
+    el.classList.toggle('sel',S.intereses.includes(el.id.replace('int-','')));
+  });
+  syncTodoIntereses();
+  if(S.intereses.length) clearErr('err_intereses');
+  flow=computeFlow(); updateProgress(); updateLive();
+}
+function visibleIntereses(){
+  const all=['iluminacion','persianas','clima','camaras','sensores','accesos','jardin','piscina'];
+  return all.filter(k=>(k!=='jardin'||needsJardin())&&(k!=='piscina'||needsPiscina()));
+}
+function updateInteresesUI(){
+  vis('int-jardin',needsJardin());
+  vis('int-piscina',needsPiscina());
+  // Si cambia el tipo de vivienda, quitar intereses que ya no aplican
+  S.intereses=S.intereses.filter(k=>visibleIntereses().includes(k));
+  document.querySelectorAll('#intereses-lista .chk').forEach(el=>{
+    el.classList.toggle('sel',S.intereses.includes(el.id.replace('int-','')));
+  });
+  syncTodoIntereses();
+}
+function updatePiscinaAccesosUI(){
+  const pis=wants('piscina'), acc=wants('accesos');
+  show('piscina-card',pis);
+  show('piscina-divider',pis&&acc);
+  show('accesos-card',acc);
+  vis('acc-garaje',S.tipo!=='piso'); // en un piso no suele haber puerta de garaje propia
+  const label=pis&&acc?'Piscina y accesos':pis?'Piscina':'Accesos';
+  LABELS['sec-piscina']=label;
+  const t=document.querySelector('#sec-piscina .step-title');
+  if(t) t.dataset.name=label; // renderStepTitle lo pinta
+}
+
+let flow=[], cur=0;
+
+function startForm(){
+  modoPortada(false); // fondo y barras del navegador vuelven al gris claro del formulario
+  detectUTM();
+  initPriceLabels();
+  buildCamGrid(); // genera el grid desde CAM_CONFIG JSON
+  document.getElementById('screen-welcome').style.display='none';
+  document.getElementById('screen-form').style.display='block';
+  flow=computeFlow(); cur=0;
+  updateProgress(); window.scrollTo({top:0});
+  rh(); setTimeout(rh,400);
+}
+
+function goNext(){
+  if(!validateCur()) return;
+  document.getElementById(flow[cur]).classList.remove('active');
+  cur++;
+  flow=computeFlow();
+  updateConditionalUI();
+  document.getElementById(flow[cur]).classList.add('active');
+  updateProgress();
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(flow[cur]==='sec-resumen'){
+    const ct=document.getElementById('ct_comentarios');
+    const res=document.getElementById('res_comentarios');
+    if(ct&&res&&ct.value&&!res.value) res.value=ct.value;
+    buildResumen();
+  }
+  if(flow[cur]==='sec-camaras'&&!document.getElementById('cam-grid-dynamic')?.children?.length){
+    buildCamGrid(); // construir grid la primera vez que se entra
+  }
+  // Sistema central: dejar preseleccionada la opción recomendada la primera vez
+  if(flow[cur]==='sec-sistema'&&!S.plataforma){
+    _sinAutoAvance=true; // preselección: no debe bajar a la siguiente pregunta
+    document.querySelector('#plataforma [data-v="local"]')?.click();
+    _sinAutoAvance=false;
+  }
+  rh();setTimeout(rh,400);
+}
+// Saltar directamente a un paso (p. ej. "Añadir o quitar cosas" desde el resumen)
+function goTo(id){
+  document.getElementById(flow[cur]).classList.remove('active');
+  flow=computeFlow();
+  cur=Math.max(0,flow.indexOf(id));
+  updateConditionalUI();
+  document.getElementById(flow[cur]).classList.add('active');
+  updateProgress();
+  window.scrollTo({top:0,behavior:'smooth'});
+  rh();setTimeout(rh,400);
+}
+function goBack(){
+  if(cur<=0) return;
+  document.getElementById(flow[cur]).classList.remove('active');
+  cur--;
+  document.getElementById(flow[cur]).classList.add('active');
+  updateProgress();
+  window.scrollTo({top:0,behavior:'smooth'});
+  rh();setTimeout(rh,400);
+}
+function updateProgress(){
+  // Barra de progreso continua (con muchos pasos, los puntos se amontonaban)
+  const pct=Math.round(((cur+1)/flow.length)*100);
+  document.getElementById('progressSteps').innerHTML='<div class="p-fill" style="width:'+pct+'%"></div>';
+  renderStepTitle(flow[cur]);
+  document.getElementById('progressLabel').textContent=LABELS[flow[cur]]||'';
+  document.getElementById('progressCounter').textContent=flow[cur]==='sec-contacto'?'Último paso':'Paso '+(cur+1)+' de '+flow.length;
+}
+// Título grande del paso (el nº de paso va en la cabecera). El nombre se guarda en data-name la primera vez.
+function renderStepTitle(id){
+  const st=document.querySelector('#'+id+' .step-title');
+  if(!st) return;
+  if(!st.dataset.name) st.dataset.name=st.textContent.replace(/^.*?·\s*/,'').trim();
+  st.innerHTML='<span class="step-name">'+st.dataset.name+'</span>';
+}
+
+// ═══ VALIDATION ═══
+function validateCur(){
+  const s=flow[cur]; let ok=true;
+  if(s==='sec-vivienda'){
+    if(!S.tipo){showErr('err_tipo');ok=false;}
+    if(!S.metros){showErr('err_metros');ok=false;}
+  }
+  if(s==='sec-persianas'){
+    if(!S.pers_tipos.length){showErr('err_pers_tipos');ok=false;}
+  }
+  if(s==='sec-intereses'){
+    if(!S.intereses.length){showErr('err_intereses');ok=false;}
+  }
+  if(s==='sec-contacto'){
+    const emailRe=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const fields=[
+      {id:'ct_nombre',err:'err_nombre',check:v=>v.length>0},
+      {id:'ct_telefono',err:'err_telefono',check:v=>v.length>0},
+      {id:'ct_email',err:'err_email',check:v=>emailRe.test(v)},
+      {id:'ct_localidad',err:'err_localidad',check:v=>v.length>0},
+    ];
+    fields.forEach(f=>{
+      const el=document.getElementById(f.id);
+      if(!f.check(el.value.trim())){el.classList.add('err');showErr(f.err);ok=false;}
+    });
+  }
+  if(!ok) setTimeout(()=>{const e=document.querySelector('.f-err.show,.f-input.err');e&&e.scrollIntoView({behavior:'smooth',block:'center'});},50);
+  return ok;
+}
+function showErr(id){const e=document.getElementById(id);if(e)e.classList.add('show');}
+function clearErr(id){const e=document.getElementById(id);if(e)e.classList.remove('show');}
+
+// ═══ OPTION HELPERS ═══
+function selOpt(gid,btn){
+  document.querySelectorAll('#'+gid+' .opt').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel');
+  const map={plataforma:'plataforma',wifi_cobertura:'wifi_cobertura',
+    tipo_vivienda:'tipo',metros:'metros',terraza_piso:'terraza_piso',metros_ext:'metros_ext',
+    tipo_instalacion:'tipo_instalacion',
+    tiene_pers_motor:'tiene_pers_motor',tiene_pers_manuales:'tiene_pers_manuales',
+    tiene_estores:'tiene_estores',tiene_toldos:'tiene_toldos',sensor_viento:'sensor_viento',
+    calefaccion:'calefaccion',aire:'aire',ilum_interior:'ilum_interior',ilum_exterior_yn:'ilum_exterior_yn',
+    riego:'riego',sensor_lluvia:'sensor_lluvia',enchufes_yn:'enchufes_yn',
+    cam_grabacion:'cam_grabacion',
+    mascotas:'mascotas',piscina_control:'piscina_control',
+    garaje_num:'garaje_num',vp_tipo:'vp_tipo',comunidad:'comunidad',
+    timing:'timing'};
+  if(map[gid]) S[map[gid]]=btn.dataset.v;
+  updateLive();
+  autoAvance(gid,btn);
+}
+// ═══ AVANCE AUTOMÁTICO ═══
+// Tras responder una pregunta de una sola opción, baja a la siguiente pregunta del paso.
+// Si era la última, ilumina "Continuar". No baja si la opción elegida abre más preguntas debajo.
+const AUTO_AVANCE={
+  tipo_vivienda:['otro'], metros:[], terraza_piso:[], metros_ext:[],
+  wifi_cobertura:[], calefaccion:['suelo_calor','suelo_clima','caldera'], aire:['splits','conductos'],
+  tiene_estores:['manuales','motorizados'], sensor_viento:[], tipo_instalacion:[],
+  riego:['integrar'], sensor_lluvia:[], enchufes_yn:['si'], cam_grabacion:[],
+  mascotas:[], piscina_control:[], vp_tipo:[], comunidad:[], plataforma:[]
+};
+let _sinAutoAvance=false;
+function autoAvance(gid,btn){
+  if(_sinAutoAvance) return;
+  if(!(gid in AUTO_AVANCE)||AUTO_AVANCE[gid].includes(btn.dataset.v)) return;
+  setTimeout(function(){
+    const card=btn.closest('.card'), sec=btn.closest('.section');
+    if(!card||!sec) return;
+    const visible=el=>el.offsetParent!==null;
+    // ¿Quedan más preguntas en esta misma tarjeta? Entonces no movemos nada
+    const grupos=[...card.querySelectorAll('.opts')].filter(visible);
+    if(grupos.indexOf(document.getElementById(gid))<grupos.length-1) return;
+    const cards=[...sec.querySelectorAll('.card')].filter(c=>visible(c)&&!c.closest('details:not([open])'));
+    const next=cards.slice(cards.indexOf(card)+1).find(c=>!card.contains(c));
+    if(next){
+      const top=next.getBoundingClientRect().top;
+      if(top>window.innerHeight*0.5){
+        const hdr=document.querySelector('.progress-bar')?.offsetHeight||0;
+        window.scrollTo({top:window.scrollY+top-hdr-12,behavior:'smooth'});
+      }
+    } else {
+      const b=sec.querySelector('.btn-next');
+      if(b){ b.classList.remove('pulse'); void b.offsetWidth; b.classList.add('pulse'); }
+    }
+  },200);
+}
+function show(id,v){const e=document.getElementById(id);if(e)e.style.display=v?'block':'none';}
+function vis(id,v){const e=document.getElementById(id);if(e)e.style.display=v?'':'none';} // respeta el display del CSS (flex, grid…)
+function nls(){S.nls_count++;}
+function fmt(n){const p=Math.round(n).toString().split('');let r='',c=0;for(let i=p.length-1;i>=0;i--){if(c>0&&c%3===0)r='.'+r;r=p[i]+r;c++;}return r+'€';}
+
+// ═══ TIPO CHANGE ═══
+function onTipoChange(){
+  document.getElementById('otro_tipo_wrap').style.display=S.tipo==='otro'?'block':'none';
+  // Zonas exteriores inline en paso 1
+  const isPiso=S.tipo==='piso'||S.tipo==='local';
+  const isChalet=S.tipo==='chalet';
+  document.getElementById('ext-piso').style.display=isPiso?'block':'none';
+  document.getElementById('ext-chalet').style.display=isChalet?'block':'none';
+  updatePersianasUI();
+  updateInteresesUI();
+  flow=computeFlow();
+  if(window.self!==window.top){rh();setTimeout(rh,400);}
+}
+function updateConditionalUI(){
+  const s=flow[cur];
+  if(s==='sec-persianas') updatePersianasUI();
+  if(s==='sec-intereses') updateInteresesUI();
+  if(s==='sec-iluminacion'){
+    // Piso/local sin terraza: no preguntar por iluminación exterior
+    const sinExterior=(S.tipo==='piso'||S.tipo==='local')&&S.terraza_piso==='no';
+    show('ilum-ext-card',!sinExterior); show('ilum-ext-divider',!sinExterior);
+    if(sinExterior){S.ilum_ext_num=0;const el=document.getElementById('ilum_ext_num-val');if(el)el.textContent=0;}
+  }
+  if(s==='sec-piscina') updatePiscinaAccesosUI();
+}
+
+// ═══ ZONA CHALET ═══
+function togZona(id,val){
+  chk[id]=!chk[id];
+  document.getElementById(id).classList.toggle('sel',!!chk[id]);
+  if(chk[id]){if(!S.zonas_ext.includes(val)) S.zonas_ext.push(val);}
+  else S.zonas_ext=S.zonas_ext.filter(z=>z!==val);
+  document.getElementById('ze-no').classList.remove('sel');
+  document.getElementById('metros-ext-card').style.display=S.zonas_ext.length?'block':'none';
+  flow=computeFlow(); updateLive();
+}
+function selNoExt(){
+  S.zonas_ext=[];
+  ['ze-jardin','ze-terraza','ze-patio','ze-piscina','ze-garaje','ze-cancela','ze-porche'].forEach(id=>{
+    chk[id]=false; document.getElementById(id)?.classList.remove('sel');
+  });
+  document.getElementById('ze-no').classList.add('sel');
+  document.getElementById('metros-ext-card').style.display='none';
+  flow=computeFlow(); updateLive();
+}
+
+// ═══ CAMERA IMAGE CARD — multi-select with qty ═══
+// ═══ CÁMARAS — configuración dinámica desde window.CAM_CONFIG (JSON via PHP) ═══
+// Fallback si window.CAM_CONFIG no está disponible (acceso directo sin PHP)
+const CAM_FALLBACK = {
+  wifi4k:  { nombre:'Reolink WiFi 4K',     imagen:'https://domoticahogarmadrid.com/wp-content/uploads/2026/02/camara_opcion_4.jpg', precio:220, zonas:['exterior','interior'], recomendada:false },
+  poe4k:   { nombre:'Reolink PoE 4K UHD',  imagen:'https://domoticahogarmadrid.com/wp-content/uploads/2026/02/camara_opcion_1.jpg', precio:250, zonas:['exterior'],            recomendada:true  },
+  duo3:    { nombre:'Reolink Duo 3 PoE',   imagen:'https://domoticahogarmadrid.com/wp-content/uploads/2026/02/camara_opcion_2.jpg', precio:340, zonas:['exterior'],            recomendada:true  },
+  dome5mp: { nombre:'Reolink 5MP Nocturno',imagen:'https://domoticahogarmadrid.com/wp-content/uploads/2026/02/camara_opcion_3.jpg', precio:200, zonas:['exterior','interior'], recomendada:false },
+  colorx:  { nombre:'Reolink CX810 ColorX',imagen:'https://domoticahogarmadrid.com/wp-content/uploads/2026/04/Reolink-5MP-PTZ-Camara-Vigilancia-WiFi-interior.jpg', precio:390, zonas:['interior'], recomendada:true },
+  nvr:     { nombre:'Grabador NVR', precio:180 }
+};
+const CAM_CONFIG_RAW = (function(){
+  const raw = window.CAM_CONFIG && Object.keys(window.CAM_CONFIG).filter(k=>k!=='_descripcion').length>0
+              ? window.CAM_CONFIG : CAM_FALLBACK;
+  const out = {};
+  Object.keys(raw).forEach(k=>{ if(k!=='_descripcion') out[k]=raw[k]; });
+  return out;
+})();
+// Excluir 'nvr' del grid (es grabador, no cámara de zona)
+const CAM_IDS = Object.keys(CAM_CONFIG_RAW).filter(id=>id!=='nvr');
+// Precios de cámara: de CAM_CONFIG si tiene precio, si no del P plano
+const CAM_PRICES = {};
+CAM_IDS.forEach(id=>{
+  const cfg=CAM_CONFIG_RAW[id]||{};
+  CAM_PRICES[id]=cfg.precio||(P['cam_'+id])||0;
+});
+// Estado de selección
+const CAM_STATE = {};
+CAM_IDS.forEach(id=>{ CAM_STATE[id]={sel:false,qty:0}; });
+// Zonas por cámara
+const CAM_ZONES = {};
+CAM_IDS.forEach(id=>{
+  const cfg=CAM_CONFIG_RAW[id]||{};
+  CAM_ZONES[id]=cfg.zonas||['exterior'];
+});
+
+function selCamCard(id){
+  const c=CAM_STATE[id];
+  c.sel=!c.sel;
+  if(c.sel&&c.qty===0) c.qty=1;
+  if(!c.sel) c.qty=0;
+  document.getElementById('camcard-'+id)?.classList.toggle('sel',c.sel);
+  document.getElementById('camqty-'+id).textContent=c.qty;
+  document.getElementById('cam-no').classList.remove('sel');
+  document.getElementById('cam-nls').classList.remove('sel');
+  S.no_cam=false; S.nls_cam=false;
+  document.getElementById('cam-detalle').style.display=shouldShowCamDetalle()?'block':'none';
+  updateLive();
+}
+function camQty(id,d,e){
+  e&&e.stopPropagation();
+  const c=CAM_STATE[id];
+  c.qty=Math.max(0,c.qty+d);
+  c.sel=c.qty>0;
+  document.getElementById('camcard-'+id)?.classList.toggle('sel',c.sel);
+  document.getElementById('camqty-'+id).textContent=c.qty;
+  document.getElementById('cam-no').classList.remove('sel');
+  document.getElementById('cam-nls').classList.remove('sel');
+  S.no_cam=false; S.nls_cam=false;
+  document.getElementById('cam-detalle').style.display=shouldShowCamDetalle()?'block':'none';
+  updateLive();
+}
+function hasCams(){ return Object.values(CAM_STATE).some(c=>c.sel); }
+// Mostrar cam-detalle mientras haya zonas marcadas, aunque qty=0
+function shouldShowCamDetalle(){ return S.cam_zonas.length>0; }
+
+// ═══ AUTO-SELECT CENTRAL ═══
+function autoSelCentral(){
+  S.sistema=S.sistema.filter(x=>x.id!=='cloud_plat');
+  if(!S.sistema.find(x=>x.id==='central')) S.sistema.push({id:'central',price:P.central||640});
+  clearTimeout(_lt); _doLive();
+}
+function setCloudPlat(){
+  const price=P.cloud_plat||120;
+  S.sistema=S.sistema.filter(x=>x.id!=='central');
+  if(!S.sistema.find(x=>x.id==='cloud_plat')) S.sistema.push({id:'cloud_plat',price});
+  clearTimeout(_lt); _doLive();
+}
+function clearSistema(){
+  S.sistema=S.sistema.filter(x=>x.id!=='central'&&x.id!=='cloud_plat');
+  ['sis-auto','sis-wall'].forEach(id=>{
+    chk[id]=false;
+    document.getElementById(id)?.classList.remove('sel');
+  });
+  clearTimeout(_lt); _doLive();
+}
+
+// ═══ EMAIL VALIDATION ═══
+function validateEmail(input){
+  const re=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const ok=re.test(input.value.trim());
+  input.classList.toggle('err',!ok&&input.value.length>0);
+  const err=document.getElementById('err_email');
+  if(err&&input.value.length>0) err.style.display=ok?'none':'block';
+}
+
+// ═══ SISTEMA ═══
+function togSistema(id,val,price){
+  chk[id]=!chk[id];
+  document.getElementById(id)?.classList.toggle('sel',!!chk[id]);
+  if(chk[id]){if(!S.sistema.find(x=>x.id===val)) S.sistema.push({id:val,price});}
+  else S.sistema=S.sistema.filter(x=>x.id!==val);
+  updateLive();
+}
+function togSistemaNls(){
+  // kept for compatibility — no longer used
+}
+
+// ═══ ACCESOS ═══
+function togAcceso(id,val){
+  chk[id]=!chk[id];
+  document.getElementById(id)?.classList.toggle('sel',!!chk[id]);
+  if(chk[id]){if(!S.accesos.includes(val)) S.accesos.push(val);}
+  else S.accesos=S.accesos.filter(a=>a!==val);
+  document.getElementById('acc-no')?.classList.remove('sel');
+  const hasGaraje=S.accesos.includes('garaje');
+  const hasPuerta=S.accesos.includes('puerta_principal');
+  const hasVideo =S.accesos.includes('videoportero');
+  document.getElementById('acc-garaje-det').style.display=hasGaraje?'block':'none';
+  document.getElementById('acc-cerradura-det').style.display=hasPuerta?'block':'none';
+  document.getElementById('acc-video-det').style.display=hasVideo?'block':'none';
+  updateLive();
+}
+function selNoAccesos(){
+  S.accesos=[];
+  ['acc-garaje','acc-puerta','acc-video'].forEach(id=>{
+    chk[id]=false; document.getElementById(id)?.classList.remove('sel');
+  });
+  document.getElementById('acc-no').classList.add('sel');
+  document.getElementById('acc-nls').classList.remove('sel');
+  ['acc-garaje-det','acc-cerradura-det','acc-video-det'].forEach(id=>show(id,false));
+  updateLive();
+}
+function selNlsAccesos(){
+  document.getElementById('acc-nls').classList.add('sel');
+  document.getElementById('acc-no').classList.remove('sel');
+  nls();
+}
+
+// ═══ CÁMARAS ═══
+// Construye el grid de cámaras dinámicamente desde CAM_CONFIG (JSON)
+function buildCamGrid(){
+  const grid=document.getElementById('cam-grid-dynamic');
+  if(!grid) return;
+  if(grid.children.length>0) return; // ya construido
+  if(CAM_IDS.length===0){ console.warn('CAM_IDS vacío — window.CAM_CONFIG no disponible'); return; }
+  CAM_IDS.forEach(id=>{
+    const cfg=CAM_CONFIG_RAW[id]||{};
+    const nombre=cfg.nombre||id;
+    const imagen=cfg.imagen||'';
+    const precio=CAM_PRICES[id]||0;
+    const recomendada=cfg.recomendada||false;
+    const wrap=document.createElement('div');
+    wrap.id='camwrap-'+id;
+    wrap.style.display='none'; // hidden until filterCamsByZone shows them
+    wrap.innerHTML=
+      '<div class="cam-card" id="camcard-'+id+'" onclick="selCamCard(\''+id+'\')">'+
+        '<div class="cam-img" id="camimg-'+id+'" style="background-image:url(\''+imagen+'\')">'+
+          '<div class="cam-check-dot" id="cc-'+id+'"></div>'+
+          (recomendada?'<div class="cam-badge-img">⭐ Recomendada</div>':'')+
+        '</div>'+
+        '<div class="cam-body">'+
+          '<div class="cam-name">'+nombre+'</div>'+
+          '<div class="cam-price"><span id="lbl-cam-'+id+'">'+fmt(precio)+'</span> <span>/ ud.</span></div>'+
+          '<div class="cam-qty-row" onclick="event.stopPropagation()">'+
+            '<button class="cam-q-btn" onclick="camQty(\''+id+'\',-1,event)">−</button>'+
+            '<span class="cam-q-val" id="camqty-'+id+'">0</span>'+
+            '<button class="cam-q-btn" onclick="camQty(\''+id+'\',1,event)">+</button>'+
+          '</div>'+
+        '</div>'+
+      '</div>';
+    grid.appendChild(wrap);
+  });
+}
+
+// Mostrar/ocultar cámaras según zonas — NO toca cantidades (eso lo hace togCam)
+function filterCamsByZone(){
+  if(!document.getElementById('cam-grid-dynamic')?.children?.length) buildCamGrid();
+  const zonas=S.cam_zonas;
+  const hasExt=zonas.includes('exterior');
+  const hasInt=zonas.includes('interior');
+  Object.keys(CAM_ZONES).forEach(id=>{
+    const zones=CAM_ZONES[id];
+    const visible=(hasExt&&zones.includes('exterior'))||(hasInt&&zones.includes('interior'));
+    const wrap=document.getElementById('camwrap-'+id);
+    if(wrap) wrap.style.display=visible?'contents':'none';
+  });
+  updateLive();
+}
+
+function togCam(id,val){
+  const wasSelected=chk[id];
+  chk[id]=!chk[id];
+  document.getElementById(id).classList.toggle('sel',!!chk[id]);
+  if(chk[id]){
+    // AÑADIR zona — no tocar cantidades existentes
+    if(!S.cam_zonas.includes(val)) S.cam_zonas.push(val);
+  } else {
+    // QUITAR zona — resetear solo cámaras que dejan de ser válidas
+    S.cam_zonas=S.cam_zonas.filter(z=>z!==val);
+    Object.keys(CAM_STATE).forEach(cid=>{
+      const zones=CAM_ZONES[cid]||[];
+      // ¿Sigue siendo válida con las zonas que quedan?
+      const stillValid=S.cam_zonas.some(z=>zones.includes(z));
+      if(!stillValid){
+        CAM_STATE[cid].sel=false;
+        CAM_STATE[cid].qty=0;
+        document.getElementById('camcard-'+cid)?.classList.remove('sel');
+        const qel=document.getElementById('camqty-'+cid);
+        if(qel) qel.textContent='0';
+      }
+    });
+  }
+  document.getElementById('cam-no').classList.remove('sel');
+  document.getElementById('cam-nls').classList.remove('sel');
+  S.no_cam=false; S.nls_cam=false;
+  const hasZones=S.cam_zonas.length>0;
+  document.getElementById('cam-detalle').style.display=hasZones?'block':'none';
+  filterCamsByZone();
+  updateLive(); // garantizar recálculo
+}
+function selNoCam(){
+  S.cam_zonas=[]; S.no_cam=true; S.nls_cam=false;
+  ['cam-exterior','cam-interior'].forEach(id=>{chk[id]=false;document.getElementById(id)?.classList.remove('sel');});
+  Object.keys(CAM_STATE).forEach(id=>{CAM_STATE[id].sel=false;CAM_STATE[id].qty=0;document.getElementById('camcard-'+id)?.classList.remove('sel');document.getElementById('camqty-'+id).textContent='0';});
+  document.getElementById('cam-no').classList.add('sel');
+  document.getElementById('cam-nls').classList.remove('sel');
+  document.getElementById('cam-detalle').style.display='none';
+  updateLive();
+}
+function selNlsCam(){
+  const wasAlready=S.nls_cam;
+  S.nls_cam=true; S.no_cam=false; S.cam_zonas=[];
+  // Desmarcar zonas
+  ['cam-exterior','cam-interior'].forEach(id=>{
+    chk[id]=false; document.getElementById(id)?.classList.remove('sel');
+  });
+  // Resetear cámaras seleccionadas
+  Object.keys(CAM_STATE).forEach(id=>{
+    CAM_STATE[id].sel=false; CAM_STATE[id].qty=0;
+    document.getElementById('camcard-'+id)?.classList.remove('sel');
+    const qel=document.getElementById('camqty-'+id); if(qel) qel.textContent='0';
+  });
+  document.getElementById('cam-nls').classList.add('sel');
+  document.getElementById('cam-no').classList.remove('sel');
+  document.getElementById('cam-detalle').style.display='none';
+  // Solo incrementar NLS la primera vez
+  if(!wasAlready) nls();
+  else updateLive();
+}
+
+// ═══ ILUM EXT ═══
+function togIlumExt(id,val){ /* no-op: replaced by counter */ }
+function selNoIlumExt(){ S.ilum_ext_num=0; const el=document.getElementById("ilum_ext_num-val"); if(el) el.textContent=0; updateLive(); }
+
+// ═══ SENSORES ═══
+// ═══ SENSORES ═══
+const SENSOR_PRICE_KEYS={
+  'sen-presencia': 'sensor_presencia',
+  'sen-movimiento':'sensor_movimiento',
+  'sen-humo':      'sensor_humo',
+  'sen-inundacion':'sensor_inundacion',
+  'sen-apertura':  'sensor_apertura',
+  'sen-sirena':    'sirena'
+};
+const SENSOR_DEFAULTS={
+  'sen-presencia':89,'sen-movimiento':65,'sen-humo':79,
+  'sen-inundacion':59,'sen-apertura':49,'sen-sirena':89
+};
+function getSensorPrice(id){
+  const key=SENSOR_PRICE_KEYS[id];
+  return key?(P[key]||SENSOR_DEFAULTS[id]||89):89;
+}
+function togSensor(id){
+  const price=getSensorPrice(id);
+  if(S.sensores[id]){delete S.sensores[id]; document.getElementById(id)?.classList.remove('sel');}
+  else{S.sensores[id]={qty:1,price}; document.getElementById(id)?.classList.add('sel');}
+  document.getElementById('sen-no')?.classList.remove('sel');
+  document.getElementById('sen-nls')?.classList.remove('sel');
+  S.no_sensores=false; updateMascotasUI(); updateLive();
+}
+// La pregunta de mascotas solo importa si hay sensores de movimiento o presencia
+function updateMascotasUI(){
+  show('mascotas-card',!!(S.sensores['sen-movimiento']||S.sensores['sen-presencia']));
+}
+function senCtr(id,_unused,d){
+  const price=getSensorPrice(id);
+  if(!S.sensores[id]) S.sensores[id]={qty:1,price};
+  S.sensores[id].price=price; // always use current P price
+  S.sensores[id].qty=Math.max(1,S.sensores[id].qty+d);
+  const valEl=document.getElementById(id+'-val');
+  const subEl=document.getElementById(id+'-sub');
+  if(valEl) valEl.textContent=S.sensores[id].qty;
+  if(subEl) subEl.textContent=fmt(S.sensores[id].qty*price);
+  updateLive();
+}
+function selNoSensores(){
+  S.sensores={}; S.no_sensores=true;
+  document.querySelectorAll('.sensor-block').forEach(b=>b.classList.remove('sel'));
+  document.getElementById('sen-no').classList.add('sel');
+  document.getElementById('sen-nls').classList.remove('sel');
+  updateMascotasUI(); updateLive();
+}
+function selNlsSensores(){
+  document.getElementById('sen-nls').classList.add('sel');
+  document.getElementById('sen-no').classList.remove('sel');
+  nls();
+}
+
+// ═══ COUNTER ═══
+function ctr(k,d){
+  S[k]=Math.max(0,(S[k]||0)+d);
+  const el=document.getElementById(k+'-val');
+  if(el) el.textContent=S[k];
+  // Update garaje price label
+  if(k==='garaje_num_cnt'){
+    const n=S[k];
+    const price=220+(Math.max(0,n-1)*160);
+    const lbl=document.getElementById('garaje-precio-label');
+    if(lbl) lbl.textContent=fmt(price);
+  }
+  updateLive();
+}
+
+// ═══ PERSIANAS, ESTORES Y TOLDOS ═══
+// Arriba el cliente marca qué tiene; solo se abren las tarjetas de lo marcado
+function togPersTipo(k){
+  if(S.pers_tipos.includes(k)) S.pers_tipos=S.pers_tipos.filter(x=>x!==k);
+  else S.pers_tipos.push(k);
+  if(k==='toldos') S.tiene_toldos=S.pers_tipos.includes('toldos')?'integrar':null;
+  clearErr('err_pers_tipos');
+  updatePersianasUI(); updateLive();
+}
+function updatePersianasUI(){
+  const local=S.tipo==='local'; // en un local no se ofrecen toldos
+  if(local){ S.pers_tipos=S.pers_tipos.filter(x=>x!=='toldos'); S.tiene_toldos=null; }
+  vis('pt-toldos',!local);
+  document.getElementById('pers-tipos')?.classList.toggle('tiles3',!local);
+  ['persianas','estores','toldos'].forEach(k=>{
+    document.getElementById('pt-'+k)?.classList.toggle('sel',S.pers_tipos.includes(k));
+    show(k+'-card',S.pers_tipos.includes(k));
+  });
+}
+function togPersOpcion(k){
+  const key=k==='motor'?'tiene_pers_motor':'tiene_pers_manuales';
+  S[key]=S[key]==='si'?null:'si';
+  document.getElementById('pm-'+k)?.classList.toggle('sel',S[key]==='si');
+  show(k==='motor'?'pers-motor-wrap':'pers-manual-wrap',S[key]==='si');
+  document.getElementById('pm-nls')?.classList.remove('sel');
+  updateLive();
+}
+function selPersNls(){
+  const ya=document.getElementById('pm-nls')?.classList.contains('sel');
+  S.tiene_pers_motor='nls'; S.tiene_pers_manuales='nls';
+  ['pm-motor','pm-manual'].forEach(id=>document.getElementById(id)?.classList.remove('sel'));
+  show('pers-motor-wrap',false); show('pers-manual-wrap',false);
+  document.getElementById('pm-nls')?.classList.add('sel');
+  if(!ya) nls(); else updateLive();
+}
+
+// ═══ CLIMATIZACIÓN ═══
+// Calefacción y aire acondicionado son independientes (una casa puede tener ambos)
+function tieneCalef(s){ return !!s.calefaccion&&s.calefaccion!=='no'&&s.calefaccion!=='nls'; }
+function tieneAire(s){ return s.aire==='splits'||s.aire==='conductos'; }
+// Precio por split/zona de aire: clave "aire_control" del config si existe; si no, el del termostato
+function precioAire(){ return P.aire_control||P.termostato||99; }
+function setAireLabel(){
+  const el=document.getElementById('aire-num-label');
+  if(el) el.textContent=S.aire==='conductos'?'Nº de zonas / termostatos de conductos':'Nº de splits';
+}
+
+// ═══ ESTADO EFECTIVO ═══
+// Copia de S sin las secciones que el cliente no ha marcado en "¿Qué quieres automatizar?".
+// Así, si rellena algo y luego lo desmarca, no se suma al precio ni se envía.
+function effS(){
+  const E=Object.assign({},S);
+  E.sensores=Object.assign({},S.sensores);
+  E.accesos=S.accesos.slice();
+  if(!wants('persianas')){E.tiene_pers_motor=null;E.tiene_pers_manuales=null;E.tipo_instalacion=null;E.tiene_estores=null;E.tiene_toldos=null;E.sensor_viento=null;}
+  if(!S.pers_tipos.includes('persianas')){E.tiene_pers_motor=null;E.tiene_pers_manuales=null;E.tipo_instalacion=null;}
+  if(!S.pers_tipos.includes('estores')){E.tiene_estores=null;}
+  if(!S.pers_tipos.includes('toldos')||S.tipo==='local'){E.tiene_toldos=null;E.sensor_viento=null;}
+  if(!wants('clima')){E.calefaccion=null;E.aire=null;}
+  if(!wants('iluminacion')){E.interruptores=0;E.ilum_ext_num=0;}
+  if(!wants('jardin')){E.riego=null;E.sensor_lluvia=null;E.enchufes_yn=null;}
+  if(!wants('camaras')){E.no_cam=true;E.nls_cam=false;E.cam_zonas=[];}
+  if(!wants('sensores')){E.sensores={};}
+  if(!E.sensores['sen-movimiento']&&!E.sensores['sen-presencia']) E.mascotas=null;
+  if(!wants('piscina')){E.piscina_control=null;}
+  if(!wants('accesos')){E.accesos=[];E.vp_tipo=null;E.comunidad=null;}
+  if(S.tipo==='piso') E.accesos=E.accesos.filter(a=>a!=='garaje');
+  return E;
+}
+
+// ═══ PRICING ═══
+let _lt=null;
+function updateLive(){clearTimeout(_lt);_lt=setTimeout(_doLive,0);}
+function calcBase(){
+  const S=effS(); // solo lo que el cliente ha marcado
+  let t=0;
+  // Sistema / plataforma
+  S.sistema.forEach(s=>{
+    t+=s.price;
+    if(s.id==='central') t+=(P.zigbee||170);
+  });
+  // WiFi
+  if(S.wifi_cobertura==='mejora_int')  t+=(P.wifi_int||250)*S.plantas;
+  if(S.wifi_cobertura==='mejora_ext')  t+=(P.wifi_ext||200);
+  if(S.wifi_cobertura==='mejora_todo') t+=(P.wifi_int||250)*S.plantas+(P.wifi_ext||200);
+  // Persianas — solo si el toggle está marcado como 'si'
+  if(S.tiene_pers_motor==='si')    t+=S.pers_motor*(P.persiana_motor||135);
+  if(S.tiene_pers_manuales==='si'){
+    t+=S.pers_manuales*(P.persiana_nueva||220);
+    if(S.tipo_instalacion==='roza') t+=S.pers_manuales*(P.suplemento_roza||90);
+  }
+  // Estores
+  if(S.tiene_estores==='manuales')    t+=S.estores_num*(P.estor_manual||180);
+  if(S.tiene_estores==='motorizados') t+=S.estores_num*(P.estor||131);
+  // Toldos
+  if(S.tiene_toldos==='integrar'){
+    t+=S.toldos_num*(P.toldo||180);
+    if(S.sensor_viento==='si') t+=S.toldos_num*(P.sensor_viento||70);
+  }
+  // Clima
+  if(tieneCalef(S)) t+=S.termostatos*(P.termostato||99);
+  if(tieneAire(S))  t+=S.aire_num*precioAire();
+  // Iluminación
+  if(S.interruptores>0) t+=S.interruptores*(P.interruptor||125);
+  if(S.ilum_ext_num>0)  t+=S.ilum_ext_num*(P.ilum_ext_zona||125);
+  // Cámaras
+  if(!S.no_cam){
+    let hasCamUnits=false;
+    Object.entries(CAM_STATE).forEach(([id,c])=>{
+      if(c.sel&&c.qty>0){
+        t+=c.qty*(CAM_PRICES[id]||0);
+        hasCamUnits=true;
+      }
+    });
+    // NVR solo si hay al menos una cámara
+    if(hasCamUnits&&S.cam_grabacion==='nvr'){
+      const nvrPrice=CAM_CONFIG_RAW['nvr']?.precio||P.cam_nvr||0;
+      t+=nvrPrice;
+    }
+  }
+  // Sensores
+  Object.values(S.sensores).forEach(s=>t+=s.qty*s.price);
+  // Piscina
+  const pm={
+    depuradora:(P.piscina_depuradora||175),
+    iluminacion:(P.piscina_iluminacion||130),
+    completo:(P.piscina_completo||290)
+  };
+  if(S.piscina_control&&pm[S.piscina_control]) t+=pm[S.piscina_control];
+  // Accesos
+  if(S.accesos.includes('garaje')){
+    const n=S.garaje_num_cnt||1;
+    t+=(P.garaje_1||220)+(Math.max(0,n-1)*(P.garaje_adicional||160));
+  }
+  if(S.accesos.includes('puerta_principal')) t+=(P.cerradura||380);
+  if(S.accesos.includes('videoportero')&&S.vp_tipo){
+    t+=({basico:(P.vp_basico||350),poe4k:(P.vp_poe4k||550),pantalla:(P.vp_pantalla||750)}[S.vp_tipo]||(P.vp_poe4k||550));
+  }
+  // Riego
+  if(S.riego==='integrar'){
+    t+=S.riego_zonas_num*(P.riego_zona||190);
+    if(S.sensor_lluvia==='si') t+=(P.sensor_lluvia||80);
+  }
+  // Enchufes — solo si se ha marcado 'si'
+  if(S.enchufes_yn==='si'&&S.enchufes_num>0) t+=S.enchufes_num*(P.enchufe_ext||175);
+  return t;
+}
+function calcRange(){
+  const base=calcBase();
+  const uf=Math.min(S.nls_count,10)*0.04+0.1;
+  return {min:Math.round(base),max:Math.round(base*(1+uf))};
+}
+var _liveShown=false;
+function _doLive(){
+  const r=calcRange();
+  // Estimación en vivo en la cabecera (siempre visible, no tapa los botones)
+  const hdr=document.getElementById('hdrAmt');
+  if(r.min>0 && cur>=1){
+    _liveShown=true;
+    if(hdr) hdr.style.display='block';
+    const v=document.getElementById('hdrAmtVal'); if(v) v.textContent=fmt(r.min);
+  } else if(!_liveShown){
+    if(hdr) hdr.style.display='none';
+  }
+}
+
+// ═══ RESUMEN ═══
+function buildResumen(){
+  const S=effS(); // solo lo que el cliente ha marcado
+  const r=calcRange();
+  const sections=[];
+  const push=(icon,title,rows)=>{if(rows.length) sections.push({icon,title,rows});};
+
+  // Vivienda
+  const vr=[];
+  const tipos={piso:'Piso/Apartamento',chalet:'Chalet/Casa',local:'Local/Oficina',otro:'Otro'};
+  if(S.tipo) vr.push({t:'info',name:'Tipo',val:tipos[S.tipo]||S.tipo});
+  vr.push({t:'info',name:'Plantas',val:S.plantas});
+  if(S.metros) vr.push({t:'info',name:'Superficie',val:{70:'Hasta 70 m²',120:'70-120 m²',200:'120-200 m²',300:'+ 200 m²',nls:'No especificada'}[S.metros]});
+  if(S.zonas_ext.length) vr.push({t:'info',name:'Zonas exteriores',val:S.zonas_ext.join(', ')});
+  if(S.intereses.length) vr.push({t:'info',name:'Quiere automatizar',val:interesesTexto()});
+  push('🏡','Tu vivienda',vr);
+
+  // Sistema
+  const sr=[];
+  S.sistema.forEach(s=>{
+    const n={
+      central:'Sistema local inteligente ('+fmt(P.central||640)+')',
+      cloud_plat:'Integración plataforma cloud ('+fmt(P.cloud_plat||120)+')',
+      automatizaciones:'Pack automatizaciones básicas',
+      wallpanel:'Pantalla táctil de pared'
+    }[s.id];
+    sr.push({t:'price',name:n||s.id,detail:'',price:fmt(s.price)});
+    if(s.id==='central') sr.push({t:'price',name:'Coordinador Zigbee/Z-Wave/Matter Thread',detail:'1 ud.',price:fmt(P.zigbee||170)});
+  });
+  if(!sr.length) sr.push({t:'info',name:'Sistema',val:'No seleccionado'});
+  // Dispositivos existentes
+  const dispoEx=(document.getElementById('dispositivos_existentes')?.value||'').trim();
+  if(dispoEx) sr.push({t:'info',name:'Dispositivos actuales',val:dispoEx});
+  push('🧠','Sistema central',sr);
+
+  // Persianas — solo si el toggle padre está en 'si'
+  const pr=[];
+  if(S.tiene_pers_motor==='si'&&S.pers_motor>0) pr.push({t:'price',name:'Persianas con motor',detail:S.pers_motor+' ud. × '+fmt(P.persiana_motor||135),price:fmt(S.pers_motor*(P.persiana_motor||135))});
+  if(S.tiene_pers_manuales==='si'&&S.pers_manuales>0){
+    pr.push({t:'price',name:'Motorización nueva',detail:S.pers_manuales+' ud. × '+fmt(P.persiana_nueva||220),price:fmt(S.pers_manuales*(P.persiana_nueva||220))});
+    if(S.tipo_instalacion==='roza') pr.push({t:'price',name:'Suplemento Roza',detail:S.pers_manuales+' ud. × '+fmt(P.suplemento_roza||90),price:fmt(S.pers_manuales*(P.suplemento_roza||90))});
+  }
+  if(S.tiene_estores&&S.tiene_estores!=='no'&&S.tiene_estores!=='nls'){
+    const ep=S.tiene_estores==='manuales'?(P.estor_manual||180):(P.estor||131);
+    pr.push({t:'price',name:'Estores',detail:S.estores_num+' ud. × '+fmt(ep),price:fmt(S.estores_num*ep)});
+    const ec=(document.getElementById('estores_comentarios')?.value||document.getElementById('marca_estores')?.value||'').trim();
+    if(ec) pr.push({t:'info',name:'Marca / Fabricante',val:ec});
+  }
+  if(S.tiene_toldos==='integrar'){
+    pr.push({t:'price',name:'Toldos/Pérgolas',detail:S.toldos_num+' ud. × '+fmt(P.toldo||180),price:fmt(S.toldos_num*(P.toldo||180))});
+    const tc=(document.getElementById('toldos_comentarios')?.value||'').trim();
+    if(tc) pr.push({t:'info',name:'Marca / Fabricante',val:tc});
+  }
+  // Solo mostrar sección si hay algo seleccionado (no NLS ni no)
+  const prReal=pr.filter(r=>r.t==='price');
+  if(prReal.length) push('🪟','Persianas, estores y toldos',pr);
+
+  // Clima
+  const cr=[];
+  const calefN={suelo_calor:'suelo radiante (solo calor)',suelo_clima:'suelo radiante (frío/calor)',caldera:'caldera gas/gasóil'};
+  if(S.calefaccion==='nls') cr.push({t:'nls',name:'Calefacción — pendiente de asesoramiento'});
+  else if(tieneCalef(S)) cr.push({t:'price',name:'Termostatos inteligentes — '+calefN[S.calefaccion],detail:S.termostatos+' zona(s) × '+fmt(P.termostato||99),price:fmt(S.termostatos*(P.termostato||99))});
+  if(S.aire==='nls') cr.push({t:'nls',name:'Aire acondicionado — pendiente de asesoramiento'});
+  else if(tieneAire(S)) cr.push({t:'price',name:'Control aire acondicionado — '+(S.aire==='splits'?'splits':'conductos'),detail:S.aire_num+(S.aire==='splits'?' split(s)':' zona(s)')+' × '+fmt(precioAire()),price:fmt(S.aire_num*precioAire())});
+  if(S.interruptores>0){
+    cr.push({t:'price',name:'Interruptores inteligentes (interior)',detail:S.interruptores+' ud. × '+fmt(P.interruptor||125),price:fmt(S.interruptores*(P.interruptor||125))});
+    const ic=(document.getElementById('ilum_comentarios')?.value||'').trim();
+    if(ic) cr.push({t:'info',name:'Zonas ilum. interior',val:ic});
+  }
+  if(S.ilum_ext_num>0){
+    cr.push({t:'price',name:'Iluminación exterior',detail:S.ilum_ext_num+' zona(s) × '+fmt(P.ilum_ext_zona||125),price:fmt(S.ilum_ext_num*(P.ilum_ext_zona||125))});
+    const exc=(document.getElementById('ilum_ext_notas')?.value||'').trim();
+    if(exc) cr.push({t:'info',name:'Zonas ilum. exterior',val:exc});
+  }
+  if(cr.length) push('🌡️',wants('clima')&&wants('iluminacion')?'Clima e iluminación':wants('clima')?'Climatización':'Iluminación',cr);
+
+  // Jardín — solo mostrar si hay algo real seleccionado
+  const jr=[];
+  if(S.riego==='integrar') jr.push({t:'price',name:'Riego inteligente',detail:S.riego_zonas_num+' zona(s) × '+fmt(P.riego_zona||190),price:fmt(S.riego_zonas_num*(P.riego_zona||190))});
+  if(S.sensor_lluvia==='si') jr.push({t:'price',name:'Sensor lluvia/humedad',detail:'',price:fmt(P.sensor_lluvia||80)});
+  if(S.enchufes_yn==='si'&&S.enchufes_num>0) jr.push({t:'price',name:'Enchufes exteriores',detail:S.enchufes_num+' ud. × '+fmt(P.enchufe_ext||175),price:fmt(S.enchufes_num*(P.enchufe_ext||175))});
+  if(jr.length) push('🌳','Jardín y exterior',jr);
+
+  // Cámaras
+  const camr=[];
+  if(!S.no_cam){
+    // Mostrar zonas seleccionadas
+    if(S.cam_zonas.length>0){
+      const zMap={exterior:'Exterior',interior:'Interior'};
+      const zonas=S.cam_zonas.map(z=>zMap[z]||z).join(' + ');
+      camr.push({t:'info',name:'Ubicación',val:zonas});
+    }
+    // Cámaras con cantidad > 0
+    Object.entries(CAM_STATE).forEach(([id,c])=>{
+      if(c.sel&&c.qty>0){
+        const price=CAM_PRICES[id]||0;
+        const name=CAM_CONFIG_RAW[id]?.nombre||id;
+        camr.push({t:'price',name:name,detail:c.qty+' ud. × '+fmt(price),price:fmt(c.qty*price)});
+      }
+    });
+    // Mensaje si zonas seleccionadas pero 0 cámaras
+    const hasModels=Object.values(CAM_STATE).some(c=>c.sel&&c.qty>0);
+    if(S.cam_zonas.length>0&&!hasModels){
+      camr.push({t:'info',name:'Modelo',val:'Pendiente — un técnico te recomendará el modelo según tus necesidades'});
+    }
+    // Grabación solo si hay cámaras seleccionadas
+    if(hasModels&&S.cam_grabacion==='nvr'){
+      const nvrPrice=CAM_CONFIG_RAW['nvr']?.precio||P.cam_nvr||180;
+      camr.push({t:'price',name:'Grabador NVR',detail:'Grabación centralizada',price:fmt(nvrPrice)});
+    }
+  } else if(S.nls_cam) camr.push({t:'nls',name:'Cámaras — pendiente de asesoramiento'});
+  if(camr.length) push('📷','Cámaras de seguridad',camr);
+
+  // Sensores
+  const segr=[];
+  const sn={sen_presencia:'Sensor Presencia','sen-presencia':'Sensor Presencia','sen-movimiento':'Sensor Movimiento','sen-humo':'Detector Humo','sen-inundacion':'Detector Inundación','sen-apertura':'Sensor Apertura','sen-sirena':'Sirena Interior'};
+  Object.entries(S.sensores).forEach(([id,s])=>{
+    segr.push({t:'price',name:sn[id]||id,detail:s.qty+' ud. × '+fmt(s.price),price:fmt(s.qty*s.price)});
+  });
+  if(segr.length) push('🛡️','Sensores inteligentes',segr);
+
+  // Piscina
+  if(S.piscina_control&&S.piscina_control!=='no'&&S.piscina_control!=='nls'){
+    const pn={depuradora:'Control depuradora',iluminacion:'Control iluminación',completo:'Control completo'}[S.piscina_control];
+    const pp={depuradora:P.piscina_depuradora,iluminacion:P.piscina_iluminacion,completo:P.piscina_completo}[S.piscina_control];
+    push('🏊','Piscina',[{t:'price',name:pn,detail:'',price:fmt(pp)}]);
+  }
+
+  // Accesos
+  const acr=[];
+  if(S.accesos.includes('completo')) acr.push({t:'price',name:'Solución completa accesos',detail:'',price:fmt(P.acceso_completo)});
+  else {
+    if(S.accesos.includes('garaje')){
+      const n=S.garaje_num_cnt||1;
+      const gp=(P.garaje_1||220)+(Math.max(0,n-1)*(P.garaje_adicional||160));
+      acr.push({t:'price',name:'Control puerta de garaje',detail:n+' puerta(s)',price:fmt(gp)});
+    }
+    if(S.accesos.includes('puerta_principal')) acr.push({t:'price',name:'Cerradura inteligente',detail:'Sujeta a compatibilidad',price:fmt(P.cerradura)});
+    if(S.accesos.includes('videoportero')&&S.vp_tipo&&S.vp_tipo!=='nls'){
+      const vp={basico:P.vp_basico,poe4k:P.vp_poe4k,pantalla:P.vp_pantalla}[S.vp_tipo]||P.vp_poe4k;
+      const vn={basico:'EZVIZ WiFi Básico',poe4k:'EZVIZ HP7 Pro 4K',pantalla:'Hikvision PoE'}[S.vp_tipo];
+      acr.push({t:'price',name:vn||'Videoportero',detail:'',price:fmt(vp)});
+    }
+  }
+  if(acr.length) push('🚗','Accesos y videoportero',acr);
+
+  if(S.nls_count>0) push('❓','Pendiente de valorar',[{t:'nls',name:'Hay '+S.nls_count+' elemento(s) que indicaste como "no lo sé" y que nuestro equipo valorará contigo'}]);
+
+  // Comentarios — leer del campo del resumen (disponible en este paso)
+  const comentarios=(document.getElementById('res_comentarios')?.value||document.getElementById('ct_comentarios')?.value||'').trim();
+  if(comentarios) push('💬','Comentarios',[{t:'info',name:'',val:comentarios}]);
+
+  // Render
+  let html='<div class="sum-card">';
+  sections.forEach(sec=>{
+    html+='<div class="sum-sec-head">'+icono(sec.icon)+' '+sec.title+'</div>';
+    sec.rows.forEach(row=>{
+      if(row.t==='price'){
+        html+='<div class="sum-row"><div style="flex:1"><div class="sum-row-name">'+row.name+'</div><div class="sum-row-detail">'+row.detail+'</div></div><div class="sum-row-price">'+row.price+'</div></div>';
+      } else if(row.t==='info'){
+        html+='<div class="sum-row info-row"><div style="flex:1"><div class="sum-row-name">'+row.name+'</div></div><div class="sum-row-info">'+row.val+'</div></div>';
+      } else {
+        html+='<div class="sum-row nls-row"><div class="sum-row-name">⚠️ '+row.name+'</div></div>';
+      }
+    });
+  });
+  html+='</div>';
+  document.getElementById('resumen-content').innerHTML=html;
+
+  document.getElementById('prc-range').textContent=fmt(r.min)+' – '+fmt(r.max);
+  document.getElementById('sc-total').textContent=fmt(r.min)+' – '+fmt(r.max);
+
+  if(S.nls_count>0){
+    document.getElementById('ub-wrap').style.display='block';
+    const pct=Math.max(30,90-S.nls_count*6);
+    document.getElementById('ub-fill').style.width=pct+'%';
+    const label=pct>=84?'Alta precisión (respondiste casi todo)':
+                 pct>=66?'Precisión media — hay '+S.nls_count+' dato(s) pendientes':
+                         'Estimación orientativa — muchos datos por confirmar';
+    document.getElementById('ub-label').textContent=label;
+  } else {
+    document.getElementById('ub-wrap').style.display='none';
+  }
+}
+
+function interesesTexto(){
+  const n={iluminacion:'Iluminación',persianas:'Persianas',clima:'Climatización',camaras:'Cámaras',
+    sensores:'Sensores',accesos:'Accesos',jardin:'Jardín',piscina:'Piscina'};
+  return S.intereses.filter(wants).map(k=>n[k]||k).join(', ');
+}
+
+// ═══ SEND ═══
+function sendBudget(){
+  const S=effS(); // solo lo que el cliente ha marcado
+  const btn=document.getElementById('btn-send'),fb=document.getElementById('send-feedback');
+  const nombre=document.getElementById('ct_nombre').value.trim();
+  const email=document.getElementById('ct_email').value.trim();
+  const telefono=document.getElementById('ct_telefono').value.trim();
+  const localidad=document.getElementById('ct_localidad').value.trim();
+  const comentarios=(document.getElementById('res_comentarios')?.value||document.getElementById('ct_comentarios')?.value||'').trim();
+
+  const emailRe=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  let ok=true;
+  if(!nombre){showErr('err_nombre');document.getElementById('ct_nombre').classList.add('err');ok=false;}
+  if(!emailRe.test(email)){showErr('err_email');document.getElementById('ct_email').classList.add('err');ok=false;}
+  if(!telefono){showErr('err_telefono');document.getElementById('ct_telefono').classList.add('err');ok=false;}
+  if(!localidad){showErr('err_localidad');document.getElementById('ct_localidad').classList.add('err');ok=false;}
+  if(!ok){setTimeout(()=>{const e=document.querySelector('.f-err.show,.f-input.err');e&&e.scrollIntoView({behavior:'smooth',block:'center'});},50);return;}
+
+  const r=calcRange();
+  const total=fmt(r.min)+' – '+fmt(r.max);
+  const resumen=buildResumenTexto(r);
+  const camState=Object.entries(CAM_STATE).filter(([,c])=>!S.no_cam&&c.sel&&c.qty>0).map(([id,c])=>({modelo:id,qty:c.qty,precio:CAM_PRICES[id]}));
+  const payload={
+    contacto:{
+      nombre, email, telefono, localidad,
+      timing:S.timing,
+      comentarios:comentarios,
+      utm:S.utm
+    },
+    vivienda:{
+      tipo:S.tipo, plantas:S.plantas,
+      metros:S.metros, metros_ext:S.metros_ext,
+      terraza_piso:S.terraza_piso
+    },
+    intereses:S.intereses.filter(wants),
+    plataforma:S.plataforma,
+    wifi_cobertura:S.wifi_cobertura,
+    sistema:S.sistema,
+    dispositivos_existentes:(document.getElementById('dispositivos_existentes')?.value||'').trim(),
+    persianas:{
+      tipos:S.pers_tipos,
+      tiene_motor:S.tiene_pers_motor, motor:(S.tiene_pers_motor==='si'?S.pers_motor:0),
+      tiene_manuales:S.tiene_pers_manuales, manuales:(S.tiene_pers_manuales==='si'?S.pers_manuales:0),
+      instalacion:(S.tiene_pers_manuales==='si'?S.tipo_instalacion:null),
+      estores:{tipo:S.tiene_estores, num:S.estores_num, comentarios:(document.getElementById('marca_estores')?.value||'').trim()},
+      toldos:{tipo:S.tiene_toldos, num:S.toldos_num, sensor_viento:S.sensor_viento, comentarios:(document.getElementById('toldos_comentarios')?.value||'').trim()}
+    },
+    clima:{
+      calefaccion:S.calefaccion, termostatos:(tieneCalef(S)?S.termostatos:0),
+      aire:S.aire, aire_num:(tieneAire(S)?S.aire_num:0),
+      ilum_interior_num:S.interruptores,
+      ilum_interior_comentarios:(document.getElementById('ilum_comentarios')?.value||'').trim(),
+      ilum_ext_num:S.ilum_ext_num,
+      ilum_ext_comentarios:(document.getElementById('ilum_ext_notas')?.value||'').trim()
+    },
+    jardin:{
+      riego:S.riego, riego_zonas_num:S.riego_zonas_num,
+      sensor_lluvia:S.sensor_lluvia,
+      enchufes_yn:S.enchufes_yn,
+      enchufes_num:(S.enchufes_yn==='si'?S.enchufes_num:0)
+    },
+    camaras:{
+      zonas:S.cam_zonas,
+      modelos:camState,
+      grabacion:camState.length>0 ? S.cam_grabacion : null,
+      no_camaras:S.no_cam
+    },
+    sensores:S.sensores,
+    sensores_comentarios:(document.getElementById('sensores_comentarios')?.value||'').trim(),
+    mascotas:S.mascotas,
+    piscina:{control:S.piscina_control},
+    accesos:{
+      tipos:S.accesos,
+      garaje_num_cnt:S.garaje_num_cnt,
+      videoportero:S.vp_tipo,
+      comunidad:S.comunidad
+    },
+    estimacion:{min:r.min, max:r.max, nls_count:S.nls_count},
+    _meta:{fecha:new Date().toLocaleString('es-ES'), utm:S.utm, version:'v2'}
+  };
+
+  const tsToken=(window.turnstile&&window.turnstile.getResponse())||'';
+  if(!tsToken){
+    fb.style.cssText='display:block;background:#fff7ed;color:#9a3412;border:1px solid #fdba74;border-radius:14px;padding:16px;text-align:center;font-size:14px;font-weight:600;margin-top:16px';
+    fb.innerHTML='Espera un momento a que se complete la verificación de seguridad y vuelve a pulsar el botón.';
+    return;
+  }
+  btn.disabled=true; btn.textContent='⏳ Enviando…'; fb.style.display='none';
+
+  const fd=new FormData();
+  fd.append('action','domotica_send_budget');
+  fd.append('nonce',window.domoticaNonce||'');
+  fd.append('nombre',nombre); fd.append('email',email);
+  fd.append('telefono',telefono); fd.append('localidad',localidad);
+  fd.append('origen',S.utm||'');
+  fd.append('comentarios',comentarios);
+  fd.append('total',total); fd.append('resumen',resumen);
+  fd.append('payload_json',btoa(unescape(encodeURIComponent(JSON.stringify(payload)))));
+  fd.append('cf-turnstile-response',tsToken);
+
+  fetch(window.domoticaAjaxUrl||'/wp-admin/admin-ajax.php',{method:'POST',body:fd})
+    .then(r=>r.json()).then(data=>{
+      if(!data||data.success!==true) throw new Error((data&&data.error)||'Error');
+      btn.disabled=false;
+      document.getElementById('sec-contacto').classList.remove('active');
+      // Aplicar textos personalizados desde JSON si existen
+      const T=window.TEXTOS||{};
+      if(T.confirmacion_titulo) document.getElementById('success-title').textContent=T.confirmacion_titulo;
+      if(T.confirmacion_cuerpo) document.getElementById('success-body').innerHTML=T.confirmacion_cuerpo;
+      document.getElementById('success-screen').classList.add('show');
+      document.querySelector('.progress-bar').style.display='none';
+      document.getElementById('sc-nombre').textContent=nombre;
+      document.getElementById('sc-telefono').textContent=telefono;
+      document.getElementById('sc-email').textContent=email;
+      document.getElementById('sc-localidad').textContent=localidad;
+      document.getElementById('sc-total').textContent=total;
+      const waNum=window.WA_NUMBER||'34649611494';
+      document.getElementById('sc-whatsapp').href='https://wa.me/'+waNum+'?text='+encodeURIComponent('Hola, acabo de solicitar una estimación de domótica.\nNombre: '+nombre+'\nEstimación: '+total);
+      window.scrollTo({top:0,behavior:'smooth'});
+    }).catch(()=>{
+      window.turnstile&&window.turnstile.reset();
+      btn.disabled=false; btn.textContent='Solicitar propuesta personalizada';
+      fb.style.cssText='display:block;background:#fef2f2;color:#b91c1c;border:1px solid #ef4444;border-radius:14px;padding:16px;text-align:center;font-size:14px;font-weight:600;margin-top:16px';
+      fb.innerHTML='⚠️ Error al enviar. Escríbenos directamente por WhatsApp.';
+    });
+}
+function buildResumenTexto(r){
+  const S=effS(); // solo lo que el cliente ha marcado
+  const camLines=Object.entries(CAM_STATE).filter(([,c])=>!S.no_cam&&c.sel&&c.qty>0).map(([id,c])=>id+'×'+c.qty);
+  const l=['=== ESTIMACIÓN DOMÓTICA ===','Rango: '+fmt(r.min)+' – '+fmt(r.max),'',
+    'Intereses: '+interesesTexto(),'Tipo: '+S.tipo,'Plantas: '+S.plantas,'Metros: '+S.metros,'Zonas ext: '+S.zonas_ext.join(','),
+    'Plataforma: '+S.plataforma,'Sistema: '+S.sistema.map(x=>x.id).join(','),
+    'Persianas motor: '+(S.tiene_pers_motor==='si'?S.pers_motor:'—'),'Persianas manual: '+(S.tiene_pers_manuales==='si'?S.pers_manuales:'—'),'Instalación: '+(S.tiene_pers_manuales==='si'?S.tipo_instalacion:'—'),
+    'Calefacción: '+S.calefaccion+(tieneCalef(S)?' – '+S.termostatos+' zonas':''),'Aire: '+S.aire+(tieneAire(S)?' – '+S.aire_num+' ud.':''),'Iluminación: '+S.interruptores+' interior, '+S.ilum_ext_num+' zonas ext.',
+    'Cámaras: '+camLines.join(', '),'Piscina: '+S.piscina_control,'Accesos: '+S.accesos.join(','),
+    'VP: '+S.vp_tipo,'Riego: '+S.riego+' – '+S.riego_zonas_num+' zonas',
+    'Sensores: '+Object.entries(S.sensores).map(([k,v])=>k+'×'+v.qty).join(','),
+    'NLS: '+S.nls_count,'Timing: '+S.timing];
+  return l.join('\n');
+}
+
+// ═══ INIT PRICE LABELS FROM P ═══
+function initPriceLabels(){
+  const f=fmt; // shorthand
+  const set=(id,txt)=>{const e=document.getElementById(id);if(e)e.textContent=txt;};
+
+  // Sistema / Plataforma
+  set('lbl-central-price', f(P.central||640));
+  set('lbl-cloud-price',   f(P.cloud_plat||120));
+  set('lbl-auto-price',    f(P.automatizaciones||100));
+  set('lbl-wall-price',    f(P.wallpanel||380));
+
+  // WiFi
+  set('lbl-wifi-int',  f(P.wifi_int||250)+'/planta');
+  set('lbl-wifi-ext',  f(P.wifi_ext||200)+' exterior');
+  set('lbl-wifi-todo', f(P.wifi_int||250)+'/planta + '+f(P.wifi_ext||200)+' exterior');
+
+  // Persianas
+  set('lbl-pers-motor',  '· '+f(P.persiana_motor||135)+'/ud.');
+  set('lbl-pers-manual', '· '+f(P.persiana_nueva||220)+'/ud.');
+  set('lbl-roza-price',  '+'+f(P.suplemento_roza||90));
+
+  // Estores
+  set('lbl-estor-manual', f(P.estor_manual||180)+'/ud.');
+  set('lbl-estor-int',    f(P.estor||131)+'/ud.');
+  // Update estores onclick labels
+  const btnManuales=document.querySelector('#tiene_estores [data-v="manuales"]');
+  const btnMotorizados=document.querySelector('#tiene_estores [data-v="motorizados"]');
+  if(btnManuales) btnManuales.setAttribute('onclick',
+    "selOpt('tiene_estores',this);show('estores-wrap',true);document.getElementById('estores-price-label').textContent='· "+f(P.estor_manual||180)+"/ud.';updateLive()");
+  if(btnMotorizados) btnMotorizados.setAttribute('onclick',
+    "selOpt('tiene_estores',this);show('estores-wrap',true);document.getElementById('estores-price-label').textContent='· "+f(P.estor||131)+"/ud.';updateLive()");
+
+  // Toldos
+  set('lbl-toldo',       f(P.toldo||180)+'/ud.');
+  set('lbl-toldo-label', f(P.toldo||180));
+  set('lbl-sensor-viento', '+'+f(P.sensor_viento||70));
+
+  // Clima e Iluminación
+  set('lbl-termostato',    f(P.termostato||99));
+  set('lbl-aire',          f(precioAire()));
+  set('lbl-interruptor',   f(P.interruptor||125));
+  set('lbl-ilum-ext-zona', f(P.ilum_ext_zona||125));
+
+  // Riego / Jardín
+  set('lbl-riego-zona',       f(P.riego_zona||190)+'/zona');
+  set('lbl-riego-zona-label', f(P.riego_zona||190));
+  set('lbl-sensor-lluvia',    f(P.sensor_lluvia||80));
+  set('lbl-enchufe-ext',      f(P.enchufe_ext||175));
+  set('lbl-enchufe-label',    f(P.enchufe_ext||175));
+
+  // Cámaras — dinámico desde CAM_CONFIG
+  CAM_IDS.forEach(id=>{
+    CAM_PRICES[id]=CAM_CONFIG_RAW[id]?.precio||(P['cam_'+id])||0;
+    set('lbl-cam-'+id, f(CAM_PRICES[id]));
+  });
+  set('lbl-nvr', f(CAM_CONFIG_RAW['nvr']?.precio||(P.cam_nvr)||180));
+  set('lbl-nvr-title', f(CAM_CONFIG_RAW['nvr']?.precio||(P.cam_nvr)||180));
+
+  // Sensores — price tags, subtotals, and update stored prices
+  Object.keys(SENSOR_PRICE_KEYS).forEach(id=>{
+    const price=getSensorPrice(id);
+    const pt=document.querySelector('#'+id+' .s-price-tag');
+    if(pt) pt.textContent=f(price)+'/ud.';
+    const sub=document.getElementById(id+'-sub');
+    if(sub) sub.textContent=f(price);
+    // Update stored price if sensor already selected
+    if(S.sensores&&S.sensores[id]) S.sensores[id].price=price;
+  });
+
+  // Piscina
+  set('lbl-pisc-dep',  f(P.piscina_depuradora||175));
+  set('lbl-pisc-ilum', f(P.piscina_iluminacion||130));
+  set('lbl-pisc-comp', f(P.piscina_completo||290));
+
+  // Accesos
+  set('lbl-cerradura',      f(P.cerradura||380));
+  set('lbl-cerradura-piso', f(P.cerradura||380));
+  set('lbl-garaje-1',   f(P.garaje_1||220));
+  set('lbl-garaje-adic',f(P.garaje_adicional||160));
+  set('lbl-vp-basico',  f(P.vp_basico||350));
+  set('lbl-vp-poe4k',   f(P.vp_poe4k||550));
+  set('lbl-vp-pantalla',f(P.vp_pantalla||750));
+  // Update garaje initial label
+  const gl=document.getElementById('garaje-precio-label');
+  if(gl) gl.textContent=f(P.garaje_1||220);
+
+  // Update CAM_PRICES from P
+  CAM_PRICES.wifi4k  = P.cam_wifi4k  ||220;
+  CAM_PRICES.poe4k   = P.cam_poe4k   ||250;
+  CAM_PRICES.duo3    = P.cam_duo3     ||340;
+  CAM_PRICES.dome5mp = P.cam_dome5mp  ||200;
+  // Imágenes de cámaras desde CAM_CONFIG (JSON)
+  const camCfg=window.CAM_CONFIG||{};
+  ['wifi4k','poe4k','duo3','dome5mp'].forEach(id=>{
+    const cfg=camCfg[id];
+    if(cfg&&cfg.imagen){
+      const el=document.getElementById('camimg-'+id);
+      if(el) el.style.backgroundImage="url('"+cfg.imagen+"')";
+    }
+    if(cfg&&cfg.nombre){
+      const nel=document.querySelector('#camcard-'+id+' .cam-name');
+      if(nel) nel.textContent=cfg.nombre;
+    }
+  });
+}
+
+// Al escribir en un campo marcado en rojo, quitar el aviso de error
+document.addEventListener('input',function(e){
+  const el=e.target;
+  if(!el.classList||!el.classList.contains('f-input')||!el.classList.contains('err')) return;
+  if(el.id==='ct_email') return; // el email tiene su propia validación (validateEmail)
+  if(el.value.trim()){el.classList.remove('err');const er=el.parentElement.querySelector('.f-err');if(er)er.classList.remove('show');}
+});
+
+// ═══ FOTOS ═══
+// Cada foto se puede cambiar sin tocar código: en domotica-config.json → "imagenes": { "clima": "https://…/mi-foto.jpg" }
+// Si no hay URL propia, se usa img/<nombre>.jpg de la carpeta del plugin.
+function imgUrl(k,ext){
+  const propias=window.IMAGENES||{};
+  // Carpeta de imágenes: la pasa el plugin (DOMOTICA_IMG). Si un plugin antiguo no la pasa y estamos
+  // en WordPress, usar la carpeta img/ del plugin en vez de img/ junto a la página (daba 404).
+  const base=window.DOMOTICA_IMG||(window.domoticaAjaxUrl?'/wp-content/plugins/presupuesto-domotica/img/':'img/');
+  return propias[k]||(base+k+(ext||'.jpg'));
+}
+function aplicarFotos(){
+  document.querySelectorAll('[data-img]').forEach(function(el){ el.style.backgroundImage="url('"+imgUrl(el.dataset.img)+"')"; });
+  const w=document.getElementById('screen-welcome');
+  if(w){ w.style.backgroundImage="url('"+imgUrl('portada')+"')"; w.classList.add('has-photo'); }
+  const logo=document.getElementById('welcome-logo');
+  if(logo) logo.src=imgUrl('logo','.png'); // logo blanco con fondo transparente
+}
+// Iconos de las secciones del resumen (antes eran emojis)
+const ICONO_RESUMEN={'🏡':'home','🧠':'cpu','🪟':'shutter','🌡️':'thermo','🌳':'tree','📷':'cctv','🛡️':'shield','🏊':'pool','🚗':'lock','❓':'info','💬':'message'};
+function icono(e){
+  const n=ICONO_RESUMEN[e];
+  return n?'<svg class="ic" aria-hidden="true"><use href="#i-'+n+'"/></svg>':'<span>'+e+'</span>';
+}
+
+// ═══ COLOR DE FONDO Y BARRAS DEL NAVEGADOR ═══
+// En el iPhone, Safari pinta junto a la hora y bajo su barra el color de fondo de la página.
+// Mientras se ve la portada usamos el color de la parte de arriba de la foto, para que la franja de la hora no se note.
+// (Safari no permite dibujar la foto en esa zona; abajo la foto ya llega detrás de la barra.)
+function modoPortada(on){
+  // Arriba #5e6e8e (cielo de la foto con el velo) para la zona de la hora; abajo #111e44 (parte baja de la foto) para debajo de la barra de Safari
+  const fondo=on?'linear-gradient(#5e6e8e 0 50%,#111e44 50% 100%) #5e6e8e':'#f4f6fb';
+  [document.documentElement,document.body].forEach(function(el){ el.style.setProperty('background',fondo,'important'); });
+  let m=document.querySelector('meta[name="theme-color"]');
+  if(!m){ m=document.createElement('meta'); m.name='theme-color'; document.head.appendChild(m); }
+  m.setAttribute('content',on?'#5e6e8e':'#ffffff');
+}
+
+// ═══ INICIO ═══
+function syncComentarios(){
+  const v=document.getElementById('res_comentarios')?.value||'';
+  const ct=document.getElementById('ct_comentarios');
+  if(ct) ct.value=v;
+}
+
+function detectUTM(){
+  const p=new URLSearchParams(window.location.search);
+  S.utm=p.get('utm_source')||p.get('ref')||'';
+}
+
+// ═══ IFRAME HEIGHT ═══
+// Usamos offsetHeight (altura visible) nunca scrollHeight (puede crecer infinito)
+var _lh=0,_rhTimer=null;
+function rh(){
+  if(window.self===window.top) return;
+  clearTimeout(_rhTimer);
+  _rhTimer=setTimeout(function(){
+    var pb=document.querySelector('.progress-bar');
+    var welcome=document.getElementById('screen-welcome');
+    var success=document.getElementById('success-screen');
+    var h=0;
+    if(welcome&&welcome.style.display!=='none'){
+      h=welcome.offsetHeight;
+    } else {
+      if(pb) h+=pb.offsetHeight;
+      // Medir solo la sección activa con offsetHeight (no scrollHeight)
+      var active=document.querySelector('.section.active');
+      if(active){
+        // Quitar padding live bar temporalmente para medir bien
+        var fc=document.querySelector('.form-container');
+        var prevPB=fc?fc.style.paddingBottom:'';
+        if(fc) fc.style.paddingBottom='20px';
+        h+=active.offsetHeight;
+        if(fc) fc.style.paddingBottom=prevPB;
+      }
+      if(success&&success.classList.contains('show')) h+=success.offsetHeight;
+      h+=120; // margen nav + live bar
+    }
+    if(h>200&&Math.abs(h-_lh)>10){
+      _lh=h;
+      window.parent.postMessage({type:'domotica_height',height:h},'*');
+    }
+  },200);
+}
+aplicarFotos();
+modoPortada(true);
+if(window.self!==window.top){
+  rh(); setTimeout(rh,600); setTimeout(rh,1500);
+  window.addEventListener('resize',rh);
+}
+</script>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+</body>
+</html>

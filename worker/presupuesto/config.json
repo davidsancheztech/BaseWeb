@@ -1,0 +1,132 @@
+{
+  "_info": "Configuración de la calculadora (/calculadora-presupuesto). Precios, cámaras, textos e imágenes. Las URLs y claves de n8n NO van aquí: están como secretos en Cloudflare.",
+  "contacto": {
+    "whatsapp": "34649611494"
+  },
+  "textos": {
+    "confirmacion_titulo": "¡Hemos recibido tu configuración!",
+    "confirmacion_cuerpo": "Gracias por usar nuestro configurador. Un técnico de Domótica Hogar Madrid revisará tu solicitud y se pondrá en contacto contigo en menos de 24/48 horas para preparar tu propuesta personalizada.",
+    "email_cliente_asunto": "Hemos recibido tu solicitud de presupuesto — Domótica Hogar Madrid",
+    "email_cliente_cuerpo": "Hemos recibido tu configuración y nuestro equipo técnico la está revisando. Un técnico se pondrá en contacto contigo en menos de 24/48 horas para preparar tu propuesta personalizada sin compromiso.",
+    "email_admin_asunto": "📋 Nueva solicitud de presupuesto domótica"
+  },
+  "sistema_y_plataforma": {
+    "_descripcion": "Plataformas de control y componentes del sistema central",
+    "central": 490,
+    "cloud_plat": 120,
+    "automatizaciones": 100,
+    "wallpanel": 380,
+    "zigbee": 140
+  },
+  "wifi_conectividad": {
+    "_descripcion": "Puntos de acceso WiFi Mesh (interior por planta, exterior fijo)",
+    "wifi_int": 249,
+    "wifi_ext": 229
+  },
+  "persianas": {
+    "_descripcion": "Motorización e integración de persianas",
+    "persiana_motor": 135,
+    "persiana_nueva": 330,
+    "suplemento_roza": 90
+  },
+  "estores_y_toldos": {
+    "_descripcion": "Estores y toldos motorizados",
+    "estor_manual": 315,
+    "estor": 135,
+    "toldo": 135,
+    "sensor_viento": 80
+  },
+  "clima_e_iluminacion": {
+    "_descripcion": "Climatización e interruptores inteligentes",
+    "termostato": 145,
+    "interruptor": 125,
+    "ilum_ext_zona": 125
+  },
+  "jardin_y_exterior": {
+    "_descripcion": "Riego, enchufes y jardín",
+    "riego_zona": 121,
+    "sensor_lluvia": 89,
+    "enchufe_ext": 165
+  },
+  "camaras": {
+    "camara-01-poe-ext": {
+      "nombre": "Reolink Exterior PoE 4K 8MP",
+      "imagen": "https://domoticahogarmadrid.com/wp-content/uploads/2026/02/camara_opcion_2.jpg",
+      "precio": 269,
+      "zonas": [
+        "exterior"
+      ],
+      "recomendada": true
+    },
+    "camara-05-poe-ext": {
+      "nombre": "Reolink Exterior PoE 4K DUE 8MP",
+      "imagen": "https://domoticahogarmadrid.com/wp-content/uploads/2026/02/camara_opcion_3.jpg",
+      "precio": 339,
+      "zonas": [
+        "exterior"
+      ],
+      "recomendada": false
+    },
+    "camara-02-wifi-ext": {
+      "nombre": "Reolink Exterior Wifi 4K ",
+      "imagen": "https://domoticahogarmadrid.com/wp-content/uploads/2026/04/Reolink-4K-Camara-Vigilancia-WiFi-Exterior.jpg",
+      "precio": 249,
+      "zonas": [
+        "exterior"
+      ],
+      "recomendada": false
+    },
+    "camara-03-wifi-int": {
+      "nombre": "Reolink Interior Wifi",
+      "imagen": "https://domoticahogarmadrid.com/wp-content/uploads/2026/04/Reolink-5MP-PTZ-Camara-Vigilancia-WiFi-interior.jpg",
+      "precio": 235,
+      "zonas": [
+        "interior"
+      ],
+      "recomendada": false
+    },
+    "camara-04-poe-int": {
+      "nombre": "Reolink Interior PoE",
+      "imagen": "https://domoticahogarmadrid.com/wp-content/uploads/2026/05/5182ILKsvqL._AC_SL1500_.jpg",
+      "precio": 220,
+      "zonas": [
+        "interior"
+      ],
+      "recomendada": false
+    },
+    "nvr": {
+      "nombre": "Grabador NVR (2TB)",
+      "precio": 459
+    },
+    "_descripcion": "Para añadir una cámara: añade una clave única (ej: 'colorx', 'camara5'). Campos: nombre, imagen (URL), precio, zonas (['exterior'], ['interior'] o ambos), recomendada (true/false). El id 'nvr' es especial (grabador, no aparece en grid)."
+  },
+  "sensores": {
+    "_descripcion": "Sensores inteligentes",
+    "sensor_presencia": 89,
+    "sensor_movimiento": 65,
+    "sensor_humo": 79,
+    "sensor_inundacion": 59,
+    "sensor_apertura": 49,
+    "sirena": 89
+  },
+  "piscina": {
+    "_descripcion": "Control inteligente de piscina",
+    "piscina_depuradora": 175,
+    "piscina_iluminacion": 130,
+    "piscina_completo": 290
+  },
+  "accesos_y_videoportero": {
+    "_descripcion": "Accesos, garajes y videoporteros",
+    "cerradura": 510,
+    "garaje_1": 160,
+    "garaje_adicional": 149,
+    "vp_basico": 519,
+    "vp_poe4k": 609,
+    "vp_pantalla": 649
+  },
+  "imagenes": {
+    "_info": "Logo y foto de portada de la calculadora (rutas de esta web o URLs completas).",
+    "logo": "/assets/img/logo-full.png",
+    "portada": "/assets/img/calculadora-portada.jpg"
+  }
+}

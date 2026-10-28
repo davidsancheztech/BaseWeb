@@ -40,6 +40,31 @@ Secretos necesarios en **Workers & Pages → baseweb → Settings → Variables 
 
 Prueba en local: crea `.dev.vars` con esas variables y ejecuta `npx wrangler dev`.
 
+## Calculadora y zona de presupuestos
+
+| Ruta | Acceso | Qué es |
+|---|---|---|
+| `/calculadora-presupuesto` | Pública (sin enlaces en el menú) | Calculadora de presupuesto (`worker/presupuesto/calculadora.html`) |
+| `/presupuestos` | Privada, con `PASS_PRESUPUESTO` | Listado de presupuestos (`worker/presupuesto/listado.html`) |
+| `/presupuesto?id=P-0056` | Privada | Editor de presupuestos (`worker/presupuesto/editor.html`); sin `id` crea uno nuevo |
+| `/acceso` · `/salir` | — | Entrar con la clave (el navegador la recuerda 180 días) y cerrar sesión |
+
+- Precios, cámaras, textos e imágenes de la calculadora: `worker/presupuesto/config.json` (sin URLs ni claves).
+- Al enviar la calculadora: aviso por correo a `MAIL_TO`, confirmación al cliente y POST JSON al webhook de n8n con la cabecera `X-Webhook-Secret`.
+- Las zonas privadas no se indexan (`X-Robots-Tag: noindex`) y no se enlazan desde la web.
+
+Secretos adicionales (tipo *Secret* en **Runtime variables and secrets**):
+
+| Nombre | Valor |
+|---|---|
+| `PASS_PRESUPUESTO` | Clave de la zona privada (cambiarla cierra todas las sesiones) |
+| `N8N_CALCULADORA_URL` | Webhook de n8n que recibe cada solicitud de la calculadora |
+| `N8N_CALCULADORA_SECRET` | Clave enviada a ese webhook en `X-Webhook-Secret` |
+| `N8N_PRESUPUESTO_DATOS_URL` | Webhook que devuelve catálogo + presupuesto (`?id=`) |
+| `N8N_PRESUPUESTO_GUARDAR_URL` | Webhook que guarda un presupuesto (POST JSON) |
+| `N8N_PRESUPUESTOS_LISTA_URL` | Webhook que devuelve la lista de presupuestos |
+| `N8N_PRESUPUESTO_API_KEY` | Clave enviada a esos tres webhooks en `X-Api-Key` |
+
 ## Vídeos de Instagram
 
 En `js/main.js`, añade las URLs de tus reels a `SITE.instagramPosts`:

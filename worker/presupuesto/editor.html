@@ -1,0 +1,1504 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Presupuesto en vivo — Domótica Hogar Madrid</title>
+<style>
+  :root{
+    --navy:#1c2b3a;
+    --navy-light:#28405a;
+    --amber:#c8791f;
+    --amber-light:#e3a355;
+    --cream:#faf7f2;
+    --paper:#ffffff;
+    --line:#e4ddd1;
+    --ink:#232323;
+    --ink-soft:#6b6459;
+    --red:#b23a3a;
+  }
+  *{box-sizing:border-box;}
+  /* Respaldo general: fuerza el color del texto en TODOS los campos editables.
+     Sin esto, algunos navegadores (sobre todo iOS mientras el teclado predictivo
+     resalta la palabra que estás escribiendo) pueden dejar el texto invisible al
+     depender solo de heredar el color del body. Los campos con su propio color
+     (categoría en ámbar, etc.) lo siguen teniendo, porque su regla es más
+     específica y gana por encima de esta. */
+  input, textarea, select{color:var(--ink);-webkit-text-fill-color:var(--ink);caret-color:var(--ink);}
+  /* La página entera (html/body) NUNCA se mueve — así header y footer quedan
+     completamente fuera de cualquier zona que pueda hacer scroll o rebotar.
+     El único que se desplaza es #scrollArea, ahí dentro. Esto evita de raíz el
+     problema del rebote elástico (rubber-band) de iOS/Safari "despegando"
+     visualmente el header/footer: al no ser el documento el que hace scroll,
+     no hay bounce del documento que los pueda arrastrar.
+     Se fija la altura directamente al viewport (100vh, con 100dvh como mejora
+     donde el navegador lo soporte) en vez de encadenar html→body→.app-shell al
+     100%, que dentro de un iframe en Safari a veces no se resuelve bien. */
+  html{height:100vh;height:100dvh;overflow:hidden;margin:0;overscroll-behavior:none;}
+  body{height:100vh;height:100dvh;overflow:hidden;margin:0;overscroll-behavior:none;
+    font-family:'Segoe UI', Roboto, Arial, sans-serif;background:var(--cream);color:var(--ink);}
+  .app-shell{display:flex;flex-direction:column;height:100vh;height:100dvh;overflow:hidden;}
+  /* Overlay de carga: cubre toda la pantalla hasta que termina el GET */
+  .loading-overlay{
+    position:fixed;inset:0;z-index:200;background:var(--cream);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;
+    transition:opacity .3s ease;
+  }
+  .loading-overlay.hidden{opacity:0;pointer-events:none;}
+  .loading-spinner{
+    width:44px;height:44px;border:4px solid #e5ded1;border-top-color:var(--amber);
+    border-radius:50%;animation:spin .8s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .loading-text{color:var(--ink-soft);font-size:14px;font-weight:600;}
+  #scrollArea{flex:1 1 auto;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;}
+  header{background:var(--navy);color:#fff;padding:16px 14px 0;flex:0 0 auto;box-shadow:0 4px 14px rgba(0,0,0,.25);position:relative;z-index:40;}
+  .header-top{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;padding-bottom:16px;}
+  .brand{display:flex;align-items:center;gap:14px;}
+  .brand-mark{width:44px;height:44px;background:var(--amber);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px;}
+  .brand h1{font-size:15px;margin:0;letter-spacing:.04em;text-transform:uppercase;font-weight:700;}
+  .brand span{display:block;font-size:11px;color:#b9c2cc;font-weight:400;letter-spacing:.02em;}
+  .doc-meta{text-align:right;font-size:12px;color:#c9d2db;}
+  .doc-meta strong{display:block;font-size:16px;color:#fff;}
+
+  .tabs{display:flex;gap:2px;overflow-x:auto;}
+  .tab-btn{background:transparent;border:none;color:#a9b4bf;padding:11px 18px;font-size:12.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;}
+  .tab-btn.active{color:#fff;border-bottom:3px solid var(--amber);}
+  .tab-btn:hover{color:#fff;}
+
+  main{max-width:1100px;margin:0 auto;padding:12px 8px 24px;width:100%;}
+  .panel{display:none;}
+  .panel.active{display:block;}
+
+  /* SEARCH BAR */
+  .search-panel{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:20px;position:relative;}
+  .search-label{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-soft);font-weight:700;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;}
+  .btn-manual{background:none;border:1px solid var(--amber);color:var(--amber);padding:5px 11px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;text-transform:none;letter-spacing:0;}
+  .btn-manual:hover{background:#fbf3e7;}
+  .search-row{display:flex;gap:10px;position:relative;}
+  .search-row input[type=text]{flex:1;padding:12px 14px;border:1px solid var(--line);border-radius:9px;font-size:16px;outline:none;transition:border-color .15s;color:var(--ink);-webkit-text-fill-color:var(--ink);caret-color:var(--ink);background:#fff;}
+  .search-row input[type=text]:focus{border-color:var(--amber);}
+  .search-row input[type=text]:focus{border-color:var(--amber);}
+  .results{position:absolute;left:0;right:0;top:100%;margin-top:8px;background:#fff;border:1px solid var(--line);border-radius:8px;box-shadow:0 10px 30px rgba(28,43,58,.14);max-height:340px;overflow-y:auto;z-index:20;display:none;}
+  .results.open{display:block;}
+  .result-item{padding:10px 14px;border-bottom:1px solid #f0ece3;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;}
+  .result-item:hover{background:#fbf3e7;}
+  .result-item.highlighted{background:#fbf3e7;}
+  .result-item:last-child{border-bottom:none;}
+  .result-name{font-size:14px;}
+  .result-cat{font-size:10.5px;color:var(--amber);text-transform:uppercase;letter-spacing:.05em;font-weight:700;}
+  .result-ref{font-size:11px;color:var(--ink-soft);margin-top:1px;}
+  .result-price{font-size:14px;font-weight:700;color:var(--navy);white-space:nowrap;}
+  .no-results{padding:14px 16px;font-size:13px;color:var(--ink-soft);}
+  .no-results .btn-add-new{margin-top:8px;display:inline-block;background:var(--amber);color:#fff;border:none;padding:8px 14px;border-radius:6px;font-size:12.5px;font-weight:700;cursor:pointer;}
+
+  .pending, .manual-form{display:none;margin-top:12px;padding:14px;background:#fbf3e7;border:1px solid var(--amber-light);border-radius:8px;align-items:center;gap:14px;flex-wrap:wrap;}
+  .pending.open, .manual-form.open{display:flex;}
+  .pending .pname{font-size:14px;font-weight:600;flex:1;}
+  .qty-wrap{display:flex;align-items:center;gap:6px;}
+  button.step{width:28px;height:28px;border:1px solid var(--amber);background:#fff;border-radius:6px;font-size:16px;cursor:pointer;color:var(--amber);}
+  input.qty{width:44px;text-align:center;padding:5px;border:1px solid var(--line);border-radius:6px;}
+  .btn-add{background:var(--amber);color:#fff;border:none;padding:9px 18px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;letter-spacing:.02em;}
+  .btn-add:hover{background:#b06c19;}
+  .btn-cancel{background:none;border:none;color:var(--ink-soft);font-size:13px;cursor:pointer;text-decoration:underline;}
+
+  .manual-form{flex-direction:column;align-items:stretch;gap:10px;}
+  .manual-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .field-label{font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-soft);font-weight:700;margin-bottom:4px;display:block;}
+  .manual-form input{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:6px;font-size:16px;font-family:inherit;transform:scale(0.844);transform-origin:left center;}
+  /* #manualCat queda fuera del transform:scale de arriba a propósito: en Chrome de
+     escritorio, un input con CSS transform no muestra el desplegable nativo del
+     <datalist> asociado (bug conocido de Chromium). Sin transform en este campo,
+     el listado de categorías vuelve a abrirse al pinchar/escribir. */
+  .manual-form input#manualCat{transform:none;font-size:14px;}
+  .manual-hint{font-size:11px;color:var(--ink-soft);}
+
+  /* FICHA DEL CLIENTE */
+  .ficha-form{padding:18px 20px;display:flex;flex-direction:column;gap:16px;}
+  .ficha-field{display:flex;flex-direction:column;gap:5px;}
+  .ficha-field input, .ficha-field select{
+    width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:9px;
+    font-size:16px;font-family:inherit;color:var(--ink);background:#fff;
+  }
+  .ficha-field input:focus, .ficha-field select:focus{border-color:var(--amber);outline:none;}
+  /* Placeholder claramente informativo: más claro y en cursiva, para distinguirlo
+     del texto realmente escrito (que va en color de tinta normal). */
+  .ficha-field input::placeholder, .search-row input::placeholder{
+    color:#b8b0a2;
+    -webkit-text-fill-color:#b8b0a2;
+    font-style:italic;
+    opacity:1;
+  }
+  /* Un select sin elegir (mostrando su primera opción tipo "Selecciona…") también más tenue */
+  .ficha-field select.is-placeholder{color:#b8b0a2;-webkit-text-fill-color:#b8b0a2;font-style:italic;}
+  .ficha-field select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9'%3E%3Cpath d='M1 1l6 6 6-6' stroke='%236b6459' stroke-width='2' fill='none' fill-rule='evenodd'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:34px;}
+  /* iOS Safari centra el texto de los input[type=date] y a veces no respeta bien
+     el ancho del 100% — se fuerza ancho real y alineación a la izquierda. */
+  .ficha-field input[type=date]{
+    width:100%;display:block;box-sizing:border-box;text-align:left;
+  }
+  .ficha-field input[type=date]::-webkit-date-and-time-value{text-align:left;}
+  .ficha-field input[type=date]::-webkit-datetime-edit{text-align:left;}
+
+  /* TIEMPOS Y PAGOS */
+  .tp-subtitle{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--amber);font-weight:700;}
+  .tp-hint{font-size:11.5px;color:var(--ink-soft);line-height:1.4;margin:-6px 0 2px;}
+  .tp-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .tp-readonly{background:#f4f1ea !important;color:var(--ink-soft) !important;-webkit-text-fill-color:var(--ink-soft) !important;font-weight:700;}
+
+  .tp-pago-card{border:1px solid var(--line);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:10px;}
+  .tp-pago-card.tp-locked{background:#f7f5f0;border-color:#e5ddcf;}
+  .tp-pago-card-head{display:flex;align-items:center;justify-content:space-between;}
+  .tp-pago-label{font-size:15px;font-weight:700;color:var(--ink);}
+  .tp-locked .tp-pago-label{color:var(--green,#3f7d5c);}
+  .tp-check-inline{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--ink-soft);cursor:pointer;font-weight:600;}
+  .tp-check-inline.hidden{visibility:hidden;}
+  .tp-check-inline input{width:20px;height:20px;accent-color:var(--green,#3f7d5c);}
+  .tp-pago-inputs{display:flex;align-items:flex-end;gap:10px;}
+  .tp-inp{display:flex;flex-direction:column;gap:4px;}
+  .tp-inp:first-child{flex:1 1 auto;}
+  .tp-inp-label{font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-soft);font-weight:700;}
+  .tp-inp input[type=number]{padding:9px 10px;border:1px solid var(--line);border-radius:8px;font-size:16px;font-family:inherit;text-align:right;width:100%;}
+  .tp-inp input[type=number]:focus{border-color:var(--amber);outline:none;}
+  .tp-inp-eur{display:flex;align-items:center;border:1px solid var(--line);border-radius:8px;padding-right:10px;}
+  .tp-inp-eur input{border:none !important;padding:9px 6px 9px 10px !important;}
+  .tp-inp-eur span{color:var(--ink-soft);font-size:14px;}
+  .tp-inp-eur:focus-within{border-color:var(--amber);}
+  .tp-inp:nth-child(2){flex:0 0 76px;}
+  .tp-resto-btn{flex:0 0 auto;background:#fbf3e7;border:1px solid var(--amber);color:var(--amber);border-radius:8px;padding:9px 12px;font-size:12.5px;font-weight:700;cursor:pointer;height:40px;}
+  .tp-resto-btn:hover{background:var(--amber);color:#fff;}
+  .tp-locked .tp-inp input, .tp-locked .tp-inp-eur{background:#f0ece3;color:var(--ink-soft);-webkit-text-fill-color:var(--ink-soft);opacity:.8;cursor:not-allowed;}
+  .tp-locked .tp-resto-btn{visibility:hidden;}
+
+  .tp-pago-totales{margin-top:4px;padding-top:12px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:4px;}
+  .tp-total-line{font-size:13px;color:var(--ink-soft);}
+  .tp-total-line b{color:var(--ink);font-variant-numeric:tabular-nums;}
+  .tp-total-line.error, .tp-total-line.error b{color:var(--red);}
+  .tp-total-line.ok, .tp-total-line.ok b{color:var(--green,#3f7d5c);}
+  .manual-checkbox{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--ink-soft);cursor:pointer;}
+  .manual-checkbox input{width:auto;}
+  .manual-actions{display:flex;gap:10px;justify-content:flex-end;}
+
+  /* SHARED DOC WRAPPER */
+  .doc{background:var(--paper);border:1px solid var(--line);border-radius:10px;overflow:hidden;}
+  .doc-head{padding:16px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;}
+  .doc-head h2{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-soft);margin:0;}
+  .empty-state{padding:40px 20px;text-align:center;color:var(--ink-soft);font-size:14px;}
+  .hint{font-size:12px;color:var(--ink-soft);margin:10px 4px 0;}
+  .btn-add-row{background:none;border:1px dashed var(--amber);color:var(--amber);padding:11px 16px;font-size:13px;font-weight:700;cursor:pointer;width:100%;}
+  .btn-add-row:hover{background:#fbf3e7;}
+  .del-btn{background:none;border:none;color:var(--red);cursor:pointer;font-size:15px;padding:4px 6px;flex:0 0 auto;}
+  .del-btn:hover{color:#7e2424;}
+
+  /* PRESUPUESTO — tarjetas anchas por línea */
+  .cat-block{border-bottom:1px solid var(--line);}
+  .cat-block:last-child{border-bottom:none;}
+  .cat-header{background:#eef1f4;padding:6px 10px;display:flex;align-items:center;gap:8px;}
+  .cat-input{
+    flex:1;background:transparent;border:1px solid transparent;border-radius:5px;padding:6px 8px;
+    font-weight:700;color:var(--navy-light);font-size:12px;text-transform:uppercase;letter-spacing:.03em;
+    min-width:0;text-overflow:ellipsis;
+  }
+  .cat-input:hover{border-color:var(--line);}
+  .cat-input:focus{border-color:var(--amber);background:#fff;outline:none;}
+  .cat-subtotal{color:var(--ink-soft);font-weight:700;font-size:13px;white-space:nowrap;padding-right:4px;}
+  .item-card{padding:8px 18px;border-top:1px solid #f2efe8;cursor:pointer;}
+  .item-card:first-of-type{border-top:none;}
+  /* Línea en DOS columnas: [ nombre ]  [ col derecha ] [x]
+     Col derecha: fila 1 = unidades × precio ; fila 2 = total, justo debajo. */
+  .item-row{display:flex;align-items:center;gap:10px;}
+  .item-name{
+    flex:1 1 auto;min-width:0;padding:4px 6px;border:1px solid transparent;border-radius:5px;font-size:16px;
+    font-family:inherit;background:transparent;resize:none;overflow:hidden;line-height:1.3;
+    white-space:pre-wrap;word-break:break-word;display:block;}
+  .item-name:hover{border-color:var(--line);}
+  .item-name:focus{border-color:var(--amber);background:#fff;outline:none;}
+  .item-col-right{flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-end;gap:5px;}
+  .item-calc-row{display:flex;align-items:center;gap:6px;}
+  .item-calc-row .qty-inline{
+    flex:0 0 42px;width:42px;text-align:center;border:none;border-bottom:1px dashed var(--line);
+    background:transparent;font-size:16px;font-family:inherit;padding:1px 0;color:var(--ink);
+  }
+  .item-calc-row .op{flex:0 0 auto;color:var(--ink-soft);font-size:13px;}
+  .item-calc-row .price-inline{
+    flex:0 0 72px;width:72px;text-align:right;border:none;border-bottom:1px dashed var(--line);
+    background:transparent;font-size:16px;font-family:inherit;padding:1px 2px 1px 0;color:var(--ink);
+  }
+  .item-calc-row .qty-inline:focus, .item-calc-row .price-inline:focus{border-bottom-color:var(--amber);outline:none;}
+  .price-wrap{display:inline-flex;align-items:baseline;border-bottom:1px dashed var(--line);}
+  .price-wrap:focus-within{border-bottom-color:var(--amber);}
+  .price-wrap .price-inline{border:none !important;flex:0 0 auto;}
+  .price-eur{color:var(--ink-soft);font-size:13px;padding-left:1px;}
+  .item-total-row{font-weight:700;font-size:15px;color:var(--navy);font-variant-numeric:tabular-nums;padding-right:2px;}
+
+  /* En tablet/escritorio (ancho >= 700px): la línea vuelve a ser TODO horizontal
+     — nombre · unidades × precio · total — en una sola fila, como antes. */
+  @media (min-width:700px){
+    .item-col-right{flex-direction:row;align-items:center;gap:14px;}
+    .item-total-row{min-width:90px;text-align:right;border-left:1px solid var(--line);padding-left:14px;}
+  }
+  .pending-toggle{background:none;border:none;color:var(--ink-soft);font-size:11px;cursor:pointer;text-decoration:underline;padding:0 2px;}
+  .pending-toggle:hover{color:var(--amber);}
+  .item-extra{display:flex;justify-content:flex-end;align-items:center;gap:8px;padding:3px 6px 0;}
+  .pending-tag{
+    font-size:12px;font-style:italic;color:var(--amber);background:#fbf3e7;
+    padding:4px 10px;border-radius:12px;font-weight:600;
+  }
+  .cat-subtotal.is-pending{font-style:italic;color:var(--ink-soft);font-weight:500;}
+
+  /* DISPOSITIVOS — modo listado */
+  .device-list{display:flex;flex-direction:column;}
+  .device-row{display:flex;gap:14px;padding:14px 18px;border-bottom:1px solid var(--line);align-items:flex-start;}
+  .device-row:last-child{border-bottom:none;}
+  .device-thumb{
+    flex:0 0 64px;width:64px;height:64px;background:#f1ede4;border-radius:8px;
+    display:flex;align-items:center;justify-content:center;font-size:26px;color:var(--amber);
+    overflow:hidden;position:relative;
+  }
+  .device-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+  .device-thumb-fallback{width:100%;height:100%;display:flex;align-items:center;justify-content:center;}
+  .device-text{flex:1;display:flex;flex-direction:column;gap:3px;min-width:0;}
+  input.d-cat{color:var(--amber);text-transform:uppercase;font-size:10.5px;font-weight:700;letter-spacing:.05em;border:1px solid transparent;border-radius:5px;padding:3px 6px;width:100%;}
+  textarea.d-name{
+    font-weight:700;font-size:14.5px;border:1px solid transparent;border-radius:5px;padding:3px 6px;width:100%;
+    font-family:inherit;background:transparent;resize:none;overflow:hidden;line-height:1.35;
+    white-space:pre-wrap;word-break:break-word;min-height:20px;}
+  textarea.d-name:hover{border-color:var(--line);}
+  textarea.d-name:focus{border-color:var(--amber);outline:none;background:#fff;}
+  textarea.d-desc{
+    color:var(--ink-soft);font-size:12.5px;border:1px solid transparent;border-radius:5px;padding:3px 6px;width:100%;
+    font-family:inherit;resize:none;overflow:hidden;line-height:1.55;white-space:pre-wrap;word-break:break-word;min-height:20px;}
+  .device-text input:hover{border-color:var(--line);}
+  .device-text input:focus{border-color:var(--amber);outline:none;background:#fff;}
+  .device-row .del-btn{flex:0 0 auto;align-self:center;}
+
+  .obs-card{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:18px 20px;margin-bottom:16px;position:relative;}
+  .obs-card-top{display:flex;align-items:flex-start;gap:10px;}
+  .obs-title{
+    flex:1;font-size:16px;font-weight:800;color:var(--amber);text-transform:uppercase;letter-spacing:.05em;
+    border:1px solid transparent;border-radius:5px;padding:6px 8px;font-family:inherit;
+    transform:scale(0.875);transform-origin:left center;
+  }
+  .obs-title:hover{border-color:var(--line);}
+  .obs-title:focus{border-color:var(--amber);outline:none;}
+  textarea.obs-desc{
+    width:100%;color:var(--ink-soft);font-size:16px;border:1px solid transparent;border-radius:5px;
+    padding:6px 8px;font-family:inherit;resize:none;overflow:hidden;line-height:1.5;margin-top:2px;min-height:24px;}
+  textarea.obs-desc:hover{border-color:var(--line);}
+  textarea.obs-desc:focus{border-color:var(--amber);outline:none;}
+  .obs-notes-box{background:#fbf3e7;border-left:3px solid var(--amber);border-radius:0 8px 8px 0;padding:4px 10px;margin-top:10px;}
+  textarea.obs-notes{
+    width:100%;background:transparent;border:none;font-size:16px;color:var(--ink);font-family:inherit;
+    resize:none;overflow:hidden;line-height:1.5;padding:8px 4px;min-height:24px;}
+  textarea.obs-notes:focus{outline:none;}
+  .obs-notes-label{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--amber);font-weight:700;padding:8px 4px 0;}
+  .obs-card .del-btn{position:absolute;top:14px;right:16px;}
+
+  /* GUARDAR — barra fija abajo, dos columnas: botón + desglose */
+  .save-footer{
+    flex:0 0 auto;background:var(--paper);border-top:1px solid var(--line);
+    padding:8px 14px calc(8px + env(safe-area-inset-bottom));display:flex;align-items:center;justify-content:space-between;gap:12px;
+    box-shadow:0 -4px 14px rgba(0,0,0,.08);
+  }
+  .save-col{display:flex;flex-direction:column;gap:1px;}
+  .btn-save{
+    background:var(--amber);color:#fff;border:none;padding:10px 18px;border-radius:8px;
+    font-size:13.5px;font-weight:700;cursor:pointer;letter-spacing:.01em;display:flex;align-items:center;gap:6px;
+    white-space:nowrap;
+  }
+  .btn-save:hover{background:#b06c19;}
+  .btn-save:disabled{opacity:.6;cursor:default;}
+  .save-status{font-size:10.5px;color:var(--ink-soft);margin-top:2px;}
+  .save-status.ok{color:var(--green,#2f7a4d);}
+  .save-status.err{color:var(--red);}
+  .totals-col{display:flex;flex-direction:column;align-items:flex-end;gap:2px;line-height:1.25;}
+  .totals-base{font-size:14px;color:var(--ink);white-space:nowrap;line-height:1.3;background:#fbf3e7;border-radius:6px;padding:2px 8px;display:inline-block;}
+  .totals-base b{color:var(--amber);font-weight:800;font-size:16px;}
+  .totals-sub{font-size:10.5px;color:var(--ink-soft);white-space:nowrap;line-height:1.3;}
+  .totals-sub b{color:var(--ink);font-weight:600;}
+  .totals-grand{font-size:13px;color:var(--ink-soft);white-space:nowrap;font-weight:600;margin-top:1px;}
+  .totals-grand span{font-size:19px;font-weight:800;color:var(--navy);}
+</style>
+</head>
+<body>
+
+<div class="app-shell">
+
+<div id="loadingOverlay" class="loading-overlay">
+  <div class="loading-spinner"></div>
+  <div class="loading-text">Cargando presupuesto…</div>
+</div>
+
+<div id="savingOverlay" class="loading-overlay hidden">
+  <div class="loading-spinner"></div>
+  <div class="loading-text" id="savingText">Guardando presupuesto…</div>
+</div>
+
+<header>
+  <div class="header-top">
+    <div class="brand">
+      <div class="brand-mark">🏠</div>
+      <h1>Domótica Hogar Madrid<span>Presupuesto en vivo · prototipo</span></h1>
+    </div>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="ficha">Ficha</button>
+    <button class="tab-btn" data-tab="presupuesto">Presupuesto</button>
+    <button class="tab-btn" data-tab="dispositivos">Dispositivos</button>
+    <button class="tab-btn" data-tab="observaciones">Observaciones</button>
+  </div>
+</header>
+
+<div id="scrollArea">
+<main>
+
+  <!-- ===== PANEL: FICHA ===== -->
+  <div class="panel active" id="panel-ficha">
+    <div class="doc">
+      <div class="doc-head">
+        <h2>Ficha del cliente</h2>
+      </div>
+      <div class="ficha-form">
+        <div class="ficha-field">
+          <span class="field-label">Nombre</span>
+          <input type="text" id="fichaNombre" placeholder="Nombre y apellidos" autocomplete="off" oninput="updateFicha('nombre', this.value)">
+        </div>
+        <div class="ficha-field">
+          <span class="field-label">Dirección</span>
+          <input type="text" id="fichaDireccion" placeholder="Calle, número, ciudad" autocomplete="off" oninput="updateFicha('direccion', this.value)">
+        </div>
+        <div class="ficha-field">
+          <span class="field-label">DNI / NIF</span>
+          <input type="text" id="fichaDni" autocomplete="off" oninput="updateFicha('dni_nif', this.value)">
+        </div>
+        <div class="ficha-field">
+          <span class="field-label">Teléfono</span>
+          <input type="tel" id="fichaTelefono" placeholder="600 000 000" autocomplete="off" oninput="updateFicha('telefono', this.value)">
+        </div>
+        <div class="ficha-field">
+          <span class="field-label">Email</span>
+          <input type="email" id="fichaEmail" autocomplete="off" oninput="updateFicha('email', this.value)">
+        </div>
+        <div class="ficha-field">
+          <span class="field-label">Origen</span>
+          <select id="fichaOrigen" onchange="updateFicha('origen', this.value)">
+            <option>Telefónica</option>
+            <option>Instagram</option>
+            <option>ChatGPT</option>
+            <option>Wallapop</option>
+          </select>
+        </div>
+        <div class="ficha-field">
+          <span class="field-label">Tipo</span>
+          <select id="fichaTipo" onchange="updateFicha('tipo', this.value)">
+            <option>Particular</option>
+            <option>Empresa</option>
+          </select>
+        </div>
+        <div class="ficha-field">
+          <span class="field-label">Estado</span>
+          <select id="fichaEstado" onchange="updateFicha('estado', this.value)">
+            <option>Lead nuevo</option>
+            <option>Contactado</option>
+            <option>Pendiente presupuesto</option>
+            <option>Generar presupuesto</option>
+            <option>Presupuestado</option>
+            <option>Aceptado</option>
+            <option>Generar Estado Proyecto</option>
+            <option>Generado Estado Proyecto</option>
+            <option>En seguimiento</option>
+            <option>1º Pago Realizado</option>
+            <option>Pendiente de instalación</option>
+            <option>Ultimo Pago Realizado</option>
+            <option>Rechazado</option>
+            <option>Instalado</option>
+            <option>Finalizado</option>
+          </select>
+        </div>
+        <div class="ficha-field">
+          <span class="field-label">Fecha presupuesto</span>
+          <input type="date" id="fichaFecha" oninput="updateFicha('fecha_presupuesto', this.value)">
+        </div>
+      </div>
+    </div>
+
+    <div class="doc" style="margin-top:16px;">
+      <div class="doc-head">
+        <h2>Tiempos y pagos</h2>
+      </div>
+      <div class="ficha-form">
+
+        <div class="tp-subtitle">Tiempos estimados (días)</div>
+        <div class="tp-grid">
+          <div class="ficha-field">
+            <span class="field-label">Recepción equipos</span>
+            <input type="number" min="0" id="tpRecepcion" oninput="updateTiempo('dias_recepcion_equipos', this.value)">
+          </div>
+          <div class="ficha-field">
+            <span class="field-label">Configuración sistema</span>
+            <input type="number" min="0" id="tpConfiguracion" oninput="updateTiempo('dias_configuracion_sistema', this.value)">
+          </div>
+          <div class="ficha-field">
+            <span class="field-label">Instalación cliente</span>
+            <input type="number" min="0" id="tpInstalacion" oninput="updateTiempo('dias_instalacion_cliente', this.value)">
+          </div>
+          <div class="ficha-field">
+            <span class="field-label">Total días</span>
+            <input type="number" id="tpTotalDias" readonly class="tp-readonly">
+          </div>
+        </div>
+
+        <div class="tp-subtitle" style="margin-top:6px;">Forma de pago</div>
+        <div class="tp-hint">Escribe el importe o el % — el otro se calcula solo. El botón «resto» rellena lo que falta para cuadrar con la base.</div>
+
+        <div class="tp-pago-card" id="tpCardAceptacion">
+          <div class="tp-pago-card-head">
+            <span class="tp-pago-label">Aceptación</span>
+            <label class="tp-check-inline"><input type="checkbox" id="pagoAceptacionStatus" onchange="updatePagoStatus('aceptacion_status', this.checked)"> Pagado</label>
+          </div>
+          <div class="tp-pago-inputs">
+            <div class="tp-inp"><span class="tp-inp-label">Importe</span><div class="tp-inp-eur"><input type="number" min="0" step="0.01" id="pagoAceptacionImp" oninput="updatePagoImporte('aceptacion', this.value)"><span>€</span></div></div>
+            <div class="tp-inp"><span class="tp-inp-label">%</span><input type="number" min="0" max="100" id="pagoAceptacionPct" oninput="updatePagoPct('aceptacion', this.value)"></div>
+            <button type="button" class="tp-resto-btn" onclick="asignarResto('aceptacion')">resto</button>
+          </div>
+        </div>
+
+        <div class="tp-pago-card" id="tpCardInicio">
+          <div class="tp-pago-card-head">
+            <span class="tp-pago-label">Inicio</span>
+            <label class="tp-check-inline"><input type="checkbox" id="pagoInicioStatus" onchange="updatePagoStatus('inicio_status', this.checked)"> Pagado</label>
+          </div>
+          <div class="tp-pago-inputs">
+            <div class="tp-inp"><span class="tp-inp-label">Importe</span><div class="tp-inp-eur"><input type="number" min="0" step="0.01" id="pagoInicioImp" oninput="updatePagoImporte('inicio', this.value)"><span>€</span></div></div>
+            <div class="tp-inp"><span class="tp-inp-label">%</span><input type="number" min="0" max="100" id="pagoInicioPct" oninput="updatePagoPct('inicio', this.value)"></div>
+            <button type="button" class="tp-resto-btn" onclick="asignarResto('inicio')">resto</button>
+          </div>
+        </div>
+
+        <div class="tp-pago-card" id="tpCardEntrega">
+          <div class="tp-pago-card-head">
+            <span class="tp-pago-label">Entrega</span>
+            <label class="tp-check-inline"><input type="checkbox" id="pagoEntregaStatus" onchange="updatePagoStatus('entrega_status', this.checked)"> Pagado</label>
+          </div>
+          <div class="tp-pago-inputs">
+            <div class="tp-inp"><span class="tp-inp-label">Importe</span><div class="tp-inp-eur"><input type="number" min="0" step="0.01" id="pagoEntregaImp" oninput="updatePagoImporte('entrega', this.value)"><span>€</span></div></div>
+            <div class="tp-inp"><span class="tp-inp-label">%</span><input type="number" min="0" max="100" id="pagoEntregaPct" oninput="updatePagoPct('entrega', this.value)"></div>
+            <button type="button" class="tp-resto-btn" onclick="asignarResto('entrega')">resto</button>
+          </div>
+        </div>
+
+        <div class="tp-pago-totales">
+          <div class="tp-total-line" id="tpImpLine">Asignado <b id="tpImpSum">0,00€</b> de <b id="tpBaseRef">0,00€</b></div>
+          <div class="tp-total-line" id="tpFaltaLine">Falta por asignar: <b id="tpFalta">0,00€</b></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PANEL: PRESUPUESTO ===== -->
+  <div class="panel" id="panel-presupuesto">
+
+    <div class="search-panel">
+      <div class="search-label">
+        <span>Buscar dispositivo o servicio</span>
+        <button class="btn-manual" id="openManualBtn">+ Línea manual</button>
+      </div>
+      <div class="search-row">
+        <input type="text" id="searchInput" placeholder="Ej: cámara, persiana, WiiM, termostato..." autocomplete="off"
+          role="combobox" aria-expanded="false" aria-controls="resultsBox" aria-autocomplete="list">
+        <div class="results" id="resultsBox" role="listbox"></div>
+      </div>
+
+      <div class="manual-form" id="manualForm">
+        <div class="manual-grid">
+          <div>
+            <span class="field-label">Categoría</span>
+            <input type="text" id="manualCat" list="catList" placeholder="Ej: Seguridad / Cámaras">
+            <datalist id="catList"></datalist>
+          </div>
+          <div>
+            <span class="field-label">Detalle</span>
+            <input type="text" id="manualName" placeholder="Nombre del artículo o servicio">
+          </div>
+        </div>
+        <div class="manual-grid">
+          <div>
+            <span class="field-label">Cantidad</span>
+            <input type="number" id="manualQty" value="1" min="1">
+          </div>
+          <div>
+            <span class="field-label">Precio unitario (€)</span>
+            <input type="number" id="manualPrice" value="0" min="0" step="0.01">
+          </div>
+        </div>
+        <label class="manual-checkbox">
+          <input type="checkbox" id="manualPending"> Precio pendiente (a determinar en visita)
+        </label>
+        <div class="manual-hint">Si la categoría ya existe en el presupuesto, la línea se añadirá dentro de ese mismo grupo (no se crean categorías duplicadas).</div>
+        <div class="manual-actions">
+          <button class="btn-cancel" id="cancelManual">cancelar</button>
+          <button class="btn-add" id="confirmManual">Añadir línea</button>
+        </div>
+      </div>
+
+      <div class="hint">Al tocar un resultado se añade directamente con cantidad 1 — luego ajusta cantidad, precio o nombre en la lista de abajo. Si no encuentras el artículo, usa "+ Línea manual". El nombre de categoría se edita tocando el encabezado de cada grupo.</div>
+    </div>
+
+    <div class="doc">
+      <div class="doc-head">
+        <h2>Detalle económico</h2>
+        <span style="font-size:11px;color:var(--ink-soft)">Cada bloque es una categoría · toca el encabezado para renombrarla</span>
+      </div>
+      <div id="budgetList">
+        <div class="empty-state">Aún no has añadido ninguna línea. Busca arriba o crea una línea manual para empezar.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PANEL: DISPOSITIVOS (listado) ===== -->
+  <div class="panel" id="panel-dispositivos">
+    <div class="doc">
+      <div class="doc-head">
+        <h2>Anexo técnico · equipamiento</h2>
+        <span style="font-size:11px;color:var(--ink-soft)">Imagen · categoría · dispositivo · descripción</span>
+      </div>
+      <div class="device-list" id="deviceList"></div>
+      <button class="btn-add-row" id="addDeviceBtn">+ Añadir dispositivo</button>
+    </div>
+  </div>
+
+  <!-- ===== PANEL: OBSERVACIONES (tarjetas tipo adjunto) ===== -->
+  <div class="panel" id="panel-observaciones">
+    <div id="obsList"></div>
+    <button class="btn-add-row" id="addObsRow">+ Añadir observación</button>
+  </div>
+
+</main>
+</div>
+
+<div class="save-footer">
+  <div class="save-col">
+    <button class="btn-save" id="saveBtn">💾 Guardar cambios</button>
+    <span class="save-status" id="saveStatus"></span>
+  </div>
+  <div class="totals-col">
+    <div class="totals-base">Base imponible: <b id="baseVal">0,00€</b></div>
+    <div class="totals-sub">IVA (21%): <b id="ivaVal">0,00€</b></div>
+    <div class="totals-grand">Total: <span id="totalVal">0,00€</span></div>
+  </div>
+</div>
+</div>
+
+<script>
+// ---- ORDEN DE CATEGORÍAS ----
+// Orden de referencia para presupuesto y dispositivos. Si aparece una categoría
+// Orden de las categorías: mapa { "Nombre categoría": número_orden }.
+// Se ordena por ese número (menor primero). Categorías no listadas van al final.
+// Se sustituye por completo desde maestro_materiales.categorias al cargar
+// (que llega como [{ "orden": 1, "categoria": "..." }, ...]).
+let CATEGORY_ORDER = {
+  "Cerebro domótico": 1,
+  "Climatización": 2,
+  "Iluminación": 3,
+  "Persianas": 4,
+  "Toldos": 5,
+  "Seguridad / Cámaras": 6,
+  "Red y rack técnico": 7,
+  "Audio multiroom": 8,
+  "Acceso": 9,
+  "WallPanel": 10,
+  "Puesta en marcha": 11,
+};
+function catRank(cat){
+  const key = Object.keys(CATEGORY_ORDER).find(c => c.toLowerCase() === (cat || '').toLowerCase());
+  return key !== undefined ? CATEGORY_ORDER[key] : 9999; // no reconocida -> al final
+}
+
+// ---- CATÁLOGO ----
+let CATALOG = [
+  {cat:"Cerebro domótico", name:"Servidor domótico Home Assistant, control local sin cuotas", price:690, ref:"CD001"},
+  {cat:"Cerebro domótico", name:"Coordinador Zigbee / Matter Thread multiprotocolo", price:140, ref:"CD002"},
+  {cat:"Cerebro domótico", name:"Escenas: amanecer, anochecer, entrada y salida de casa", price:25},
+  {cat:"Cerebro domótico", name:"Central domótica, instalación y configuración Mini Server HA", price:490, ref:"CD001"},
+  {cat:"Cerebro domótico", name:"Configuración de 4 escenas base", price:100},
+  {cat:"Climatización", name:"Termostato inteligente por estancia, programación horaria", price:149, ref:"CD005"},
+  {cat:"Climatización", name:"Termostato inteligente WiFi Meross por zona", price:145, ref:"CD005"},
+  {cat:"Climatización", name:"Instalación WiFi Daikin BRP069B45 y sincronización", price:145},
+  {cat:"Iluminación", name:"Punto de luz inteligente con medición de consumo", price:145, ref:"CD003"},
+  {cat:"Iluminación", name:"Punto de luz inteligente exterior con medición de consumo", price:125, ref:"CD003"},
+  {cat:"Persianas", name:"Motorización de persiana con posición exacta y programación", price:465, ref:"CD004"},
+  {cat:"Persianas", name:"Control inteligente de persiana motorizada con posicionamiento", price:135, ref:"CD004"},
+  {cat:"Persianas", name:"Realización de roza e interruptor", price:130},
+  {cat:"Toldos", name:"Control inteligente de toldo motorizado con posicionamiento", price:135, ref:"CD004"},
+  {cat:"Toldos", name:"Realización de roza para toldo", price:130},
+  {cat:"Seguridad / Cámaras", name:"Cámara PoE exterior 4K, visión nocturna en color, con detección", price:460, ref:"CD006"},
+  {cat:"Seguridad / Cámaras", name:"Cámara PoE exterior, instalación y configuración", price:265, ref:"CD006"},
+  {cat:"Seguridad / Cámaras", name:"Grabador NVR 2TB, grabación local continua o por detección", price:390, ref:"CD007"},
+  {cat:"Red y rack técnico", name:"Rack técnico mural 8U con parcheo y organización", price:420, ref:"CD008"},
+  {cat:"Red y rack técnico", name:"Switch PoE gestionable 14 puertos con separación de redes", price:380, ref:"CD009"},
+  {cat:"Red y rack técnico", name:"Switch YuanLey 8 Port PoE 320W", price:160},
+  {cat:"Red y rack técnico", name:"Switch YuanLey 4 Port PoE 120W", price:130},
+  {cat:"Red y rack técnico", name:"Punto WiFi - HPE Instant On AP22", price:130},
+  {cat:"Red y rack técnico", name:"Cable de red RJ45 100% Cobre (100m) - Interior", price:90},
+  {cat:"Red y rack técnico", name:"Cable de red RJ45 100% Cobre (150m) - Exterior", price:270},
+  {cat:"Red y rack técnico", name:"Material: regletas, latiguillos, tubo, canaleta, cajas registro", price:55},
+  {cat:"Red y rack técnico", name:"Instalación cableado y red WiFi", price:440},
+  {cat:"Audio multiroom", name:"Amplificación WiiM Amp Pro con control independiente por zona", price:460, ref:"CD010"},
+  {cat:"Audio multiroom", name:"Altavoces techo Monitor Audio CP-CT260", price:640, ref:"CD011"},
+  {cat:"Audio multiroom", name:"Altavoces exterior Monitor Audio CL60 T2 IP55", price:590, ref:"CD012"},
+  {cat:"Acceso", name:"Videoportero IP Hikvision DS-KV6124-E1", price:330, ref:"CD013"},
+  {cat:"Acceso", name:"Instalación y configuración videoportero PoE + connect mobile", price:250, ref:"CD013"},
+  {cat:"Acceso", name:"Instalación y configuración cerradura inteligente Nuki", price:480, ref:"CD014"},
+  {cat:"WallPanel", name:"WallPanel móvil (Tablet Lenovo 11\") + soporte pared", price:380, ref:"CD015"},
+  {cat:"Puesta en marcha", name:"Configuración de dashboard, pruebas y formación de uso", price:220},
+];
+
+// ---- DISPOSITIVOS (ficha maestra: "ref" es la referencia que engancha con el "ref" del catálogo) ----
+let DEVICES = [
+  {ref:"CD001", name:"Central domótica (16GB RAM / 512GB SSD)", cat:"Cerebro domótico", desc:"16 GB RAM y 512 GB SSD\ncontrol local, sin cuotas mensuales\nacceso remoto seguro desde el móvil", url_imagen:"https://domoticahogarmadrid.com/wp-content/uploads/2026/03/HIKVISION-DS-KIS612-P-Kit.jpg"},
+  {ref:"CD002", name:"Coordinador Zigbee SLZB-06P10U", cat:"Cerebro domótico", desc:"Multiprotocolo Zigbee y Matter/Thread\nconexión Ethernet, PoE o WiFi\nantena externa de largo alcance", url_imagen:"https://domoticahogarmadrid.com/wp-content/uploads/2026/03/HIKVISION-DS-KIS612-P-Kit.jpg"},
+  {ref:"CD003", name:"Shelly 1PM Gen4", cat:"Iluminación", desc:"Relé de 16A con medición de consumo\nse instala oculto en la caja de mecanismo", url_imagen:"https://domoticahogarmadrid.com/wp-content/uploads/2026/03/HIKVISION-DS-KIS612-P-Kit.jpg"},
+  {ref:"CD004", name:"Shelly 2PM Gen4", cat:"Persianas", desc:"Control de posición exacta (0-100%)\nprogramable por horario, sol o escena", url_imagen:"https://domoticahogarmadrid.com/wp-content/uploads/2026/03/HIKVISION-DS-KIS612-P-Kit.jpg"},
+  {ref:"CD005", name:"Termostato Meross", cat:"Climatización", desc:"Control de temperatura independiente por zona\nprogramación horaria semanal\nhistórico de consumo", url_imagen:"https://domoticahogarmadrid.com/wp-content/uploads/2026/03/HIKVISION-DS-KIS612-P-Kit.jpg"},
+  {ref:"CD006", name:"Reolink Cámara PoE ColorX 4K UHD", cat:"Seguridad / Cámaras", desc:"Resolución 4K UHD (8MP)\nalimentación PoE por un solo cable\ndetección de persona, vehículo y animal", url_imagen:"https://domoticahogarmadrid.com/wp-content/uploads/2026/03/HIKVISION-DS-KIS612-P-Kit.jpg"},
+  {ref:"CD007", name:"NVR Reolink 8 canales + 2TB", cat:"Seguridad / Cámaras", desc:"8 canales PoE, ampliable\ndisco 2TB incluido, grabación local", url_imagen:"https://domoticahogarmadrid.com/wp-content/uploads/2026/03/HIKVISION-DS-KIS612-P-Kit.jpg"},
+  {ref:"CD008", name:"Rack técnico mural 8U", cat:"Red y rack técnico", desc:"8U de altura, montaje en pared\npanel de parcheo y organización de cableado", url_imagen:"https://domoticahogarmadrid.com/wp-content/uploads/2026/03/HIKVISION-DS-KIS612-P-Kit.jpg"},
+  {ref:"CD009", name:"Switch PoE 14 puertos", cat:"Red y rack técnico", desc:"Alimenta cámaras y equipos por el propio cable de red", url_imagen:"https://domoticahogarmadrid.com/wp-content/uploads/2026/03/HIKVISION-DS-KIS612-P-Kit.jpg"},
+  {ref:"CD010", name:"WiiM Amp Pro", cat:"Audio multiroom", desc:"60W/canal (8Ω) · 120W (4Ω)\nWiFi 6E y Bluetooth 5.3\nintegración nativa en Home Assistant", url_imagen:"https://domoticahogarmadrid.com/wp-content/uploads/2026/03/HIKVISION-DS-KIS612-P-Kit.jpg"},
+  {ref:"CD011", name:"Altavoces techo Monitor Audio CP-CT260", cat:"Audio multiroom", desc:"2 vías, woofer 6\" + tweeter 1\"\nqueda enrasado en el techo, prácticamente invisible", url_imagen:"https://domoticahogarmadrid.com/wp-content/uploads/2026/03/HIKVISION-DS-KIS612-P-Kit.jpg"},
+  {ref:"CD012", name:"Altavoces exterior Monitor Audio CL60 T2", cat:"Audio multiroom", desc:"Altavoz satélite estéreo, IP55\ncontrolador de graves 6.5\" + tweeter dome 1\"", url_imagen:"https://domoticahogarmadrid.com/wp-content/uploads/2026/03/HIKVISION-DS-KIS612-P-Kit.jpg"},
+  {ref:"CD013", name:"Videoportero IP Hikvision DS-KV6124-E1", cat:"Acceso", desc:"Lector de tarjetas MF y Bluetooth\nbotonera táctil numérica\ndesbloqueo de puerta remota", url_imagen:"https://domoticahogarmadrid.com/wp-content/uploads/2026/03/HIKVISION-DS-KIS612-P-Kit.jpg"},
+  {ref:"CD014", name:"Cerradura inteligente Nuki", cat:"Acceso", desc:"Conectividad Bluetooth, WiFi y Matter\nacceso y control remoto\n3 modos de bloqueo", url_imagen:"https://domoticahogarmadrid.com/wp-content/uploads/2026/03/HIKVISION-DS-KIS612-P-Kit.jpg"},
+  {ref:"CD015", name:"WallPanel Tablet Lenovo 11\"", cat:"WallPanel", desc:"Tablet para control total del sistema inteligente", url_imagen:"https://domoticahogarmadrid.com/wp-content/uploads/2026/03/HIKVISION-DS-KIS612-P-Kit.jpg"},
+];
+
+// ---- OBSERVACIONES iniciales (formato tarjeta: título / descripción / notas) ----
+const OBS_INITIAL = [
+  {
+    title:"Sobre el sistema",
+    desc:"El sistema se construye sobre Home Assistant, la plataforma domótica de código abierto más extendida del mundo.",
+    notes:"Recomendación: Home Assistant permite que la vivienda no quede atada a un fabricante ni a cuotas mensuales, y sigue funcionando aunque falle internet. Somos instaladores certificados Shelly y trabajamos a diario sobre Home Assistant, así que el sistema se entrega configurado, documentado y listo para ampliarse en el futuro."
+  },
+];
+
+let budget = [];
+let devices = [];
+let obsRows = [];
+let idCounter = 1;
+let devIdCounter = 1;
+let obsIdCounter = 1;
+let selected = null;
+let expandedItemId = null;
+
+// ===== FICHA DEL CLIENTE =====
+let ficha = {
+  nombre: '',
+  direccion: '',
+  dni_nif: '000000000A',
+  telefono: '',
+  email: 'noreply@domoticahogarmadrid.com',
+  origen: 'Instagram',
+  tipo: 'Particular',
+  estado: 'Contactado',
+  fecha_presupuesto: '',
+  // tiempos (días)
+  dias_recepcion_equipos: 10,
+  dias_configuracion_sistema: 5,
+  dias_instalacion_cliente: 1,
+  // pagos (%, importe, status pagado 1/0)
+  aceptacion_pct: 50, aceptacion_importe: 0, aceptacion_status: 0,
+  inicio_pct: 0,      inicio_importe: 0,      inicio_status: 0,
+  entrega_pct: 50,    entrega_importe: 0,     entrega_status: 0,
+};
+function updateFicha(field, value){
+  ficha[field] = value;
+}
+function updateTiempo(field, value){
+  ficha[field] = Number(value) || 0;
+  renderTiemposPagos();
+}
+// al cambiar el %, se recalcula el importe de ese grupo como ese % de la base imponible
+function updatePagoPct(grupo, value){
+  const pct = value === '' ? 0 : Number(value);
+  ficha[grupo + '_pct'] = pct;
+  ficha[grupo + '_importe'] = Math.round(baseImponible() * pct) / 100; // % sobre la base, a 2 decimales
+  renderFichaPagos();
+}
+// al cambiar el importe, se recalcula el % que representa sobre la base
+function updatePagoImporte(grupo, value){
+  const imp = value === '' ? 0 : Number(value);
+  ficha[grupo + '_importe'] = imp;
+  const base = baseImponible();
+  ficha[grupo + '_pct'] = base > 0 ? Math.round((imp / base) * 1000) / 10 : 0; // % con 1 decimal
+  renderFichaPagos();
+}
+// asigna a este grupo justo lo que falta para cuadrar con la base (el "resto")
+function asignarResto(grupo){
+  const base = baseImponible();
+  const otros = ['aceptacion','inicio','entrega']
+    .filter(g => g !== grupo)
+    .reduce((s,g) => s + (Number(ficha[g + '_importe'])||0), 0);
+  const resto = Math.max(0, Math.round((base - otros) * 100) / 100);
+  ficha[grupo + '_importe'] = resto;
+  ficha[grupo + '_pct'] = base > 0 ? Math.round((resto / base) * 1000) / 10 : 0;
+  renderFichaPagos();
+}
+function updatePagoStatus(field, checked){
+  ficha[field] = checked ? 1 : 0;
+  renderFichaPagos(); // al marcar pagado hay que bloquear/desbloquear los campos
+}
+
+// base imponible actual (suma de líneas no pendientes), la misma referencia del pie del presupuesto
+function baseImponible(){
+  return budget.reduce((s,i) => s + (i.pending ? 0 : i.price * i.qty), 0);
+}
+
+function renderFicha(){
+  document.getElementById('fichaNombre').value = ficha.nombre;
+  document.getElementById('fichaDireccion').value = ficha.direccion;
+  document.getElementById('fichaDni').value = ficha.dni_nif;
+  document.getElementById('fichaTelefono').value = ficha.telefono;
+  document.getElementById('fichaEmail').value = ficha.email;
+  document.getElementById('fichaOrigen').value = ficha.origen;
+  document.getElementById('fichaTipo').value = ficha.tipo;
+  document.getElementById('fichaEstado').value = ficha.estado;
+  document.getElementById('fichaFecha').value = ficha.fecha_presupuesto;
+
+  // tiempos
+  document.getElementById('tpRecepcion').value = ficha.dias_recepcion_equipos;
+  document.getElementById('tpConfiguracion').value = ficha.dias_configuracion_sistema;
+  document.getElementById('tpInstalacion').value = ficha.dias_instalacion_cliente;
+
+  // recalcula el importe de cada grupo NO pagado a partir de su % sobre la base
+  const base = baseImponible();
+  ['aceptacion','inicio','entrega'].forEach(g => {
+    if(ficha[g + '_status']) return; // pagado: se respeta el importe guardado
+    const pct = Number(ficha[g + '_pct']) || 0;
+    if(base > 0) ficha[g + '_importe'] = Math.round(base * pct) / 100;
+  });
+
+  renderFichaPagos();
+}
+
+// vuelca los valores de pago en los inputs y aplica el bloqueo por "pagado"
+function renderFichaPagos(){
+  ['aceptacion','inicio','entrega'].forEach(g => {
+    const cap = g.charAt(0).toUpperCase() + g.slice(1);
+    const pagado = !!ficha[g + '_status'];
+    const inPct = document.getElementById('pago'+cap+'Pct');
+    const inImp = document.getElementById('pago'+cap+'Imp');
+    const inChk = document.getElementById('pago'+cap+'Status');
+    inPct.value = ficha[g + '_pct'];
+    inImp.value = ficha[g + '_importe'];
+    inChk.checked = pagado;
+    // si está pagado, no se puede tocar ni % ni importe de esa parte
+    inPct.disabled = pagado;
+    inImp.disabled = pagado;
+    document.getElementById('tpCard'+cap).classList.toggle('tp-locked', pagado);
+  });
+  renderTiemposPagos();
+}
+
+// recalcula total de días, importes asignados vs base, y "falta por asignar"
+function renderTiemposPagos(){
+  // total días = suma de los tres
+  const totalDias = (Number(ficha.dias_recepcion_equipos)||0)
+                  + (Number(ficha.dias_configuracion_sistema)||0)
+                  + (Number(ficha.dias_instalacion_cliente)||0);
+  document.getElementById('tpTotalDias').value = totalDias;
+
+  // suma de importes vs base imponible
+  const sumImp = (Number(ficha.aceptacion_importe)||0) + (Number(ficha.inicio_importe)||0) + (Number(ficha.entrega_importe)||0);
+  const base = baseImponible();
+  const falta = Math.round((base - sumImp) * 100) / 100;
+
+  document.getElementById('tpImpSum').textContent = fmt(sumImp);
+  document.getElementById('tpBaseRef').textContent = fmt(base);
+
+  const faltaLine = document.getElementById('tpFaltaLine');
+  const faltaEl = document.getElementById('tpFalta');
+  if(Math.abs(falta) <= 0.01){
+    faltaEl.textContent = 'cuadra ✓';
+    faltaLine.className = 'tp-total-line ok';
+  } else if(falta > 0){
+    faltaEl.textContent = fmt(falta);
+    faltaLine.className = 'tp-total-line'; // aún queda por asignar: neutro
+  } else {
+    faltaEl.textContent = fmt(falta) + ' (te pasas)';
+    faltaLine.className = 'tp-total-line error'; // se pasa de la base: rojo
+  }
+
+  // el check de pagado solo aplica si ese grupo tiene importe > 0
+  toggleStatus('aceptacion', Number(ficha.aceptacion_importe)||0);
+  toggleStatus('inicio',     Number(ficha.inicio_importe)||0);
+  toggleStatus('entrega',    Number(ficha.entrega_importe)||0);
+}
+function toggleStatus(grupo, importe){
+  const cap = grupo.charAt(0).toUpperCase() + grupo.slice(1);
+  const check = document.getElementById('pago'+cap+'Status').closest('.tp-check-inline');
+  check.classList.toggle('hidden', importe <= 0); // si el importe es 0, no se muestra el check de ese grupo
+}
+
+// ===== TABS =====
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    const panel = document.getElementById('panel-' + btn.dataset.tab);
+    panel.classList.add('active');
+    // los textareas dentro de un panel oculto miden altura 0; al mostrarse hay que recalcularla
+    panel.querySelectorAll('textarea').forEach(autoGrow);
+  });
+});
+
+function fmt(n){
+  return n.toLocaleString('es-ES', {minimumFractionDigits:2, maximumFractionDigits:2, useGrouping:true}) + '€';
+}
+
+function autoGrow(el){
+  // si el campo tiene un transform:scale() visual (letra 16px real pero más
+  // pequeña en pantalla), la altura debe calcularse a partir del tamaño real
+  // del contenido y luego reducirse en la misma proporción, o el cuadro se
+  // queda más alto de lo necesario (hueco vacío debajo del texto).
+  const m = getComputedStyle(el).transform.match(/matrix\(([^,]+),/);
+  const scale = m ? parseFloat(m[1]) : 1;
+  el.style.height = 'auto';
+  el.style.height = (el.scrollHeight * scale) + 'px';
+}
+
+// normaliza el nombre de categoría: si ya existe una igual (sin importar mayúsculas/espacios),
+// reutiliza esa misma cadena para que no se creen categorías duplicadas.
+function normalizeCategory(input){
+  const trimmed = (input || '').trim() || 'Sin categoría';
+  const lower = trimmed.toLowerCase();
+  const existing = new Set([...budget.map(b => b.cat), ...CATALOG.map(c => c.cat)]);
+  for(const c of existing){
+    if(c.toLowerCase() === lower) return c;
+  }
+  return trimmed;
+}
+
+// ===== BUSCADOR =====
+const searchInput = document.getElementById('searchInput');
+const resultsBox = document.getElementById('resultsBox');
+const manualForm = document.getElementById('manualForm');
+
+// quita tildes/diacríticos para que "camara" encuentre "cámara"
+function stripAccents(s){
+  return (s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
+
+let currentMatches = []; // resultados visibles ahora mismo, para navegar con flechas
+let highlightedIndex = -1; // posición resaltada dentro de currentMatches
+
+// abre/cierra el desplegable de resultados y mantiene aria-expanded en sync con
+// la clase 'open'. searchInput declara role="combobox" con aria-controls apuntando
+// a este listado: al marcarlo como combobox, Chrome de escritorio deja de mostrar
+// su propio desplegable nativo de sugerencias encima del campo (que en ventanas
+// anchas se comía la tecla Enter antes de que llegara a nuestro JS).
+function setResultsOpen(open){
+  resultsBox.classList.toggle('open', open);
+  searchInput.setAttribute('aria-expanded', open ? 'true' : 'false');
+}
+
+// pinta una lista de resultados (búsqueda filtrada o catálogo completo) en el desplegable.
+// mostrarRef: solo se enseña la referencia cuando viene de una búsqueda (no al hojear el catálogo completo)
+function showMatches(matches, emptyLabel, mostrarRef){
+  currentMatches = matches;
+  highlightedIndex = matches.length ? 0 : -1;
+
+  if(matches.length === 0){
+    resultsBox.innerHTML = emptyLabel || '<div class="no-results">Sin resultados.</div>';
+  } else {
+    resultsBox.innerHTML = matches.map((item, i) => `
+      <div class="result-item${i === highlightedIndex ? ' highlighted' : ''}" role="option" data-index="${CATALOG.indexOf(item)}">
+        <div>
+          <div class="result-cat">${item.cat}</div>
+          <div class="result-name">${item.name}</div>
+          ${mostrarRef && item.ref ? `<div class="result-ref">Ref. ${item.ref}</div>` : ''}
+        </div>
+        <div class="result-price">${fmt(item.price)}</div>
+      </div>
+    `).join('');
+  }
+  setResultsOpen(true);
+}
+
+function renderResults(query){
+  const q = stripAccents(query.trim().toLowerCase());
+  if(!q){ setResultsOpen(false); resultsBox.innerHTML=''; currentMatches = []; highlightedIndex = -1; return; }
+  // busca por nombre, categoría o referencia
+  const matches = CATALOG.filter(item =>
+    stripAccents(item.name.toLowerCase()).includes(q)
+    || stripAccents(item.cat.toLowerCase()).includes(q)
+    || stripAccents((item.ref || '').toLowerCase()).includes(q)
+  ).slice(0, 8);
+  showMatches(matches, `<div class="no-results">Sin resultados para "${query}".<br>
+      <button class="btn-add-new" id="addNewFromSearch">+ Añadir "${query}" como línea nueva</button></div>`, true);
+}
+
+// muestra el catálogo completo (sin filtrar): se activa al pulsar ↓ con el buscador vacío
+function showFullCatalog(){
+  showMatches(CATALOG, null, false);
+}
+
+// pinta de nuevo solo el resaltado, sin recalcular los resultados (para las flechas)
+function updateHighlight(){
+  resultsBox.querySelectorAll('.result-item').forEach((el, i) => {
+    el.classList.toggle('highlighted', i === highlightedIndex);
+    if(i === highlightedIndex) el.scrollIntoView({block:'nearest'});
+  });
+}
+
+// añade el item indicado del catálogo (misma lógica que el click)
+function addCatalogItem(item){
+  const cat = normalizeCategory(item.cat);
+  budget.push({id: idCounter++, cat, name: item.name, price: item.price, price_compra: item.price_compra ?? null, qty: 1});
+  maybeAddDevice(item.ref);
+  setResultsOpen(false);
+  searchInput.value = '';
+  currentMatches = [];
+  highlightedIndex = -1;
+  renderBudget();
+}
+
+searchInput.addEventListener('input', (e) => renderResults(e.target.value));
+searchInput.addEventListener('focus', (e) => { if(e.target.value) renderResults(e.target.value); });
+
+// navegación por teclado: flechas para moverte entre resultados, Enter para añadir el resaltado
+searchInput.addEventListener('keydown', (e) => {
+  // buscador vacío + flecha abajo: abre el catálogo completo para hojearlo sin escribir
+  if(!resultsBox.classList.contains('open') && searchInput.value.trim() === '' && e.key === 'ArrowDown'){
+    e.preventDefault();
+    showFullCatalog();
+    return;
+  }
+
+  if(!resultsBox.classList.contains('open') || currentMatches.length === 0) return;
+
+  if(e.key === 'ArrowDown'){
+    e.preventDefault();
+    highlightedIndex = (highlightedIndex + 1) % currentMatches.length;
+    updateHighlight();
+  } else if(e.key === 'ArrowUp'){
+    e.preventDefault();
+    highlightedIndex = (highlightedIndex - 1 + currentMatches.length) % currentMatches.length;
+    updateHighlight();
+  } else if(e.key === 'Enter'){
+    e.preventDefault();
+    // resguardo: si por lo que sea no hay nada resaltado pero sí hay resultados,
+    // se añade el primero (el comportamiento normal ya resalta el primero solo).
+    const idx = highlightedIndex >= 0 ? highlightedIndex : (currentMatches.length ? 0 : -1);
+    if(idx >= 0) addCatalogItem(currentMatches[idx]);
+  } else if(e.key === 'Escape'){
+    setResultsOpen(false);
+  }
+});
+
+document.addEventListener('click', (e) => {
+  if(!e.target.closest('.search-panel')){
+    setResultsOpen(false);
+  }
+});
+
+// al tocar un resultado se añade directamente al presupuesto con cantidad 1
+resultsBox.addEventListener('click', (e) => {
+  if(e.target.id === 'addNewFromSearch'){
+    openManualForm(searchInput.value);
+    setResultsOpen(false);
+    return;
+  }
+  const row = e.target.closest('.result-item');
+  if(!row) return;
+  const idx = parseInt(row.dataset.index);
+  addCatalogItem(CATALOG[idx]);
+});
+
+// si el producto añadido tiene un dispositivo asociado y todavía no está en la lista, lo añade automáticamente
+// si el producto añadido tiene un dispositivo asociado (por referencia) y todavía no
+// está en la lista, lo añade automáticamente.
+function maybeAddDevice(ref){
+  if(!ref) return;
+  if(devices.some(d => d.ref === ref)) return; // ya está en la lista
+  const proto = DEVICES.find(d => d.ref === ref);
+  if(!proto) return;
+  devices.push({...proto, id: devIdCounter++});
+  renderDevices();
+}
+
+// ===== LÍNEA MANUAL =====
+function openManualForm(prefillName){
+  manualForm.classList.add('open');
+  document.getElementById('manualName').value = prefillName || '';
+  document.getElementById('manualCat').value = '';
+  document.getElementById('manualQty').value = 1;
+  document.getElementById('manualPrice').value = 0;
+  document.getElementById('manualPending').checked = false;
+  refreshCatList();
+  document.getElementById('manualCat').focus();
+}
+document.getElementById('openManualBtn').addEventListener('click', () => openManualForm(''));
+document.getElementById('cancelManual').addEventListener('click', () => manualForm.classList.remove('open'));
+document.getElementById('confirmManual').addEventListener('click', () => {
+  const cat = normalizeCategory(document.getElementById('manualCat').value);
+  const name = document.getElementById('manualName').value.trim();
+  const qty = Math.max(1, parseInt(document.getElementById('manualQty').value || 1));
+  const pending = document.getElementById('manualPending').checked;
+  const price = pending ? 0 : parseFloat(document.getElementById('manualPrice').value || 0);
+  if(!name){ document.getElementById('manualName').focus(); return; }
+  budget.push({id: idCounter++, cat, name, price, price_compra: null, qty, pending});
+  manualForm.classList.remove('open');
+  renderBudget();
+});
+
+function refreshCatList(){
+  const cats = [...new Set(budget.map(b => b.cat).concat(CATALOG.map(c => c.cat)))];
+  document.getElementById('catList').innerHTML = cats.map(c => `<option value="${c}">`).join('');
+}
+
+// ===== TABLA PRESUPUESTO =====
+function removeItem(id){ budget = budget.filter(b => b.id !== id); renderBudget(); }
+function updateField(id, field, val){
+  const item = budget.find(b => b.id === id);
+  if(!item) return;
+  if(field === 'qty') item.qty = Math.max(1, parseInt(val) || 1);
+  else if(field === 'price') item.price = parseFloat(val) || 0;
+  else item[field] = val;
+  renderBudget();
+}
+// alterna una línea entre precio numérico y "Pendiente" (se excluye del cálculo del total)
+function togglePending(id){
+  const item = budget.find(b => b.id === id);
+  if(!item) return;
+  item.pending = !item.pending;
+  renderBudget();
+}
+// muestra el control "marcar como pendiente" bajo la línea que se está tocando/editando
+function expandItem(id){
+  if(expandedItemId === id) return;
+  expandedItemId = id;
+  renderBudget();
+}
+document.addEventListener('click', (e) => {
+  if(expandedItemId !== null && !e.target.closest('.item-card')){
+    expandedItemId = null;
+    renderBudget();
+  }
+});
+// renombra una categoría entera; si el nuevo nombre coincide con otra ya existente, se fusionan
+function renameCategory(oldCat, newVal){
+  const normalized = normalizeCategory(newVal);
+  budget.forEach(item => { if(item.cat === oldCat) item.cat = normalized; });
+  renderBudget();
+}
+
+function renderBudget(){
+  const list = document.getElementById('budgetList');
+  refreshCatList();
+
+  if(budget.length === 0){
+    list.innerHTML = '<div class="empty-state">Aún no has añadido ninguna línea. Busca arriba o crea una línea manual para empezar.</div>';
+    document.getElementById('baseVal').textContent = fmt(0);
+    document.getElementById('ivaVal').textContent = fmt(0);
+    document.getElementById('totalVal').textContent = fmt(0);
+    return;
+  }
+
+  const cats = [];
+  const grouped = {};
+  budget.forEach(item => {
+    if(!grouped[item.cat]){ grouped[item.cat] = []; cats.push(item.cat); }
+    grouped[item.cat].push(item);
+  });
+  cats.sort((a, b) => catRank(a) - catRank(b) || a.localeCompare(b, 'es'));
+
+  let html = '';
+  let base = 0;
+  cats.forEach(cat => {
+    const items = grouped[cat];
+    // el importe "pendiente" no cuenta para el subtotal ni para el total del presupuesto
+    const subtotal = items.reduce((s,i) => s + (i.pending ? 0 : i.price*i.qty), 0);
+    const allPending = items.every(i => i.pending);
+    base += subtotal;
+    html += `<div class="cat-block">
+      <div class="cat-header">
+        <input class="cat-input" list="catList" value="${cat}" onchange="renameCategory('${cat.replace(/'/g,"\\'")}', this.value)">
+        <div class="cat-subtotal${allPending ? ' is-pending' : ''}">${allPending ? 'Pendiente' : fmt(subtotal)}</div>
+      </div>`;
+    items.forEach(item => {
+      const isExpanded = expandedItemId === item.id;
+      const rightCol = item.pending
+        ? `<div class="item-col-right">
+             <div class="item-calc-row"><span class="pending-tag">Pendiente</span></div>
+           </div>
+           <button class="del-btn" onclick="event.stopPropagation(); removeItem(${item.id})" title="Eliminar">✕</button>`
+        : `<div class="item-col-right">
+             <div class="item-calc-row">
+               <input class="qty-inline" type="number" min="1" value="${item.qty}" onchange="updateField(${item.id},'qty',this.value)">
+               <span class="op">×</span>
+               <span class="price-wrap">
+                 <input class="price-inline" type="number" min="0" step="0.01" value="${item.price}" onchange="updateField(${item.id},'price',this.value)">
+                 <span class="price-eur">€</span>
+               </span>
+             </div>
+             <div class="item-total-row">${fmt(item.price*item.qty)}</div>
+           </div>
+           <button class="del-btn" onclick="event.stopPropagation(); removeItem(${item.id})" title="Eliminar">✕</button>`;
+      const extraHtml = isExpanded
+        ? `<div class="item-extra">${item.pending
+            ? `<button class="pending-toggle" onclick="event.stopPropagation(); togglePending(${item.id})">fijar precio</button>`
+            : `<button class="pending-toggle" onclick="event.stopPropagation(); togglePending(${item.id})">marcar como pendiente</button>`}</div>`
+        : '';
+      html += `
+        <div class="item-card" onclick="expandItem(${item.id})">
+          <div class="item-row">
+            <textarea class="item-name" rows="1" oninput="autoGrow(this)" onchange="updateField(${item.id},'name',this.value)">${item.name}</textarea>
+            ${rightCol}
+          </div>
+          ${extraHtml}
+        </div>`;
+    });
+    html += `</div>`;
+  });
+
+  list.innerHTML = html;
+  list.querySelectorAll('textarea.item-name').forEach(autoGrow);
+  const iva = base * 0.21;
+  const total = base + iva;
+  document.getElementById('baseVal').textContent = fmt(base);
+  document.getElementById('ivaVal').textContent = fmt(iva);
+  document.getElementById('totalVal').textContent = fmt(total);
+  // al cambiar la base (añadir/ajustar líneas), la forma de pago se reajusta:
+  // cada grupo NO pagado recalcula su importe según su % sobre la nueva base
+  if(document.getElementById('tpImpLine')){
+    const base2 = base;
+    ['aceptacion','inicio','entrega'].forEach(g => {
+      if(ficha[g + '_status']) return; // pagado: no se toca
+      const pct = Number(ficha[g + '_pct']) || 0;
+      ficha[g + '_importe'] = base2 > 0 ? Math.round(base2 * pct) / 100 : 0;
+    });
+    renderFichaPagos();
+  }
+}
+
+// ===== DISPOSITIVOS (listado) =====
+function removeDevice(id){ devices = devices.filter(d => d.id !== id); renderDevices(); }
+function updateDevice(id, field, val){
+  const d = devices.find(x => x.id === id);
+  if(!d) return;
+  if(field === 'desc') d.desc = bulletDisplayToRaw(val);
+  else d[field] = val;
+}
+function addDevice(){
+  devices.push({id: devIdCounter++, name:'Nuevo dispositivo', cat:'Categoría', desc:'Característica del dispositivo', url_imagen:''});
+  renderDevices();
+}
+document.getElementById('addDeviceBtn').addEventListener('click', addDevice);
+
+// muestra cada línea de la descripción como viñeta; al guardar se quita el marcador
+function rawToBulletDisplay(desc){
+  return (desc || '').split('\n').map(l => l.trim()).filter(Boolean).map(l => '• ' + l).join('\n');
+}
+function bulletDisplayToRaw(text){
+  return (text || '').split('\n').map(l => l.replace(/^•\s*/, '').trim()).filter(Boolean).join('\n');
+}
+
+function renderDevices(){
+  const list = document.getElementById('deviceList');
+  const sorted = [...devices].sort((a, b) => catRank(a.cat) - catRank(b.cat) || (a.cat||'').localeCompare(b.cat||'', 'es'));
+  list.innerHTML = sorted.map(d => `
+    <div class="device-row">
+      <div class="device-thumb">
+        ${d.url_imagen ? `<img src="${d.url_imagen}" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">` : ''}
+        <span class="device-thumb-fallback"${d.url_imagen ? ' style="display:none"' : ''}>🔧</span>
+      </div>
+      <div class="device-text">
+        <input class="d-cat" value="${d.cat}" onchange="updateDevice(${d.id},'cat',this.value)">
+        <textarea class="d-name" rows="1" oninput="autoGrow(this)" onchange="updateDevice(${d.id},'name',this.value)">${d.name}</textarea>
+        <textarea class="d-desc" rows="1" oninput="autoGrow(this)" onchange="updateDevice(${d.id},'desc',this.value)">${rawToBulletDisplay(d.desc)}</textarea>
+      </div>
+      <button class="del-btn" onclick="removeDevice(${d.id})" title="Eliminar">✕</button>
+    </div>
+  `).join('');
+  list.querySelectorAll('textarea').forEach(autoGrow);
+}
+
+// ===== OBSERVACIONES (tarjetas: título / descripción / notas) =====
+function removeObs(id){ obsRows = obsRows.filter(o => o.id !== id); renderObs(); }
+function updateObs(id, field, val){
+  const o = obsRows.find(x => x.id === id);
+  if(o) o[field] = val;
+}
+function addObs(){
+  obsRows.push({id: obsIdCounter++, title:'Nueva observación', desc:'', notes:''});
+  renderObs();
+}
+document.getElementById('addObsRow').addEventListener('click', addObs);
+
+function renderObs(){
+  const wrap = document.getElementById('obsList');
+  if(obsRows.length === 0){
+    wrap.innerHTML = '<div class="empty-state">Sin observaciones. Añade una para incluirla como anexo del presupuesto.</div>';
+    return;
+  }
+  wrap.innerHTML = obsRows.map(o => `
+    <div class="obs-card">
+      <button class="del-btn" onclick="removeObs(${o.id})" title="Eliminar">✕</button>
+      <div class="obs-card-top">
+        <input class="obs-title" value="${o.title}" onchange="updateObs(${o.id},'title',this.value)">
+      </div>
+      <textarea class="obs-desc" rows="1" oninput="autoGrow(this)" onchange="updateObs(${o.id},'desc',this.value)" placeholder="Descripción...">${o.desc}</textarea>
+      <div class="obs-notes-box">
+        <div class="obs-notes-label">Notas</div>
+        <textarea class="obs-notes" rows="1" oninput="autoGrow(this)" onchange="updateObs(${o.id},'notes',this.value)" placeholder="Notas o recomendaciones...">${o.notes}</textarea>
+      </div>
+    </div>
+  `).join('');
+  wrap.querySelectorAll('textarea').forEach(autoGrow);
+}
+
+// ID del presupuesto activo — normalmente inyectado por WordPress (window.PRESUPUESTO_ID);
+// si se abre suelto para probar, se lee de la URL: ?id=P-0056
+const params = new URLSearchParams(window.location.search);
+const presupuestoId = window.PRESUPUESTO_ID || params.get('id') || '';
+
+// ===== PUENTE WORDPRESS (opcional) =====
+// El plugin de WordPress inyecta window.PRESUPUESTO_AJAX_URL y window.PRESUPUESTO_NONCE
+// justo antes del cierre de HEAD (mismo patrón que ya usa tu calculadora pública con
+// window.domoticaAjaxUrl / window.domoticaNonce). Si este HTML se abre suelto,
+// sin pasar por WordPress, esas variables no existen y se usan las URLs de N8N
+// de abajo directamente — útil para seguir probando el prototipo aquí.
+const wpAjaxUrl = window.PRESUPUESTO_AJAX_URL || '';
+const wpNonce   = window.PRESUPUESTO_NONCE || '';
+const usingWpBridge = !!(wpAjaxUrl && wpNonce);
+
+// ===== CARGA INICIAL (una sola llamada GET, JSON con dos bloques) =====
+// Solo se usa si NO estás pasando por el puente de WordPress. Pega aquí la URL
+// del webhook de N8N que, dado ?id=P-0056, devuelve en una sola respuesta:
+// {
+//   "maestro_materiales": {
+//     "categorias": [...],      -> orden de categorías (sustituye a CATEGORY_ORDER)
+//     "catalog": [...],         -> productos/servicios del Sheet maestro, para el buscador
+//     "catalogDevices": [...]   -> fichas técnicas maestras, para el auto-vínculo dispositivo<->línea
+//   },
+//   "presupuesto": {
+//     "id": 32,                 -> ID real (numérico) en la base de datos
+//     "nombre": "...",          -> nombre del cliente/proyecto
+//     "id_presupuesto": "P-0056", -> número/código de presupuesto (lo que antes llamábamos numero_presupuesto)
+//     "referencia": "...",
+//     "fecha": "...",
+//     "lineas": [...],          -> líneas ya guardadas de ESTE presupuesto (vacío si es nuevo)
+//     "dispositivos": [...],    -> dispositivos ya guardados de ESTE presupuesto
+//     "observaciones": [...]    -> observaciones ya guardadas de ESTE presupuesto
+//   }
+// }
+// Al GUARDAR (POST) los nombres se cruzan respecto al GET:
+//   id_presupuesto (POST) <- id (GET, el id numérico real)
+//   numero_presupuesto (POST) <- id_presupuesto (GET, el código tipo "P-0056")
+const N8N_DATA_URL = ''; // la web usa siempre el puente /api/presupuestos (con sesión)
+
+// datos del presupuesto activo (más allá de líneas/dispositivos/observaciones), por si
+// se necesitan luego — por ejemplo al guardar, o para mostrarlos en el propio documento
+let presupuestoNombre = '';
+// id real (numérico) de la BD, viene en el GET como "id"; se envía en el POST como "id_presupuesto"
+let presupuestoDbId = '';
+// código de presupuesto (p.ej. "P-0056"), viene en el GET como "id_presupuesto"; se envía en el POST como "numero_presupuesto"
+let presupuestoNumero = '';
+let presupuestoReferencia = '';
+let presupuestoFecha = '';
+
+// si el texto viene con un prefijo repetido varias veces seguidas (p.ej. "Recomendación: Recomendación: ..."
+// por haberse guardado así en algún momento), lo colapsa a una sola vez. No hace nada si el texto no lo trae.
+function limpiarPrefijoRepetido(texto, prefijo){
+  if(!texto) return texto;
+  const escapado = prefijo.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const re = new RegExp('^(\\s*' + escapado + '\\s*){2,}', 'i');
+  return texto.replace(re, prefijo + ' ');
+}
+
+async function loadAll(){
+  // por el puente de WordPress: llama a admin-ajax.php con el nonce
+  const dataUrl = usingWpBridge
+    ? `${wpAjaxUrl}?action=presupuesto_datos&nonce=${encodeURIComponent(wpNonce)}&id=${encodeURIComponent(presupuestoId)}`
+    : (N8N_DATA_URL ? `${N8N_DATA_URL}?id=${encodeURIComponent(presupuestoId)}` : '');
+
+  if(!dataUrl) return false; // ni puente WP ni N8N_DATA_URL configurados: datos de ejemplo
+
+  searchInput.placeholder = 'Cargando catálogo…';
+  searchInput.disabled = true;
+  try{
+    const res = await fetch(dataUrl, {credentials: usingWpBridge ? 'same-origin' : 'omit'});
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    const rawText = await res.text();
+    if(!rawText || !rawText.trim()){
+      // N8N devolvió una respuesta vacía (p.ej. no encontró el presupuesto y no
+      // devolvió ni el catálogo). No rompemos: avisamos y caemos a datos de ejemplo.
+      console.warn('El backend devolvió una respuesta vacía. Revisa que N8N devuelva SIEMPRE el catálogo, aunque no exista el presupuesto.');
+      return false;
+    }
+    let payload = JSON.parse(rawText); // el puente PHP reenvía la respuesta de N8N tal cual
+    // N8N a veces responde envuelto en un array [{...}] o en {data:{...}}: normalizar
+    if(Array.isArray(payload)) payload = payload[0] || {};
+    if(payload && payload.data && !payload.maestro_materiales) payload = payload.data;
+    if(Array.isArray(payload)) payload = payload[0] || {};
+
+    const maestro = payload.maestro_materiales || {};
+    const pres = payload.presupuesto || {};
+
+    if(Array.isArray(maestro.categorias) && maestro.categorias.length){
+      // llega como [{ "orden": 1, "categoria": "Infraestructura..." }, ...] -> mapa nombre->orden
+      const mapa = {};
+      maestro.categorias.forEach(c => {
+        if(c && c.categoria) mapa[c.categoria] = Number(c.orden) || 9999;
+      });
+      if(Object.keys(mapa).length) CATEGORY_ORDER = mapa;
+    }
+    if(Array.isArray(maestro.catalog)) CATALOG = maestro.catalog;
+    if(Array.isArray(maestro.catalogDevices)) DEVICES = maestro.catalogDevices;
+
+    // diagnóstico: si el catálogo no llegó, avisa en consola con lo que sí llegó
+    if(!Array.isArray(maestro.catalog) || maestro.catalog.length === 0){
+      console.warn('El catálogo llegó vacío o con otra estructura. Claves recibidas:', Object.keys(payload), '| maestro_materiales:', maestro);
+    }
+
+    presupuestoNombre = pres.nombre || '';
+    presupuestoDbId = pres.id || '';
+    presupuestoNumero = pres.id_presupuesto || '';
+    presupuestoReferencia = pres.referencia || '';
+    presupuestoFecha = pres.fecha || '';
+    if(pres.ficha) Object.assign(ficha, pres.ficha);
+
+    budget = (pres.lineas || []).map(l => ({...l, id: idCounter++}));
+    devices = (pres.dispositivos || []).map(d => ({...d, id: devIdCounter++}));
+    // si el presupuesto no trae observaciones, se ponen las de Home Assistant por defecto
+    const obsBase = (pres.observaciones && pres.observaciones.length) ? pres.observaciones : OBS_INITIAL;
+    obsRows = obsBase.map(o => ({...o, notes: limpiarPrefijoRepetido(o.notes, 'Recomendación:'), id: obsIdCounter++}));
+    return true;
+  }catch(err){
+    console.warn('No se pudo cargar catálogo/presupuesto remoto, uso los datos de ejemplo:', err.message);
+    return false;
+  }finally{
+    searchInput.disabled = false;
+    searchInput.placeholder = 'Ej: cámara, persiana, WiiM, termostato...';
+  }
+}
+
+// ===== GUARDAR =====
+// Solo se usa si NO estás pasando por el puente de WordPress.
+// Pega aquí la URL del webhook de N8N que recibe el POST y escribe en el Sheet del cliente.
+// Ej: 'https://n8n.tudominio.com/webhook/guardar-presupuesto'
+const N8N_SAVE_URL = '';
+
+// URL del listado de presupuestos: al guardar con éxito se redirige aquí.
+// Cámbiala si tu listado está en otra ruta.
+const LISTADO_URL = '/presupuestos';
+
+// mismo criterio de orden que usan renderBudget() y renderDevices() para pintar
+// en pantalla (por categoría según CATEGORY_ORDER, y alfabético como desempate).
+// Se reutiliza aquí para que el JSON que se envía en el POST salga en el mismo
+// orden que el usuario ve, en vez de en el orden en que se fueron añadiendo las líneas.
+function sortByCategory(list){
+  return [...list].sort((a, b) => catRank(a.cat) - catRank(b.cat) || (a.cat||'').localeCompare(b.cat||'', 'es'));
+}
+
+function buildPayload(){
+  return {
+    id_presupuesto: presupuestoDbId,
+    numero_presupuesto: presupuestoNumero || presupuestoId,
+    nombre: presupuestoNombre,
+    referencia: presupuestoReferencia,
+    fecha: new Date().toISOString(),
+    ficha: {...ficha},
+    lineas: sortByCategory(budget).map(({id, ...rest}) => rest),
+    dispositivos: sortByCategory(devices).map(({id, ...rest}) => rest),
+    observaciones: obsRows.map(({id, ...rest}) => rest),
+  };
+}
+
+async function saveBudget(){
+  const btn = document.getElementById('saveBtn');
+  const status = document.getElementById('saveStatus');
+  const overlay = document.getElementById('savingOverlay');
+  const savingText = document.getElementById('savingText');
+  const payload = buildPayload();
+
+  const saveUrl = usingWpBridge
+    ? `${wpAjaxUrl}?action=presupuesto_guardar&nonce=${encodeURIComponent(wpNonce)}`
+    : N8N_SAVE_URL;
+
+  btn.disabled = true;
+  status.textContent = 'Guardando…';
+  status.className = 'save-status';
+
+  if(!saveUrl){
+    // Sin webhook ni puente configurados todavía: descarga el JSON para que puedas ver
+    // la estructura exacta que recibirá N8N y probar el workflow con datos reales.
+    const blob = new Blob([JSON.stringify(payload, null, 2)], {type: 'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `presupuesto_${presupuestoId}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    status.textContent = 'Sin webhook configurado — JSON descargado para revisar';
+    status.className = 'save-status err';
+    btn.disabled = false;
+    return;
+  }
+
+  // mostrar el overlay "Guardando…" a pantalla completa
+  savingText.textContent = 'Guardando presupuesto…';
+  overlay.classList.remove('hidden');
+
+  try{
+    const res = await fetch(saveUrl, {
+      method: 'POST',
+      credentials: usingWpBridge ? 'same-origin' : 'omit',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(payload)
+    });
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    // éxito: avisamos y redirigimos al listado
+    status.textContent = 'Guardado ✓';
+    status.className = 'save-status ok';
+    savingText.textContent = 'Guardado ✓ Redirigiendo…';
+    // salimos del iframe si lo hubiera, para que la URL del navegador cambie
+    const win = window.top || window;
+    win.location.href = LISTADO_URL;
+  }catch(err){
+    // error: ocultamos el overlay y mostramos el mensaje
+    overlay.classList.add('hidden');
+    status.textContent = 'Error al guardar: ' + err.message;
+    status.className = 'save-status err';
+    btn.disabled = false;
+  }
+}
+document.getElementById('saveBtn').addEventListener('click', saveBudget);
+
+// ===== INIT =====
+(async function init(){
+  const cargado = await loadAll(); // si hay N8N_DATA_URL, rellena CATALOG/DEVICES + budget/devices/obsRows en una sola llamada
+
+  if(!cargado){
+    // sin backend todavía: arranca con los datos de ejemplo del prototipo
+    devices = DEVICES.map((d,i) => ({...d, id: i+1}));
+    obsRows = OBS_INITIAL.map((o,i) => ({...o, id: i+1}));
+    devIdCounter = devices.length + 1;
+    obsIdCounter = obsRows.length + 1;
+  }
+
+  renderBudget();
+  renderDevices();
+  renderObs();
+  renderFicha();
+
+  // datos ya cargados y pintados: ocultar el overlay de carga
+  const ov = document.getElementById('loadingOverlay');
+  if(ov) ov.classList.add('hidden');
+})();
+</script>
+
+</body>
+</html>
