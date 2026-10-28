@@ -45,32 +45,26 @@
 </header>
 <main id="main">
 <!-- ============ HERO ============ -->
-<section class="hero hero--wall">
-  <div class="hero__bg"><div class="hero__grid-lines"></div></div>
+<section class="hero-cine">
+  <div class="cine" aria-hidden="true"><div class="cine__panel"><video muted loop playsinline preload="none" poster="assets/video/videoportero-accesos.jpg" data-autoplay><source src="assets/video/videoportero-accesos-hd.mp4" type="video/mp4"></video></div><div class="cine__panel"><video muted loop playsinline autoplay preload="auto" poster="assets/video/pergola-led.jpg" data-autoplay><source src="assets/video/pergola-led-hd.mp4" type="video/mp4"></video></div><div class="cine__panel"><video muted loop playsinline preload="none" poster="assets/video/jardin-piscina.jpg" data-autoplay><source src="assets/video/jardin-piscina-hd.mp4" type="video/mp4"></video></div></div><div class="cine__shade" aria-hidden="true"></div>
   <div class="container">
-    <div class="reveal">
-      <span class="pill"><b>MADRID</b> <span class="dot-live"></span> Integradores de domótica · Hogar y empresa</span>
-      <h1>Tu casa, <em>inteligente.</em> Sin complicaciones.</h1>
-      <p class="lead">Diseñamos e instalamos domótica a medida: luces, persianas, clima, accesos, seguridad y energía, todo desde una sola app. Con las mejores marcas y sin depender de la nube.</p>
-      <div class="btn-row">
+    <div class="hero-cine__content">
+      <span class="eyebrow" data-in style="--i:0">Domótica premium · Madrid</span>
+      <h1 data-in style="--i:1">Tu casa responde. <em>Con elegancia.</em></h1>
+      <p class="lead" data-in style="--i:2">Diseñamos e instalamos domótica a medida: luz, clima, accesos, seguridad y energía, coordinados en una sola escena. Con las mejores marcas, control local y acabados de diseño.</p>
+      <div class="btn-row" data-in style="--i:3">
         <a class="btn btn--primary btn--lg" href="contacto.html">Pide tu estudio gratuito <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
-        <a class="btn btn--ghost btn--lg" href="#videos"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg> Ver instalaciones</a>
-      </div>
-      <div class="hero-protos" aria-label="Tecnologías">
-        <span>Home Assistant</span><span>Matter</span><span>Thread</span><span>Zigbee</span><span>Z-Wave</span><span>Wi-Fi</span><span>KNX</span><span>DALI-2</span>
+        <a class="btn btn--ghost btn--lg" href="#historia"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg> Descubre cómo se vive</a>
       </div>
     </div>
-    <div class="hero-wall-wrap reveal reveal-d2">
-      <div class="video-wall" aria-label="Vídeos de nuestras instalaciones">
-          <div class="vw-col"><div class="vw-item" data-video="assets/video/jardin-piscina.mp4" data-poster="assets/video/jardin-piscina.jpg" data-title="Jardín y piscina" role="button" tabindex="0" aria-label="Ver vídeo: Jardín y piscina"><video muted loop playsinline preload="none" poster="assets/video/jardin-piscina.jpg" data-autoplay><source src="assets/video/jardin-piscina.mp4" type="video/mp4"></video><span>Jardín y piscina</span></div><div class="vw-item" data-video="assets/video/videoportero-accesos.mp4" data-poster="assets/video/videoportero-accesos.jpg" data-title="Accesos Hikvision" role="button" tabindex="0" aria-label="Ver vídeo: Accesos Hikvision"><img src="assets/video/videoportero-accesos.jpg" alt="" loading="lazy"><span>Accesos Hikvision</span></div><div class="vw-item" data-video="assets/video/rack-cuadro.mp4" data-poster="assets/video/rack-cuadro.jpg" data-title="Rack y cuadro" role="button" tabindex="0" aria-label="Ver vídeo: Rack y cuadro"><img src="assets/video/rack-cuadro.jpg" alt="" loading="lazy"><span>Rack y cuadro</span></div><div class="vw-item" data-video="assets/video/jardin-piscina.mp4" data-poster="assets/video/jardin-piscina.jpg" data-title="Jardín y piscina" role="button" tabindex="-1" aria-hidden="true" aria-label="Ver vídeo: Jardín y piscina"><video muted loop playsinline preload="none" poster="assets/video/jardin-piscina.jpg" data-autoplay><source src="assets/video/jardin-piscina.mp4" type="video/mp4"></video><span>Jardín y piscina</span></div><div class="vw-item" data-video="assets/video/videoportero-accesos.mp4" data-poster="assets/video/videoportero-accesos.jpg" data-title="Accesos Hikvision" role="button" tabindex="-1" aria-hidden="true" aria-label="Ver vídeo: Accesos Hikvision"><img src="assets/video/videoportero-accesos.jpg" alt="" loading="lazy"><span>Accesos Hikvision</span></div><div class="vw-item" data-video="assets/video/rack-cuadro.mp4" data-poster="assets/video/rack-cuadro.jpg" data-title="Rack y cuadro" role="button" tabindex="-1" aria-hidden="true" aria-label="Ver vídeo: Rack y cuadro"><img src="assets/video/rack-cuadro.jpg" alt="" loading="lazy"><span>Rack y cuadro</span></div></div>
-          <div class="vw-col"><div class="vw-item" data-video="assets/video/panel-home-assistant.mp4" data-poster="assets/video/panel-home-assistant.jpg" data-title="Panel Home Assistant" role="button" tabindex="0" aria-label="Ver vídeo: Panel Home Assistant"><video muted loop playsinline preload="none" poster="assets/video/panel-home-assistant.jpg" data-autoplay><source src="assets/video/panel-home-assistant.mp4" type="video/mp4"></video><span>Panel Home Assistant</span></div><div class="vw-item" data-video="assets/video/vivienda-recorrido.mp4" data-poster="assets/video/vivienda-recorrido.jpg" data-title="Vivienda completa" role="button" tabindex="0" aria-label="Ver vídeo: Vivienda completa"><img src="assets/video/vivienda-recorrido.jpg" alt="" loading="lazy"><span>Vivienda completa</span></div><div class="vw-item" data-video="assets/video/exterior-vivienda.mp4" data-poster="assets/video/exterior-vivienda.jpg" data-title="Exterior" role="button" tabindex="0" aria-label="Ver vídeo: Exterior"><img src="assets/video/exterior-vivienda.jpg" alt="" loading="lazy"><span>Exterior</span></div><div class="vw-item" data-video="assets/video/panel-home-assistant.mp4" data-poster="assets/video/panel-home-assistant.jpg" data-title="Panel Home Assistant" role="button" tabindex="-1" aria-hidden="true" aria-label="Ver vídeo: Panel Home Assistant"><video muted loop playsinline preload="none" poster="assets/video/panel-home-assistant.jpg" data-autoplay><source src="assets/video/panel-home-assistant.mp4" type="video/mp4"></video><span>Panel Home Assistant</span></div><div class="vw-item" data-video="assets/video/vivienda-recorrido.mp4" data-poster="assets/video/vivienda-recorrido.jpg" data-title="Vivienda completa" role="button" tabindex="-1" aria-hidden="true" aria-label="Ver vídeo: Vivienda completa"><img src="assets/video/vivienda-recorrido.jpg" alt="" loading="lazy"><span>Vivienda completa</span></div><div class="vw-item" data-video="assets/video/exterior-vivienda.mp4" data-poster="assets/video/exterior-vivienda.jpg" data-title="Exterior" role="button" tabindex="-1" aria-hidden="true" aria-label="Ver vídeo: Exterior"><img src="assets/video/exterior-vivienda.jpg" alt="" loading="lazy"><span>Exterior</span></div></div>
-          <div class="vw-col"><div class="vw-item" data-video="assets/video/pergola-led.mp4" data-poster="assets/video/pergola-led.jpg" data-title="Pérgola LED" role="button" tabindex="0" aria-label="Ver vídeo: Pérgola LED"><video muted loop playsinline preload="none" poster="assets/video/pergola-led.jpg" data-autoplay><source src="assets/video/pergola-led.mp4" type="video/mp4"></video><span>Pérgola LED</span></div><div class="vw-item" data-video="assets/video/videoportero-panel.mp4" data-poster="assets/video/videoportero-panel.jpg" data-title="Videoportero en panel" role="button" tabindex="0" aria-label="Ver vídeo: Videoportero en panel"><img src="assets/video/videoportero-panel.jpg" alt="" loading="lazy"><span>Videoportero en panel</span></div><div class="vw-item" data-video="assets/video/camaras-seguridad.mp4" data-poster="assets/video/camaras-seguridad.jpg" data-title="Cámaras" role="button" tabindex="0" aria-label="Ver vídeo: Cámaras"><img src="assets/video/camaras-seguridad.jpg" alt="" loading="lazy"><span>Cámaras</span></div><div class="vw-item" data-video="assets/video/pergola-led.mp4" data-poster="assets/video/pergola-led.jpg" data-title="Pérgola LED" role="button" tabindex="-1" aria-hidden="true" aria-label="Ver vídeo: Pérgola LED"><video muted loop playsinline preload="none" poster="assets/video/pergola-led.jpg" data-autoplay><source src="assets/video/pergola-led.mp4" type="video/mp4"></video><span>Pérgola LED</span></div><div class="vw-item" data-video="assets/video/videoportero-panel.mp4" data-poster="assets/video/videoportero-panel.jpg" data-title="Videoportero en panel" role="button" tabindex="-1" aria-hidden="true" aria-label="Ver vídeo: Videoportero en panel"><img src="assets/video/videoportero-panel.jpg" alt="" loading="lazy"><span>Videoportero en panel</span></div><div class="vw-item" data-video="assets/video/camaras-seguridad.mp4" data-poster="assets/video/camaras-seguridad.jpg" data-title="Cámaras" role="button" tabindex="-1" aria-hidden="true" aria-label="Ver vídeo: Cámaras"><img src="assets/video/camaras-seguridad.jpg" alt="" loading="lazy"><span>Cámaras</span></div></div>
-          
-      </div>
-      <div class="float-card float-card--a"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2V17h5v-1.1c0-.8.4-1.5 1-2A6 6 0 0 0 12 3z"/></svg></span><span><b>Jardín encendido</b>desde el móvil, en 1 segundo</span></div>
-      <div class="float-card float-card--b"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 5 6v6c0 4.4 3 7.8 7 9 4-1.2 7-4.6 7-9V6l-7-3z"/><path d="m9 12 2 2 4-4"/></svg></span><span><b>Alarma armada</b>Puertas y ventanas cerradas</span></div>
-    </div>
+    <aside class="scene-card" data-scene-card data-in style="--i:4" aria-label="Ejemplo de escena domótica en marcha">
+      <div class="scene-card__head"><span class="dot-live"></span> Escena activa <time>19:42</time></div>
+      <div class="scene-card__name">Llegada a casa</div>
+      <ul></ul>
+      <div class="scene-card__bar"><i></i></div>
+    </aside>
   </div>
+  <a class="scroll-cue" href="#manifiesto">Desliza</a>
 </section>
 
 <!-- ============ MARCAS ============ -->
@@ -113,6 +107,77 @@
     </div>
   </div>
 </div>
+
+<!-- ============ MANIFIESTO ============ -->
+<section class="statement" id="manifiesto">
+  <div class="container">
+    <span class="eyebrow">Nuestra forma de trabajar</span>
+    <p class="statement__text mt-2" data-statement>No instalamos aparatos. Diseñamos cómo vives tu casa: la luz al llegar, el clima perfecto, la puerta que se abre sola y <span class="accent">la tranquilidad de saber que todo está bajo control.</span></p>
+    <div class="statement__sign reveal"><img src="assets/img/logo-icon.png" alt="" width="334" height="328"><span>Domótica Hogar Madrid · Integradores de Home Assistant, Matter, Zigbee, Z-Wave y KNX</span></div>
+  </div>
+</section>
+
+<!-- ============ UN DÍA EN CASA ============ -->
+<section class="story" id="historia" data-story>
+  <div class="container">
+    <div class="story__intro reveal">
+      <span class="eyebrow">Un día en una casa inteligente</span>
+      <h2>Así se vive <em>con domótica bien hecha</em></h2>
+      <p class="lead">Instalaciones reales de nuestros clientes. Baja despacio y recorre un día completo.</p>
+    </div>
+    <div class="story__grid">
+      <div class="story__steps">
+      <article class="story-step">
+        <div class="story-step__time">07:00</div>
+        <h3>Buenos días</h3>
+        <p>Las persianas suben poco a poco, el clima ya está a 21 °C y la cocina se ilumina. Todo programado y visible en el panel de pared.</p>
+        <div class="tags"><span class="tag">Persianas al 90 %</span><span class="tag">Clima 21 °C</span><span class="tag">Luz cálida</span></div>
+        <div class="story-step__media"><video muted loop playsinline preload="none" poster="assets/video/panel-home-assistant.jpg" data-autoplay><source src="assets/video/panel-home-assistant-hd.mp4" type="video/mp4"></video></div>
+      </article>
+      <article class="story-step">
+        <div class="story-step__time">08:30</div>
+        <h3>Salgo de casa</h3>
+        <p>Un toque en «Salgo»: luces apagadas, alarma armada y cámaras vigilando. Si algo pasa, te avisa al móvil al instante.</p>
+        <div class="tags"><span class="tag">Alarma armada</span><span class="tag">Cámaras activas</span><span class="tag">Todo apagado</span></div>
+        <div class="story-step__media"><video muted loop playsinline preload="none" poster="assets/video/camaras-seguridad.jpg" data-autoplay><source src="assets/video/camaras-seguridad-hd.mp4" type="video/mp4"></video></div>
+      </article>
+      <article class="story-step">
+        <div class="story-step__time">19:40</div>
+        <h3>Llegada a casa</h3>
+        <p>Código, tarjeta o móvil. La puerta se abre, la alarma se desarma sola y el camino de entrada se ilumina a tu paso.</p>
+        <div class="tags"><span class="tag">Puerta abierta</span><span class="tag">Alarma desarmada</span><span class="tag">Entrada al 80 %</span></div>
+        <div class="story-step__media"><video muted loop playsinline preload="none" poster="assets/video/videoportero-accesos.jpg" data-autoplay><source src="assets/video/videoportero-accesos-hd.mp4" type="video/mp4"></video></div>
+      </article>
+      <article class="story-step">
+        <div class="story-step__time">20:15</div>
+        <h3>Alguien llama</h3>
+        <p>La videollamada del portero aparece en el panel y en tu móvil. Ves quién es y abres desde donde estés.</p>
+        <div class="tags"><span class="tag">Videoportero</span><span class="tag">Apertura remota</span></div>
+        <div class="story-step__media"><video muted loop playsinline preload="none" poster="assets/video/videoportero-panel.jpg" data-autoplay><source src="assets/video/videoportero-panel-hd.mp4" type="video/mp4"></video></div>
+      </article>
+      <article class="story-step">
+        <div class="story-step__time">21:30</div>
+        <h3>Cena en la pérgola</h3>
+        <p>La pérgola se enciende en luz cálida regulable y el exterior entra en modo cena con una sola escena.</p>
+        <div class="tags"><span class="tag">Pérgola LED 70 %</span><span class="tag">Música exterior</span></div>
+        <div class="story-step__media"><video muted loop playsinline preload="none" poster="assets/video/pergola-led.jpg" data-autoplay><source src="assets/video/pergola-led-hd.mp4" type="video/mp4"></video></div>
+      </article>
+      <article class="story-step">
+        <div class="story-step__time">23:15</div>
+        <h3>Todo bajo control</h3>
+        <p>Antes de dormir, un vistazo al móvil: jardín, piscina, puertas y alarma. Todo como debe estar.</p>
+        <div class="tags"><span class="tag">Jardín apagado</span><span class="tag">Alarma perimetral</span><span class="tag">Modo noche</span></div>
+        <div class="story-step__media"><video muted loop playsinline preload="none" poster="assets/video/jardin-piscina.jpg" data-autoplay><source src="assets/video/jardin-piscina-hd.mp4" type="video/mp4"></video></div>
+      </article>
+      </div>
+      <div class="story__media" aria-hidden="true">
+        <div class="story__stage"><div class="story__frame"><video muted loop playsinline preload="none" poster="assets/video/panel-home-assistant.jpg"><source src="assets/video/panel-home-assistant-hd.mp4" type="video/mp4"></video><div class="story__hud"><span><span class="dot-live"></span> En directo</span><b>07:00</b></div><div class="story__chips"><span>Persianas al 90 %</span><span>Clima 21 °C</span><span>Luz cálida</span></div></div><div class="story__frame"><video muted loop playsinline preload="none" poster="assets/video/camaras-seguridad.jpg"><source src="assets/video/camaras-seguridad-hd.mp4" type="video/mp4"></video><div class="story__hud"><span><span class="dot-live"></span> En directo</span><b>08:30</b></div><div class="story__chips"><span>Alarma armada</span><span>Cámaras activas</span><span>Todo apagado</span></div></div><div class="story__frame"><video muted loop playsinline preload="none" poster="assets/video/videoportero-accesos.jpg"><source src="assets/video/videoportero-accesos-hd.mp4" type="video/mp4"></video><div class="story__hud"><span><span class="dot-live"></span> En directo</span><b>19:40</b></div><div class="story__chips"><span>Puerta abierta</span><span>Alarma desarmada</span><span>Entrada al 80 %</span></div></div><div class="story__frame"><video muted loop playsinline preload="none" poster="assets/video/videoportero-panel.jpg"><source src="assets/video/videoportero-panel-hd.mp4" type="video/mp4"></video><div class="story__hud"><span><span class="dot-live"></span> En directo</span><b>20:15</b></div><div class="story__chips"><span>Videoportero</span><span>Apertura remota</span></div></div><div class="story__frame"><video muted loop playsinline preload="none" poster="assets/video/pergola-led.jpg"><source src="assets/video/pergola-led-hd.mp4" type="video/mp4"></video><div class="story__hud"><span><span class="dot-live"></span> En directo</span><b>21:30</b></div><div class="story__chips"><span>Pérgola LED 70 %</span><span>Música exterior</span></div></div><div class="story__frame"><video muted loop playsinline preload="none" poster="assets/video/jardin-piscina.jpg"><source src="assets/video/jardin-piscina-hd.mp4" type="video/mp4"></video><div class="story__hud"><span><span class="dot-live"></span> En directo</span><b>23:15</b></div><div class="story__chips"><span>Jardín apagado</span><span>Alarma perimetral</span><span>Modo noche</span></div></div>
+          <div class="story__rail"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
 <!-- ============ SERVICIOS ============ -->
 <section class="section" style="background:var(--paper)">
@@ -227,76 +292,6 @@
 </section>
 
 
-<!-- ============ ESCENAS ============ -->
-<section class="section section--dark" id="escenas">
-  <div class="container">
-    <div class="section-head section-head--center reveal">
-      <span class="eyebrow">Vívelo</span>
-      <h2>Un toque. <em>Toda la casa</em> responde.</h2>
-      <p class="lead">Las escenas encadenan luces, persianas, clima y seguridad en una sola orden: desde un interruptor, la app, tu voz o automáticamente según la hora y tu presencia.</p>
-    </div>
-
-    <div class="scenes reveal">
-      <div class="scene-tabs" role="tablist" aria-label="Escenas de ejemplo">
-        <button class="scene-tab is-active" role="tab" data-scene="morning" aria-selected="true"><span class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></span><span><strong>Buenos días</strong><small>Persianas arriba y café listo</small></span></button>
-        <button class="scene-tab" role="tab" data-scene="away" aria-selected="false"><span class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V4a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v17M3 21h18"/><circle cx="15" cy="12" r=".9"/></svg></span><span><strong>Salgo de casa</strong><small>Todo apagado y alarma armada</small></span></button>
-        <button class="scene-tab" role="tab" data-scene="cinema" aria-selected="false"><span class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 4v16M17 4v16M3 9h4M3 15h4M17 9h4M17 15h4"/></svg></span><span><strong>Modo cine</strong><small>Luz tenue, tele y sonido</small></span></button>
-        <button class="scene-tab" role="tab" data-scene="night" aria-selected="false"><span class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg></span><span><strong>Buenas noches</strong><small>Casa segura y luz guía</small></span></button>
-      </div>
-
-      <div class="scene-stage">
-        <svg class="room" data-scene="morning" viewBox="0 0 800 480" role="img" aria-label="Ilustración de un salón que cambia según la escena">
-          <defs>
-            <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop class="sky-a" offset="0"/><stop class="sky-b" offset="1"/></linearGradient>
-            <radialGradient id="lampG"><stop offset="0" stop-color="#ffcf8a" stop-opacity=".95"/><stop offset="1" stop-color="#ffcf8a" stop-opacity="0"/></radialGradient>
-            <radialGradient id="ceilG" cx=".5" cy="0" r="1"><stop offset="0" stop-color="#fff1d6" stop-opacity=".8"/><stop offset="1" stop-color="#fff1d6" stop-opacity="0"/></radialGradient>
-            <linearGradient id="tvG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5b7cff"/><stop offset=".5" stop-color="#a36bff"/><stop offset="1" stop-color="#ff8a6b"/></linearGradient>
-            <linearGradient id="stripG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffb347" stop-opacity=".45"/><stop offset="1" stop-color="#ffb347" stop-opacity="0"/></linearGradient>
-          </defs>
-          <rect width="800" height="480" fill="#e9e3d8"/>
-          <rect y="380" width="800" height="100" fill="#c7b9a3"/>
-          <rect y="378" width="800" height="4" fill="#b3a48c"/>
-          <!-- ventana -->
-          <rect x="70" y="70" width="230" height="250" fill="url(#sky)"/>
-          <circle cx="240" cy="130" r="26" fill="#fff6dc" opacity=".8"/>
-          <path d="M70 270 Q130 230 190 260 T300 250 V320 H70Z" fill="#7a9a7e" opacity=".55"/>
-          <rect class="blind" x="70" y="70" width="230" height="250" fill="#d8d0c2"/>
-          <g class="blind" stroke="#c4baa9" stroke-width="2"><path d="M70 95h230M70 120h230M70 145h230M70 170h230M70 195h230M70 220h230M70 245h230M70 270h230M70 295h230"/></g>
-          <rect x="62" y="62" width="246" height="266" fill="none" stroke="#2a313b" stroke-width="8"/>
-          <path d="M185 66v258" stroke="#2a313b" stroke-width="5"/>
-          <!-- luz de techo -->
-          <path class="ceil-glow" d="M430 40 L330 380 H700 L600 40Z" fill="url(#ceilG)"/>
-          <rect x="490" y="0" width="4" height="30" fill="#2a313b"/><path d="M462 30h60l-12 14h-36z" fill="#2a313b"/>
-          <!-- TV -->
-          <rect x="430" y="150" width="260" height="150" rx="6" fill="#111"/>
-          <rect class="tv-screen" x="438" y="158" width="244" height="134" rx="3" fill="url(#tvG)"/>
-          <rect class="strip" x="420" y="300" width="280" height="60" fill="url(#stripG)"/>
-          <rect x="420" y="350" width="280" height="30" rx="4" fill="#3d3328"/>
-          <!-- sofá -->
-          <rect x="80" y="330" width="310" height="70" rx="20" fill="#6b5b4a"/>
-          <rect x="95" y="300" width="280" height="55" rx="18" fill="#7d6b57"/>
-          <rect x="70" y="320" width="34" height="85" rx="14" fill="#5d4f40"/>
-          <rect x="366" y="320" width="34" height="85" rx="14" fill="#5d4f40"/>
-          <rect x="150" y="315" width="60" height="40" rx="10" fill="#3d8bff" opacity=".85"/>
-          <!-- lámpara de pie -->
-          <circle class="lamp-glow" cx="745" cy="190" r="140" fill="url(#lampG)"/>
-          <path d="M745 210v170M720 380h50" stroke="#2a313b" stroke-width="5"/>
-          <path d="M715 210h60l-12-50h-36z" fill="#e6ecf3"/>
-          <!-- planta -->
-          <path d="M30 380 q-6-50 10-90 M30 380 q10-60 -20-80 M30 380 q20-40 40-70" stroke="#5f7d63" stroke-width="6" fill="none" stroke-linecap="round"/>
-          <rect x="14" y="372" width="34" height="30" rx="4" fill="#2a313b"/>
-          <!-- velo de oscuridad -->
-          <rect class="dark-veil" width="800" height="480" fill="#0a0e1d"/>
-          <circle class="lamp-glow" cx="745" cy="190" r="110" fill="url(#lampG)" style="mix-blend-mode:screen"/>
-          <rect class="tv-screen" x="438" y="158" width="244" height="134" rx="3" fill="url(#tvG)" opacity=".9"/>
-          <rect class="strip" x="420" y="300" width="280" height="60" fill="url(#stripG)"/>
-        </svg>
-        <div class="scene-caption" aria-live="polite"></div>
-      </div>
-    </div>
-  </div>
-</section>
-
 <!-- ============ POR QUÉ NOSOTROS ============ -->
 <section class="section section--white">
   <div class="container split split--wide-right">
@@ -341,24 +336,6 @@
       <div class="step reveal reveal-d1"><span class="step__n">02</span><h3>Propuesta cerrada</h3><p>Diseño del sistema, marcas recomendadas y presupuesto detallado por estancias. Sin sorpresas.</p></div>
       <div class="step reveal reveal-d2"><span class="step__n">03</span><h3>Instalación</h3><p>Montaje limpio, configuración de escenas y automatizaciones, y pruebas de todo el sistema.</p></div>
       <div class="step reveal reveal-d3"><span class="step__n">04</span><h3>Formación y soporte</h3><p>Te enseñamos a usarlo, documentamos la instalación y seguimos disponibles cuando lo necesites.</p></div>
-    </div>
-  </div>
-</section>
-
-<!-- ============ PROYECTOS DESTACADOS ============ -->
-<section class="section section--paper2">
-  <div class="container">
-    <div class="flex-between reveal" style="margin-bottom:48px">
-      <div class="section-head mb-0">
-        <span class="eyebrow">Trabajos reales</span>
-        <h2 class="mb-0">Así quedan <em>nuestras instalaciones</em></h2>
-      </div>
-      <a class="btn btn--outline" href="proyectos.html">Ver todos los proyectos <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
-    </div>
-    <div class="video-grid">
-      <div class="reveal"><figure class="vcard" data-video="assets/video/videoportero-panel.mp4" data-poster="assets/video/videoportero-panel.jpg" data-title="Videoportero en el panel de casa" tabindex="0" role="button" aria-label="Ver vídeo: Videoportero en el panel de casa"><video muted loop playsinline preload="none" poster="assets/video/videoportero-panel.jpg" data-autoplay><source src="assets/video/videoportero-panel.mp4" type="video/mp4"></video><span class="vcard__tag">Accesos</span><span class="vcard__expand"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg></span><figcaption><b>Videoportero en el panel de casa</b><small>Atiende la llamada y abre desde la pantalla</small></figcaption></figure></div>
-      <div class="reveal reveal-d1"><figure class="vcard" data-video="assets/video/pergola-led.mp4" data-poster="assets/video/pergola-led.jpg" data-title="Pérgola con tira LED regulable" tabindex="0" role="button" aria-label="Ver vídeo: Pérgola con tira LED regulable"><video muted loop playsinline preload="none" poster="assets/video/pergola-led.jpg" data-autoplay><source src="assets/video/pergola-led.mp4" type="video/mp4"></video><span class="vcard__tag">Iluminación</span><span class="vcard__expand"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg></span><figcaption><b>Pérgola con tira LED regulable</b><small>Escena de exterior al anochecer</small></figcaption></figure></div>
-      <div class="reveal reveal-d2"><figure class="vcard" data-video="assets/video/videoportero-accesos.mp4" data-poster="assets/video/videoportero-accesos.jpg" data-title="Videoportero Hikvision con tarjeta" tabindex="0" role="button" aria-label="Ver vídeo: Videoportero Hikvision con tarjeta"><video muted loop playsinline preload="none" poster="assets/video/videoportero-accesos.jpg" data-autoplay><source src="assets/video/videoportero-accesos.mp4" type="video/mp4"></video><span class="vcard__tag">Accesos</span><span class="vcard__expand"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg></span><figcaption><b>Videoportero Hikvision con tarjeta</b><small>Apertura por código, tarjeta o móvil</small></figcaption></figure></div>
     </div>
   </div>
 </section>

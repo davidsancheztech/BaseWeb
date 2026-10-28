@@ -102,6 +102,15 @@ def vframe(slug, cls="vframe"):
     v = f"assets/video/{slug}"
     return f'<div class="{cls}"><video muted loop playsinline autoplay preload="auto" poster="{v}.jpg" data-autoplay><source src="{v}.mp4" type="video/mp4"></video></div>'
 
+
+def cine(slugs):
+    panels = []
+    for i, slug in enumerate(slugs.split(",")):
+        v = f"assets/video/{slug.strip()}"
+        main = i == 1
+        panels.append(f'<div class="cine__panel"><video muted loop playsinline {"autoplay " if main else ""}preload="{"auto" if main else "none"}" poster="{v}.jpg" data-autoplay><source src="{v}-hd.mp4" type="video/mp4"></video></div>')
+    return '<div class="cine" aria-hidden="true">' + "".join(panels) + '</div><div class="cine__shade" aria-hidden="true"></div>'
+
 NAV = [
     ("index.html", "Inicio"),
     ("domotica-hogar.html", "Hogar"),
@@ -204,6 +213,7 @@ SCHEMA = {
 
 def page(fname, title, desc, body, active=None, schema=False):
     body = re.sub(r"\{\{include:([\w-]+)\}\}", lambda m: (SRC / "_partials" / f"{m.group(1)}.html").read_text(encoding="utf-8"), body)
+    body = re.sub(r"\[\[cine:([\w,-]+)\]\]", lambda m: cine(m.group(1)), body)
     body = re.sub(r"\[\[v:([\w-]+)\]\]", lambda m: vcard(m.group(1)), body)
     body = re.sub(r"\[\[vf:([\w-]+)(?:\|([\w -]+))?\]\]", lambda m: vframe(m.group(1), m.group(2) or "vframe"), body)
     body = re.sub(r"\[\[i:([\w-]+)(?:\|([\w -]+))?\]\]", lambda m: icon(m.group(1), m.group(2) or ""), body)

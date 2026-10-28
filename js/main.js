@@ -288,3 +288,121 @@ document.querySelectorAll(".card, .proto, .eco, .step, .pack, .t-card, .bento-ti
     el.style.setProperty("--my", `${e.clientY - r.top}px`);
   });
 });
+
+/* ---------- Portada cinematográfica ---------- */
+const heroCine = document.querySelector(".hero-cine, .page-hero--cine");
+const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+if (heroCine && !reduce) {
+  const onHero = () => {
+    const p = Math.min(Math.max(window.scrollY / (heroCine.offsetHeight * 0.85), 0), 1);
+    heroCine.style.setProperty("--hp", p.toFixed(3));
+  };
+  onHero();
+  window.addEventListener("scroll", onHero, { passive: true });
+}
+
+/* Tarjeta de escena activa: los pasos se van completando */
+const sceneCard = document.querySelector("[data-scene-card]");
+if (sceneCard) {
+  const scenes = [
+    { name: "Llegada a casa", time: "19:42", steps: ["Puerta principal abierta", "Alarma desarmada", "Camino de entrada al 80 %", "Clima del salón a 22 °C"] },
+    { name: "Cena en la pérgola", time: "21:30", steps: ["Pérgola LED en luz cálida", "Jardín y piscina encendidos", "Música en la terraza", "Persianas del salón al 50 %"] },
+    { name: "Buenas noches", time: "23:15", steps: ["Luces de la planta baja apagadas", "Puertas y ventanas comprobadas", "Alarma perimetral armada", "Clima en modo noche"] },
+  ];
+  const nameEl = sceneCard.querySelector(".scene-card__name");
+  const timeEl = sceneCard.querySelector("time");
+  const list = sceneCard.querySelector("ul");
+  const bar = sceneCard.querySelector(".scene-card__bar i");
+  let s = 0;
+  const run = () => {
+    const sc = scenes[s % scenes.length];
+    nameEl.textContent = sc.name;
+    timeEl.textContent = sc.time;
+    list.innerHTML = sc.steps.map((t) => `<li>${t}</li>`).join("");
+    bar.style.width = "0";
+    const items = [...list.children];
+    items.forEach((li, i) =>
+      setTimeout(() => {
+        li.classList.add("is-done");
+        bar.style.width = `${((i + 1) / items.length) * 100}%`;
+      }, reduce ? 0 : 700 + i * 900)
+    );
+    s++;
+  };
+  run();
+  if (!reduce) setInterval(run, 6500);
+}
+
+/* Texto que se ilumina palabra a palabra al hacer scroll */
+document.querySelectorAll("[data-statement]").forEach((el) => {
+  const walk = (node) => {
+    [...node.childNodes].forEach((n) => {
+      if (n.nodeType === 3) {
+        const frag = document.createDocumentFragment();
+        n.textContent.split(/(\s+)/).forEach((part) => {
+          if (!part.trim()) return frag.appendChild(document.createTextNode(part));
+          const w = document.createElement("span");
+          w.className = "w" + (node.classList && node.classList.contains("accent") ? " accent" : "");
+          w.textContent = part;
+          frag.appendChild(w);
+        });
+        n.replaceWith(frag);
+      } else if (n.nodeType === 1) walk(n);
+    });
+  };
+  walk(el);
+  el.querySelectorAll(".accent .w").forEach((w) => w.classList.add("accent"));
+  const words = [...el.querySelectorAll(".w")];
+  const update = () => {
+    const r = el.getBoundingClientRect();
+    const vh = window.innerHeight;
+    const p = Math.min(Math.max((vh * 0.85 - r.top) / (r.height + vh * 0.35), 0), 1);
+    const lit = Math.round(p * words.length);
+    words.forEach((w, i) => w.classList.toggle("is-lit", i < lit));
+  };
+  if (reduce) words.forEach((w) => w.classList.add("is-lit"));
+  else {
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+  }
+});
+
+/* Un día en una casa inteligente: el vídeo fijo cambia según el capítulo */
+const story = document.querySelector("[data-story]");
+if (story && "IntersectionObserver" in window) {
+  const steps = [...story.querySelectorAll(".story-step")];
+  const frames = [...story.querySelectorAll(".story__frame")];
+  const dots = [...story.querySelectorAll(".story__rail i")];
+  const activate = (i) => {
+    steps.forEach((st, k) => st.classList.toggle("is-active", k === i));
+    dots.forEach((d, k) => d.classList.toggle("is-active", k === i));
+    frames.forEach((f, k) => {
+      f.classList.toggle("is-active", k === i);
+      const v = f.querySelector("video");
+      if (!v || !f.offsetParent) return;
+      if (k === i) {
+        v.preload = "auto";
+        v.play().catch(() => {});
+      } else v.pause();
+    });
+  };
+  const so = new IntersectionObserver(
+    (entries) => entries.forEach((e) => e.isIntersecting && activate(steps.indexOf(e.target))),
+    { rootMargin: "-45% 0px -45% 0px" }
+  );
+  steps.forEach((st) => so.observe(st));
+  activate(0);
+}
+
+/* Paralaje suave */
+const parallax = document.querySelectorAll("[data-parallax]");
+if (parallax.length && !reduce) {
+  const onPar = () =>
+    parallax.forEach((el) => {
+      const r = el.getBoundingClientRect();
+      const c = r.top + r.height / 2 - window.innerHeight / 2;
+      el.style.transform = `translateY(${(-c * parseFloat(el.dataset.parallax)).toFixed(1)}px)`;
+    });
+  onPar();
+  window.addEventListener("scroll", onPar, { passive: true });
+}
