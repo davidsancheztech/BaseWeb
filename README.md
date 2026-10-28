@@ -12,7 +12,7 @@ Se puede publicar tal cual en cualquier hosting (Netlify, Vercel, GitHub Pages, 
 | `interruptores-zigbee.html` | Mecanismos Legrand with Netatmo, red Zigbee, acabados, microrrelés para mecanismos existentes |
 | `empresas-knx-dali.html` | Sectores, KNX, DALI/DALI-2, arquitectura (KNX IP, DALI, Modbus, BACnet), eficiencia y metodología |
 | `proyectos.html` | Caso destacado en vídeo, galería de vídeos reales filtrable y testimonios |
-| `contacto.html` | Formulario (envía por email o WhatsApp), datos de contacto y zonas de servicio |
+| `contacto.html` | Formulario (envío automático por correo con Resend, protegido con Turnstile; alternativa por WhatsApp), datos de contacto y zonas de servicio |
 | `legal.html` | Aviso legal y cookies |
 | `privacidad.html` | Política de privacidad (RGPD, Meta y eliminación de datos) |
 
@@ -24,6 +24,21 @@ Se puede publicar tal cual en cualquier hosting (Netlify, Vercel, GitHub Pages, 
 - Política de privacidad (válida para Meta / Facebook): `privacidad.html`, con instrucciones de eliminación de datos en `privacidad.html#eliminacion-datos`
 
 Pendiente: sustituir los **testimonios de ejemplo** de `_fuente/src/_partials/testimonios.html` por opiniones reales de clientes (con su permiso).
+
+## Publicación y formulario (Cloudflare)
+
+La web se publica en Cloudflare como Worker `baseweb` (ver `wrangler.jsonc`): sirve los archivos estáticos y el formulario en `/api/contacto` (`worker/index.js`). Los archivos de `.assetsignore` (`_fuente/`, `worker/`, `README.md`…) no se publican.
+
+Secretos necesarios en **Workers & Pages → baseweb → Settings → Variables and Secrets** (tipo *Secret*):
+
+| Nombre | Valor |
+|---|---|
+| `RESEND_API_KEY` | Clave de Resend con permiso de envío para domoticahogarmadrid.com |
+| `TURNSTILE_SECRET` | Secret Key del widget Turnstile (la Site Key pública está en `_fuente/src/contacto.html`) |
+| `MAIL_TO` | Dirección que recibe los avisos |
+| `WEBHOOK_URL` | Opcional: recibe cada solicitud en JSON (`origen`, `fecha`, `nombre`, `telefono`, `email`, `municipio`, `tipo`, `intereses`, `mensaje`, `pagina`) |
+
+Prueba en local: crea `.dev.vars` con esas variables y ejecuta `npx wrangler dev`.
 
 ## Vídeos de Instagram
 

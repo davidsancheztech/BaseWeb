@@ -189,12 +189,39 @@ if (form) {
     ].join("\n");
   };
   const ok = form.querySelector(".form-success");
-  form.addEventListener("submit", (e) => {
+  const err = form.querySelector(".form-error");
+  const submit = form.querySelector("[data-submit]");
+  const showError = (msg) => {
+    err.textContent = msg;
+    err.classList.add("is-visible");
+  };
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
+    ok?.classList.remove("is-visible");
+    err?.classList.remove("is-visible");
     if (!form.reportValidity()) return;
-    const subject = encodeURIComponent("Solicitud de estudio — web");
-    window.location.href = `mailto:${SITE.email}?subject=${subject}&body=${encodeURIComponent(buildMessage())}`;
-    ok?.classList.add("is-visible");
+    const data = new FormData(form);
+    if (!data.get("cf-turnstile-response")) {
+      showError("Espera un momento a que se complete la verificación antirrobots y vuelve a pulsar Enviar.");
+      return;
+    }
+    data.append("pagina", location.href);
+    const label = submit.innerHTML;
+    submit.disabled = true;
+    submit.textContent = "Enviando…";
+    try {
+      const res = await fetch("/api/contacto", { method: "POST", body: data });
+      const out = await res.json().catch(() => ({}));
+      if (!res.ok || !out.ok) throw new Error(out.error || "No hemos podido enviar tu solicitud.");
+      form.reset();
+      ok?.classList.add("is-visible");
+    } catch (error) {
+      showError(`${error.message} Si lo prefieres, llámanos o escríbenos por WhatsApp al +34 649 611 494.`);
+    } finally {
+      submit.disabled = false;
+      submit.innerHTML = label;
+      window.turnstile?.reset();
+    }
   });
   form.querySelector("[data-wa-submit]")?.addEventListener("click", () => {
     if (!form.reportValidity()) return;

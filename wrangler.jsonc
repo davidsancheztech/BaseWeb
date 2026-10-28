@@ -1,0 +1,16 @@
+// Configuración del Worker "baseweb" en Cloudflare.
+// Sirve la web estática de esta carpeta y el formulario en /api/contacto (worker/index.js).
+// Los secretos (RESEND_API_KEY, TURNSTILE_SECRET, MAIL_TO, WEBHOOK_URL) se guardan en el panel de Cloudflare.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "baseweb",
+  "main": "worker/index.js",
+  "compatibility_date": "2025-09-01",
+  "assets": {
+    "directory": ".",
+    "binding": "ASSETS",
+    "not_found_handling": "404-page",
+    "html_handling": "none"
+  },
+  "observability": { "enabled": true }
+}

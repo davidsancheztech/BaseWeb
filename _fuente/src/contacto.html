@@ -55,13 +55,16 @@
         </div>
       </fieldset>
       <div class="field"><label for="mensaje">Cuéntanos tu proyecto</label><textarea id="mensaje" name="mensaje" placeholder="Metros, número de estancias, qué te gustaría automatizar…"></textarea></div>
-      <label class="consent"><input type="checkbox" required> <span>He leído y acepto la <a href="privacidad.html">política de privacidad</a>.</span></label>
+      <div class="hp-field" aria-hidden="true"><label for="web">No rellenes este campo</label><input id="web" name="web" tabindex="-1" autocomplete="off"></div>
+      <label class="consent"><input type="checkbox" name="acepto" value="si" required> <span>He leído y acepto la <a href="privacidad.html">política de privacidad</a>.</span></label>
+      <div class="cf-turnstile" data-sitekey="0x4AAAAAAFqQ7O5PoiyJBuwj" data-language="es" data-theme="light" data-size="flexible"></div>
       <div class="btn-row">
-        <button class="btn btn--primary btn--lg" type="submit">Enviar por email [[i:arrow]]</button>
+        <button class="btn btn--primary btn--lg" type="submit" data-submit>Enviar solicitud [[i:arrow]]</button>
         <button class="btn btn--dark btn--lg" type="button" data-wa-submit>[[i:whatsapp]] Enviar por WhatsApp</button>
       </div>
-      <p class="form-success" role="status">¡Gracias! Hemos preparado tu mensaje. Si no se ha abierto tu aplicación de correo o WhatsApp, llámanos al {{PHONE}}.</p>
-      <p class="form-note">Tus datos solo se usan para responder a tu solicitud.</p>
+      <p class="form-success" role="status">¡Gracias! Hemos recibido tu solicitud y te contactaremos en menos de 24 horas laborables.</p>
+      <p class="form-error" role="alert"></p>
+      <p class="form-note">Tus datos solo se usan para responder a tu solicitud. Este formulario está protegido por Cloudflare Turnstile.</p>
     </form>
   </div>
 </section>
@@ -78,3 +81,5 @@
     </div>
   </div>
 </section>
+
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>

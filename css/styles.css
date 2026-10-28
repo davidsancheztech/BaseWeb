@@ -1219,3 +1219,11 @@ a.contact-item:hover { border-color: var(--gold); transform: translateX(4px); }
     linear-gradient(180deg, rgba(5, 8, 15, 0.6) 0%, transparent 30%, transparent 60%, rgba(5, 8, 15, 0.95) 100%);
 }
 @media (max-width: 960px) { .page-hero--cine .cine__shade { background: linear-gradient(180deg, rgba(5, 8, 15, 0.75), rgba(5, 8, 15, 0.6) 40%, rgba(5, 8, 15, 0.95)); } }
+
+/* Formulario: campo trampa, error y verificación */
+.hp-field { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.form { position: relative; }
+.form-error { display: none; padding: 16px 18px; border-radius: 12px; background: #fdecea; color: #8a1f17; font-weight: 500; margin-top: 16px; }
+.form-error.is-visible { display: block; }
+.cf-turnstile { margin: 0 0 18px; min-height: 65px; }
+.btn[disabled] { opacity: 0.7; cursor: progress; }
