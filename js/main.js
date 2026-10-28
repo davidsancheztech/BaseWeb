@@ -268,3 +268,23 @@ if (vtrack) {
   document.querySelector("[data-vprev]")?.addEventListener("click", () => vtrack.scrollBy({ left: -vstep() * 2, behavior: "smooth" }));
   document.querySelector("[data-vnext]")?.addEventListener("click", () => vtrack.scrollBy({ left: vstep() * 2, behavior: "smooth" }));
 }
+
+/* Barra de progreso de lectura */
+const progress = document.querySelector(".scroll-progress");
+if (progress) {
+  const setProgress = () => {
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    progress.style.transform = `scaleX(${max > 0 ? window.scrollY / max : 0})`;
+  };
+  setProgress();
+  window.addEventListener("scroll", setProgress, { passive: true });
+}
+
+/* Luz que sigue al cursor en tarjetas */
+document.querySelectorAll(".card, .proto, .eco, .step, .pack, .t-card, .bento-tile").forEach((el) => {
+  el.addEventListener("pointermove", (e) => {
+    const r = el.getBoundingClientRect();
+    el.style.setProperty("--mx", `${e.clientX - r.left}px`);
+    el.style.setProperty("--my", `${e.clientY - r.top}px`);
+  });
+});

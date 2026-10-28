@@ -73,11 +73,8 @@ def icon(name, cls=""):
     return f'<svg{c} viewBox="0 0 24 24" {S} aria-hidden="true">{body}</svg>'
 
 
-LOGO = """<svg class="logo__mark" viewBox="0 0 48 44" aria-hidden="true">
-  <path d="M5 22.5 24 5.5l6.5 5.8V6.5h5.5v9.7l7 6.3h-4.6V40H9.6V22.5z" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"/>
-  <path d="M15.6 25.6a12 12 0 0 1 16.8 0M18.9 29a7.3 7.3 0 0 1 10.2 0" fill="none" stroke="#3d8bff" stroke-width="2.6" stroke-linecap="round"/>
-  <circle cx="24" cy="33.4" r="2" fill="#34d3f0"/>
-</svg>"""
+LOGO = """<img class="logo__icon" src="assets/img/logo-icon.png" alt="" width="334" height="328"><img class="logo__word" src="assets/img/logo-wordmark.png" alt="Domótica Hogar Madrid" width="945" height="205">"""
+LOGO_FULL = """<img class="logo-full" src="assets/img/logo-full.png" alt="Domótica Hogar Madrid · Tu casa inteligente" width="945" height="638" loading="lazy">"""
 
 VIDEOS = {
     "jardin-piscina": ("Jardín", "Jardín y piscina desde el móvil", "Iluminación exterior con un toque"),
@@ -121,12 +118,10 @@ def header(active):
         for h, t in NAV
     )
     return f"""<a class="skip-link" href="#main">Saltar al contenido</a>
+<div class="scroll-progress" aria-hidden="true"></div>
 <header class="site-header">
   <div class="container">
-    <a class="logo" href="index.html" aria-label="Domótica Hogar Madrid, inicio">
-      {LOGO}
-      <span class="logo__text">Domótica Hogar<small>Madrid · Tu casa inteligente</small></span>
-    </a>
+    <a class="logo" href="index.html" aria-label="Domótica Hogar Madrid, inicio">{LOGO}</a>
     <nav class="nav" id="nav" aria-label="Principal">
 {links}
     </nav>
@@ -144,7 +139,7 @@ def footer():
   <div class="container">
     <div class="footer-grid">
       <div class="footer-brand">
-        <a class="logo" href="index.html">{LOGO}<span class="logo__text">Domótica Hogar<small>Madrid · Tu casa inteligente</small></span></a>
+        <a class="logo-footer" href="index.html">{LOGO_FULL}</a>
         <p>Integradores de domótica en Madrid: Home Assistant, Zigbee, KNX y DALI. Diseñamos, instalamos y mantenemos hogares y edificios inteligentes.</p>
         <div class="socials">
           <a href="https://www.instagram.com/{IG}/" target="_blank" rel="noopener" aria-label="Instagram">{icon("instagram")}</a>
@@ -230,7 +225,8 @@ def page(fname, title, desc, body, active=None, schema=False):
   <meta property="og:description" content="{desc}">
   <meta property="og:url" content="{canonical}">
   <meta property="og:image" content="{DOMAIN}/assets/img/logo-domotica-hogar-madrid.jpg">
-  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="assets/img/favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">

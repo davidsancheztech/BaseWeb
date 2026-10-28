@@ -46,7 +46,7 @@ Si la lista tiene contenido, la web incrusta además los reels oficiales encima 
 - Para añadir uno nuevo: conviértelo con
   `ffmpeg -i video.mov -vf "scale=540:-2" -c:v libx264 -crf 27 -movflags +faststart -c:a aac -b:a 64k nombre.mp4`
   y añádelo en la tabla `VIDEOS` de `_fuente/build.py` (o copia una tarjeta `<figure class="vcard">` existente).
-- Logotipo: `assets/logo.svg` (versión vectorial), `assets/favicon.svg` y el original en `assets/img/logo-domotica-hogar-madrid.jpg` (usado como imagen al compartir en redes).
+- Logotipo original de la empresa, sin modificar: `assets/img/logo-full.png`, `logo-icon.png` y `logo-wordmark.png` (recortes con fondo transparente del archivo original), favicon en `assets/img/favicon.png` y el original en `assets/img/logo-domotica-hogar-madrid.jpg` (imagen al compartir en redes).
 
 ## Cómo se generan las páginas
 
