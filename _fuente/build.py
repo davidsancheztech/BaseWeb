@@ -218,7 +218,7 @@ def page(fname, title, desc, body, active=None, schema=False):
     body = re.sub(r"\[\[vf:([\w-]+)(?:\|([\w -]+))?\]\]", lambda m: vframe(m.group(1), m.group(2) or "vframe"), body)
     body = re.sub(r"\[\[i:([\w-]+)(?:\|([\w -]+))?\]\]", lambda m: icon(m.group(1), m.group(2) or ""), body)
     body = body.replace("{{PHONE_TEL}}", PHONE_TEL).replace("{{PHONE}}", PHONE_DISPLAY).replace("{{WA}}", WA).replace("{{EMAIL}}", EMAIL).replace("{{IG}}", IG)
-    canonical = DOMAIN + "/" + ("" if fname == "index.html" else fname)
+    canonical = DOMAIN + "/" + ("" if fname == "index.html" else fname.removesuffix(".html"))
     ld = f'\n  <script type="application/ld+json">{json.dumps(SCHEMA, ensure_ascii=False)}</script>' if schema else ""
     html = f"""<!doctype html>
 <html lang="es" class="no-js">

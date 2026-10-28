@@ -9,8 +9,7 @@
   "assets": {
     "directory": ".",
     "binding": "ASSETS",
-    "not_found_handling": "404-page",
-    "html_handling": "none"
+    "not_found_handling": "404-page"
   },
   "observability": { "enabled": true }
 }

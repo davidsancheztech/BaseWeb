@@ -24,11 +24,6 @@ export default {
         return json({ ok: false, error: "No hemos podido enviar tu solicitud." }, 500);
       }
     }
-    // Las carpetas (empezando por la portada "/") sirven su index.html
-    if (url.pathname.endsWith("/")) {
-      url.pathname += "index.html";
-      return env.ASSETS.fetch(new Request(url, request));
-    }
     return env.ASSETS.fetch(request);
   },
 };
