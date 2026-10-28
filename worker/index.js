@@ -78,13 +78,21 @@ async function handleContact(request, env, ctx) {
 }
 
 async function verifyTurnstile(env, token, ip) {
-  if (!env.TURNSTILE_SECRET || !token) return false;
+  if (!env.TURNSTILE_SECRET) {
+    console.error("Turnstile: falta el secreto TURNSTILE_SECRET en el Worker");
+    return false;
+  }
+  if (!token) {
+    console.error("Turnstile: el formulario llegó sin token");
+    return false;
+  }
   const body = new FormData();
   body.append("secret", env.TURNSTILE_SECRET);
   body.append("response", token);
   if (ip) body.append("remoteip", ip);
   const res = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", { method: "POST", body });
   const out = await res.json();
+  if (!out.success) console.error("Turnstile rechazado:", JSON.stringify(out["error-codes"] || out));
   return out.success === true;
 }
 
