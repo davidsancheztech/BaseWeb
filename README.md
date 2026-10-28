@@ -13,19 +13,17 @@ Se puede publicar tal cual en cualquier hosting (Netlify, Vercel, GitHub Pages, 
 | `empresas-knx-dali.html` | Sectores, KNX, DALI/DALI-2, arquitectura (KNX IP, DALI, Modbus, BACnet), eficiencia y metodología |
 | `proyectos.html` | Caso destacado en vídeo, galería de vídeos reales filtrable y testimonios |
 | `contacto.html` | Formulario (envía por email o WhatsApp), datos de contacto y zonas de servicio |
-| `legal.html` | Aviso legal, privacidad y cookies |
+| `legal.html` | Aviso legal y cookies |
+| `privacidad.html` | Política de privacidad (RGPD, Meta y eliminación de datos) |
 
-## Antes de publicar: datos a sustituir
+## Datos de la empresa
 
-Busca y reemplaza en todos los `.html` y en `js/main.js`:
+- Teléfono y WhatsApp: +34 649 611 494 (en `_fuente/build.py` y `js/main.js`)
+- Email: info@domoticahogarmadrid.com
+- Titular: David Sánchez Pérez (Domótica Hogar Madrid), NIF 53569845Q
+- Política de privacidad (válida para Meta / Facebook): `privacidad.html`, con instrucciones de eliminación de datos en `privacidad.html#eliminacion-datos`
 
-- **Teléfono**: `+34 600 000 000`, `+34600000000` y `34600000000` (WhatsApp)
-- **Email**: `info@domoticahogarmadrid.com`
-- **Instagram**: `domoticahogarmadrid`
-- **Redes** del pie: enlaces genéricos a YouTube y LinkedIn
-- **Cifras** de la portada (`+150 proyectos`, `4,9★`) — marcadas con `<!-- EDITAR -->`
-- **Testimonios y proyectos**: son ejemplos ilustrativos. Sustitúyelos por casos y opiniones reales (con permiso del cliente); publicar opiniones inventadas no está permitido.
-- **legal.html**: titular, NIF y dirección.
+Pendiente: sustituir los **testimonios de ejemplo** de `_fuente/src/_partials/testimonios.html` por opiniones reales de clientes (con su permiso).
 
 ## Vídeos de Instagram
 

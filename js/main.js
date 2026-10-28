@@ -5,7 +5,7 @@
 /* Datos de contacto y redes: edítalos aquí (y en el HTML, buscando los mismos valores). */
 const SITE = {
   email: "info@domoticahogarmadrid.com",
-  whatsapp: "34600000000", // Sin "+" ni espacios
+  whatsapp: "34649611494", // Sin "+" ni espacios
   instagramUser: "domoticahogarmadrid",
   // Pega aquí las URLs de tus reels/publicaciones para mostrarlos incrustados.
   // Ejemplo: "https://www.instagram.com/reel/XXXXXXXXXXX/"

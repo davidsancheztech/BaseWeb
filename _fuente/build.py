@@ -5,9 +5,9 @@ import re, pathlib, json
 SRC = pathlib.Path(__file__).parent / "src"
 OUT = pathlib.Path(__file__).resolve().parent.parent
 DOMAIN = "https://domoticahogarmadrid.com"
-PHONE_DISPLAY = "+34 600 000 000"
-PHONE_TEL = "+34600000000"
-WA = "34600000000"
+PHONE_DISPLAY = "+34 649 611 494"
+PHONE_TEL = "+34649611494"
+WA = "34649611494"
 EMAIL = "info@domoticahogarmadrid.com"
 IG = "domoticahogarmadrid"
 
@@ -165,6 +165,7 @@ def footer():
           <li><a href="proyectos.html#testimonios">Opiniones</a></li>
           <li><a href="index.html#faq">Preguntas frecuentes</a></li>
           <li><a href="contacto.html">Contacto</a></li>
+          <li><a href="privacidad.html">Política de privacidad</a></li>
         </ul>
       </div>
       <div>
@@ -179,7 +180,7 @@ def footer():
     </div>
     <div class="footer-bottom">
       <span>© <span data-year>2026</span> Domótica Hogar Madrid. Todos los derechos reservados.</span>
-      <nav aria-label="Legal"><a href="legal.html">Aviso legal</a><a href="legal.html#privacidad">Privacidad</a><a href="legal.html#cookies">Cookies</a></nav>
+      <nav aria-label="Legal"><a href="legal.html">Aviso legal</a><a href="privacidad.html">Política de privacidad</a><a href="legal.html#cookies">Cookies</a></nav>
     </div>
   </div>
 </footer>
@@ -259,8 +260,10 @@ PAGES = [
      "Proyectos de domótica en Madrid: viviendas con Home Assistant, reformas con mecanismos Zigbee y oficinas con KNX y DALI. Opiniones de clientes y vídeos.", "proyectos.html", False),
     ("contacto.html", "Contacto y estudio gratuito | Domótica Hogar Madrid",
      "Pide tu estudio de domótica gratuito en Madrid. Te respondemos en menos de 24 h por teléfono, WhatsApp o email.", "contacto.html", False),
-    ("legal.html", "Aviso legal, privacidad y cookies | Domótica Hogar Madrid",
-     "Aviso legal, política de privacidad y política de cookies de Domótica Hogar Madrid.", None, False),
+    ("legal.html", "Aviso legal y cookies | Domótica Hogar Madrid",
+     "Aviso legal y política de cookies de Domótica Hogar Madrid.", None, False),
+    ("privacidad.html", "Política de privacidad | Domótica Hogar Madrid",
+     "Política de privacidad de Domótica Hogar Madrid: qué datos tratamos, para qué, durante cuánto tiempo y cómo ejercer tus derechos o solicitar su eliminación.", None, False),
 ]
 
 if __name__ == "__main__":
