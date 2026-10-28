@@ -15,6 +15,15 @@ const LIMITS = { nombre: 120, telefono: 40, email: 160, municipio: 120, tipo: 12
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
+    // Diagnóstico: indica qué secretos están configurados (nunca muestra sus valores)
+    if (url.pathname === "/api/estado") {
+      return json({
+        TURNSTILE_SECRET: Boolean(env.TURNSTILE_SECRET),
+        RESEND_API_KEY: Boolean(env.RESEND_API_KEY),
+        MAIL_TO: Boolean(env.MAIL_TO),
+        WEBHOOK_URL: Boolean(env.WEBHOOK_URL),
+      });
+    }
     if (url.pathname === "/api/contacto") {
       if (request.method !== "POST") return json({ ok: false, error: "Método no permitido." }, 405);
       try {
