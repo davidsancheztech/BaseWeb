@@ -196,7 +196,7 @@ SCHEMA = {
     "email": EMAIL,
     "telephone": PHONE_TEL,
     "areaServed": {"@type": "AdministrativeArea", "name": "Comunidad de Madrid"},
-    "address": {"@type": "PostalAddress", "addressLocality": "Madrid", "addressRegion": "Madrid", "addressCountry": "ES"},
+    "address": {"@type": "PostalAddress", "addressLocality": "Torrejón de Ardoz", "postalCode": "28850", "addressRegion": "Madrid", "addressCountry": "ES"},
     "sameAs": [f"https://www.instagram.com/{IG}/"],
     "knowsAbout": ["Domótica", "Home Assistant", "Zigbee", "KNX", "DALI", "Shelly", "Aqara", "Airzone", "Legrand Netatmo"],
 }
