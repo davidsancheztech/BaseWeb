@@ -25,6 +25,13 @@ export default {
         RESEND_API_KEY: Boolean(env.RESEND_API_KEY),
         MAIL_TO: Boolean(env.MAIL_TO),
         WEBHOOK_URL: Boolean(env.WEBHOOK_URL),
+        PASS_PRESUPUESTO: Boolean(env.PASS_PRESUPUESTO),
+        N8N_CALCULADORA_URL: Boolean(env.N8N_CALCULADORA_URL),
+        N8N_CALCULADORA_SECRET: Boolean(env.N8N_CALCULADORA_SECRET),
+        N8N_PRESUPUESTO_DATOS_URL: Boolean(env.N8N_PRESUPUESTO_DATOS_URL),
+        N8N_PRESUPUESTO_GUARDAR_URL: Boolean(env.N8N_PRESUPUESTO_GUARDAR_URL),
+        N8N_PRESUPUESTOS_LISTA_URL: Boolean(env.N8N_PRESUPUESTOS_LISTA_URL),
+        N8N_PRESUPUESTO_API_KEY: Boolean(env.N8N_PRESUPUESTO_API_KEY),
       });
     }
     if (url.pathname === "/api/contacto") {

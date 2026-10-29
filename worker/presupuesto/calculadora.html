@@ -1338,7 +1338,7 @@ details.adv[open]>summary::after{transform:rotate(180deg)}
       <div class="privacy-note">Tus datos se usarán únicamente para enviarte la propuesta. No los compartimos con terceros ni hacemos spam. Más información en nuestra <a href="/privacidad" target="_blank" rel="noopener">política de privacidad</a>.</div>
     </div>
 
-    <div class="cf-turnstile" data-sitekey="0x4AAAAAAFqQ7O5PoiyJBuwj" data-language="es" data-size="flexible" style="margin:16px 0 4px"></div>
+    <div class="cf-turnstile" data-sitekey="0x4AAAAAAFqQ7O5PoiyJBuwj" data-language="es" data-size="flexible" data-refresh-expired="auto" style="margin:16px 0 4px"></div>
     <button class="btn-full" id="btn-send" onclick="sendBudget()">Solicitar propuesta personalizada</button>
     <div id="send-feedback" style="display:none;margin-top:14px;border-radius:14px;padding:16px;text-align:center;font-size:14px;font-weight:600"></div>
 
@@ -2485,6 +2485,12 @@ function sendBudget(){
     _meta:{fecha:new Date().toLocaleString('es-ES'), utm:S.utm, version:'v2'}
   };
 
+  if(window.turnstile&&window.turnstile.isExpired&&window.turnstile.isExpired()){
+    window.turnstile.reset();
+    fb.style.cssText='display:block;background:#fff7ed;color:#9a3412;border:1px solid #fdba74;border-radius:14px;padding:16px;text-align:center;font-size:14px;font-weight:600;margin-top:16px';
+    fb.innerHTML='La verificación de seguridad había caducado y se está renovando. Espera unos segundos y vuelve a pulsar el botón.';
+    return;
+  }
   const tsToken=(window.turnstile&&window.turnstile.getResponse())||'';
   if(!tsToken){
     fb.style.cssText='display:block;background:#fff7ed;color:#9a3412;border:1px solid #fdba74;border-radius:14px;padding:16px;text-align:center;font-size:14px;font-weight:600;margin-top:16px';
@@ -2505,7 +2511,7 @@ function sendBudget(){
   fd.append('cf-turnstile-response',tsToken);
 
   fetch(window.domoticaAjaxUrl||'/wp-admin/admin-ajax.php',{method:'POST',body:fd})
-    .then(r=>r.json()).then(data=>{
+    .then(async r=>{const t=await r.text();try{return JSON.parse(t);}catch(e){throw new Error('El servidor respondió con un error (HTTP '+r.status+')');}}).then(data=>{
       if(!data||data.success!==true) throw new Error((data&&data.error)||'Error');
       btn.disabled=false;
       document.getElementById('sec-contacto').classList.remove('active');
@@ -2523,11 +2529,12 @@ function sendBudget(){
       const waNum=window.WA_NUMBER||'34649611494';
       document.getElementById('sc-whatsapp').href='https://wa.me/'+waNum+'?text='+encodeURIComponent('Hola, acabo de solicitar una estimación de domótica.\nNombre: '+nombre+'\nEstimación: '+total);
       window.scrollTo({top:0,behavior:'smooth'});
-    }).catch(()=>{
+    }).catch((err)=>{
       window.turnstile&&window.turnstile.reset();
       btn.disabled=false; btn.textContent='Solicitar propuesta personalizada';
       fb.style.cssText='display:block;background:#fef2f2;color:#b91c1c;border:1px solid #ef4444;border-radius:14px;padding:16px;text-align:center;font-size:14px;font-weight:600;margin-top:16px';
-      fb.innerHTML='⚠️ Error al enviar. Escríbenos directamente por WhatsApp.';
+      const motivo=(err&&err.message&&err.message!=='Error')?String(err.message).replace(/[<>&]/g,''):'';
+      fb.innerHTML='⚠️ No se ha podido enviar'+(motivo?': '+motivo:'')+'. Vuelve a intentarlo en unos segundos o escríbenos por WhatsApp.';
     });
 }
 function buildResumenTexto(r){
