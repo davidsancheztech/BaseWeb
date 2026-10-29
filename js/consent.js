@@ -4,7 +4,7 @@
    Se usa en todas las páginas públicas y en la calculadora.
    ========================================================================== */
 (function () {
-  const GA_ID = ""; // ID de medición de Google Analytics 4, p. ej. "G-ABC123XYZ"
+  const GA_ID = "G-LM4VPEEGYZ"; // ID de medición de Google Analytics 4, p. ej. "G-ABC123XYZ"
   const KEY = "dhm_cookies"; // "aceptadas" | "rechazadas"
   const DAYS = 180;
 
