@@ -65,6 +65,20 @@ Secretos adicionales (tipo *Secret* en **Runtime variables and secrets**):
 | `N8N_PRESUPUESTOS_LISTA_URL` | Webhook que devuelve la lista de presupuestos |
 | `N8N_PRESUPUESTO_API_KEY` | Clave enviada a esos tres webhooks en `X-Api-Key` |
 
+## Imágenes (Cloudflare R2)
+
+Las imágenes están en el bucket R2 `domotica-imagenes` (binding `IMAGENES` en `wrangler.jsonc`) y las sirve el Worker con caché de 30 días:
+
+| Carpeta en R2 | URL pública | Uso |
+|---|---|---|
+| `wp-content/uploads/...` | `/wp-content/uploads/...` | Imágenes migradas de WordPress (no se tocan; mantienen sus URLs) |
+| `media/catalogo/` | `/media/catalogo/...` | Fotos de productos del catálogo de presupuestos |
+| `media/camaras/` | `/media/camaras/...` | Fotos de cámaras de la calculadora |
+| `media/proyectos/` | `/media/proyectos/...` | Fotos de obras e instalaciones |
+| `media/varios/` | `/media/varios/...` | Cualquier otra |
+
+Nombres de archivo: minúsculas, sin espacios ni tildes, con guiones (`shelly-2pm-gen4.jpg`).
+
 ## Vídeos de Instagram
 
 En `js/main.js`, añade las URLs de tus reels a `SITE.instagramPosts`:
