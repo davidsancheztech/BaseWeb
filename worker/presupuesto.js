@@ -105,13 +105,9 @@ async function handleCalculadora(request, env, ctx) {
     const human = await verifyTurnstile(env, form.get("cf-turnstile-response"), request.headers.get("CF-Connecting-IP"));
     if (!human) return json({ success: false, error: "No se ha podido verificar que no eres un robot." }, 400);
 
-    let payload = null;
-    try {
-      const b64 = String(form.get("payload_json") || "");
-      if (b64) payload = JSON.parse(new TextDecoder().decode(Uint8Array.from(atob(b64), (c) => c.charCodeAt(0))));
-    } catch (err) {
-      console.error("payload_json no válido", err);
-    }
+    const payload = decodeB64Json(form.get("payload_json"), null);
+    const detalle = cleanDetalle(decodeB64Json(form.get("detalle_json"), []));
+    d.cuando = TIMING[payload?.contacto?.timing] || "";
 
     const T = config.textos || {};
     const fecha = new Date().toLocaleString("es-ES", { timeZone: "Europe/Madrid" });
@@ -119,9 +115,9 @@ async function handleCalculadora(request, env, ctx) {
     const okAdmin = await sendEmail(env, {
       to: [env.MAIL_TO],
       reply_to: d.email,
-      subject: `${T.email_admin_asunto || "Nueva solicitud de presupuesto domótica"} · ${d.nombre}`,
-      html: adminCalcHtml(d, fecha),
-      text: `Nueva solicitud desde la calculadora (${fecha})\n\nNombre: ${d.nombre}\nTeléfono: ${d.telefono}\nEmail: ${d.email}\nLocalidad: ${d.localidad}\nOrigen: ${d.origen || "-"}\nEstimación: ${d.total}\n\nComentarios:\n${d.comentarios || "-"}\n\n${d.resumen}`,
+      subject: `${T.email_admin_asunto || "Nueva solicitud de presupuesto domótica"} — ${d.nombre} · ${d.total}`,
+      html: adminCalcHtml(d, detalle, fecha),
+      text: `Nueva solicitud desde la calculadora (${fecha})\n\nNombre: ${d.nombre}\nTeléfono: ${d.telefono}\nEmail: ${d.email}\nLocalidad: ${d.localidad}\nCuándo: ${d.cuando || "-"}\nOrigen: ${d.origen || "-"}\nEstimación: ${d.total}\n\nComentarios:\n${d.comentarios || "-"}\n\n${detalleText(detalle) || d.resumen}`,
     });
     if (!okAdmin) return json({ success: false, error: "No se ha podido enviar la solicitud." }, 502);
 
@@ -131,8 +127,8 @@ async function handleCalculadora(request, env, ctx) {
         to: [d.email],
         reply_to: env.MAIL_TO,
         subject: T.email_cliente_asunto || "Hemos recibido tu solicitud de presupuesto — Domótica Hogar Madrid",
-        html: clienteCalcHtml(d, T, site),
-        text: `Hola ${d.nombre},\n\n${T.email_cliente_cuerpo || ""}\n\nEstimación orientativa: ${d.total}\n\nDomótica Hogar Madrid · +34 649 611 494 · domoticahogarmadrid.com`,
+        html: clienteCalcHtml(d, detalle, T, site),
+        text: `Hola ${d.nombre},\n\n${T.email_cliente_cuerpo || ""}\n\nEstimación orientativa: ${d.total} (IVA no incluido)\n\n${detalleText(detalle)}\n\nDomótica Hogar Madrid · +34 649 611 494 · domoticahogarmadrid.com`,
       })
     );
 
@@ -141,7 +137,7 @@ async function handleCalculadora(request, env, ctx) {
         fetch(env.N8N_CALCULADORA_URL, {
           method: "POST",
           headers: { "Content-Type": "application/json", "X-Webhook-Secret": env.N8N_CALCULADORA_SECRET || "" },
-          body: JSON.stringify({ ...d, payload, fecha: new Date().toISOString(), origen_web: "calculadora-presupuesto" }),
+          body: JSON.stringify({ ...d, payload, detalle, fecha: new Date().toISOString(), origen_web: "calculadora-de-presupuesto" }),
         })
           .then((r) => { if (!r.ok) console.error("Webhook calculadora respondió", r.status); })
           .catch((err) => console.error("Webhook calculadora fallido", err))
@@ -241,47 +237,116 @@ function accesoPage(volver, error) {
 
 /* ---------- Correos de la calculadora ---------- */
 
-function adminCalcHtml(d, fecha) {
-  const row = (k, v) => `<tr><td style="padding:9px 14px;color:#5a6a80;font-size:13px;width:140px;border-bottom:1px solid #e6ecf3">${k}</td><td style="padding:9px 14px;color:#0f1a2b;font-size:15px;border-bottom:1px solid #e6ecf3">${v}</td></tr>`;
+const TIMING = { urgente: "Lo antes posible", semanas: "En las próximas semanas", meses: "En 1-3 meses", despues: "Más adelante", info: "Solo se está informando" };
+
+function decodeB64Json(value, fallback) {
+  try {
+    const b64 = String(value || "");
+    return b64 ? JSON.parse(new TextDecoder().decode(Uint8Array.from(atob(b64), (c) => c.charCodeAt(0)))) : fallback;
+  } catch (err) {
+    console.error("JSON en base64 no válido", err);
+    return fallback;
+  }
+}
+
+// Desglose de la pantalla de resumen de la calculadora: [{icon, title, rows:[{t, name, detail, price, val}]}]
+function cleanDetalle(raw) {
+  if (!Array.isArray(raw)) return [];
+  const txt = (v, n = 300) => String(v ?? "").replace(/<[^>]*>/g, "").trim().slice(0, n);
+  return raw.slice(0, 20).map((sec) => ({
+    icon: txt(sec?.icon, 8),
+    title: txt(sec?.title, 80),
+    rows: (Array.isArray(sec?.rows) ? sec.rows : []).slice(0, 40).map((r) => ({
+      t: ["price", "info", "nls"].includes(r?.t) ? r.t : "info",
+      name: txt(r?.name),
+      detail: txt(r?.detail),
+      price: txt(r?.price, 40),
+      val: txt(r?.val, 2000),
+    })),
+  })).filter((sec) => sec.rows.length);
+}
+
+function detalleText(detalle) {
+  return detalle.map((sec) => [`== ${sec.title.toUpperCase()} ==`, ...sec.rows.map((r) =>
+    r.t === "price" ? `- ${r.name}${r.detail ? ` (${r.detail})` : ""}: ${r.price}` : r.t === "nls" ? `! ${r.name}` : `- ${r.name ? r.name + ": " : ""}${r.val}`)].join("\n")).join("\n\n");
+}
+
+function detalleHtml(detalle) {
+  return detalle.map((sec) => `
+  <tr><td style="padding:14px 24px 0">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #e3e9f1;border-radius:12px;border-collapse:separate;overflow:hidden">
+      <tr><td colspan="2" style="background:#f4f7fb;padding:11px 16px;font-size:12px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#26344a;border-bottom:1px solid #e3e9f1">${sec.icon ? esc(sec.icon) + "&nbsp; " : ""}${esc(sec.title)}</td></tr>
+      ${sec.rows.map((r, i) => {
+        const line = i < sec.rows.length - 1 ? "border-bottom:1px solid #eef2f7;" : "";
+        if (r.t === "price") return `<tr><td style="padding:11px 16px;${line}"><div style="font-size:14px;font-weight:600;color:#0f1a2b">${esc(r.name)}</div>${r.detail ? `<div style="font-size:12px;color:#7a8799;margin-top:3px">${esc(r.detail)}</div>` : ""}</td><td align="right" style="padding:11px 16px;${line}font-size:14px;font-weight:700;color:#1f6fe5;white-space:nowrap">${esc(r.price)}</td></tr>`;
+        if (r.t === "nls") return `<tr><td colspan="2" style="padding:11px 16px;${line}font-size:13px;color:#9a3412;background:#fff7ed">⚠️ ${esc(r.name)}</td></tr>`;
+        if (!r.name) return `<tr><td colspan="2" style="padding:11px 16px;${line}font-size:14px;color:#0f1a2b;white-space:pre-wrap">${esc(r.val)}</td></tr>`;
+        return `<tr><td style="padding:10px 16px;${line}font-size:13px;color:#5a6a80;vertical-align:top">${esc(r.name)}</td><td align="right" style="padding:10px 16px;${line}font-size:13px;color:#0f1a2b;white-space:pre-wrap">${esc(r.val)}</td></tr>`;
+      }).join("")}
+    </table>
+  </td></tr>`).join("");
+}
+
+function totalHtml(d, label) {
+  return `<tr><td style="background:linear-gradient(135deg,#3d8bff,#1f5fd0);background-color:#2a6fe0;padding:26px 24px;text-align:center;color:#fff">
+    <div style="font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#dbe8ff">${label}</div>
+    <div style="font-size:32px;font-weight:800;margin-top:8px;letter-spacing:-0.5px">${esc(d.total)}</div>
+    <div style="font-size:12px;color:#dbe8ff;margin-top:6px">Precio orientativo · IVA no incluido</div>
+  </td></tr>`;
+}
+
+function adminCalcHtml(d, detalle, fecha) {
+  const row = (k, v) => `<tr><td style="padding:10px 16px;color:#5a6a80;font-size:13px;width:130px;border-bottom:1px solid #eef2f7">${k}</td><td style="padding:10px 16px;color:#0f1a2b;font-size:14px;font-weight:600;border-bottom:1px solid #eef2f7">${v}</td></tr>`;
   const tel = d.telefono.replace(/[^\d+]/g, "");
   const wa = tel.replace(/^\+/, "").replace(/^(\d{9})$/, "34$1");
   return wrap(`
-  <tr><td style="background:#0b1220;padding:22px 24px;color:#fff">
-    <div style="font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#8ec0ff">Calculadora de presupuesto</div>
-    <div style="font-size:22px;font-weight:700;margin-top:6px">${esc(d.nombre)}</div>
+  <tr><td style="background:#0b1220;padding:20px 24px;color:#fff">
+    <div style="font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#8ec0ff">Nueva solicitud · Calculadora</div>
+    <div style="font-size:21px;font-weight:700;margin-top:6px">${esc(d.nombre)}</div>
     <div style="font-size:13px;color:#9fb0c6;margin-top:4px">${esc(fecha)}</div>
   </td></tr>
-  <tr><td style="padding:18px 24px 4px"><div style="background:#eef5ff;border-radius:12px;padding:14px 16px"><div style="font-size:12px;color:#1f6fe5;text-transform:uppercase;letter-spacing:1px">Estimación</div><div style="font-size:24px;font-weight:700;color:#0f1a2b;margin-top:4px">${esc(d.total)}</div></div></td></tr>
-  <tr><td style="padding:10px 10px 4px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-    ${row("Teléfono", `<a href="tel:${esc(tel)}" style="color:#1f6fe5">${esc(d.telefono)}</a>`)}
-    ${row("Email", `<a href="mailto:${esc(d.email)}" style="color:#1f6fe5">${esc(d.email)}</a>`)}
-    ${row("Localidad", esc(d.localidad) || "-")}
-    ${row("Origen", esc(d.origen) || "-")}
-  </table></td></tr>
-  ${d.comentarios ? `<tr><td style="padding:12px 24px 0;font-size:15px;line-height:1.6;white-space:pre-wrap;color:#0f1a2b"><strong>Comentarios:</strong><br>${esc(d.comentarios)}</td></tr>` : ""}
-  <tr><td style="padding:16px 24px 0"><pre style="margin:0;white-space:pre-wrap;font:13px/1.55 Consolas,Menlo,monospace;background:#f2f5f9;border-radius:12px;padding:14px;color:#26344a">${esc(d.resumen)}</pre></td></tr>
-  <tr><td style="padding:20px 24px 26px">
-    <a href="tel:${esc(tel)}" style="display:inline-block;background:#3d8bff;color:#fff;text-decoration:none;font-weight:600;padding:12px 20px;border-radius:999px;margin-right:8px">Llamar</a>
-    <a href="https://wa.me/${esc(wa)}" style="display:inline-block;background:#25d366;color:#fff;text-decoration:none;font-weight:600;padding:12px 20px;border-radius:999px">WhatsApp</a>
+  ${totalHtml(d, "Presupuesto domótica")}
+  <tr><td style="padding:20px 24px 0">
+    <div style="font-size:12px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#26344a;margin-bottom:8px">Datos de contacto</div>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #e3e9f1;border-radius:12px;border-collapse:separate">
+      ${row("Nombre", esc(d.nombre))}
+      ${row("Email", `<a href="mailto:${esc(d.email)}" style="color:#1f6fe5">${esc(d.email)}</a>`)}
+      ${row("Teléfono", `<a href="tel:${esc(tel)}" style="color:#1f6fe5">${esc(d.telefono)}</a>`)}
+      ${row("Localidad", esc(d.localidad) || "-")}
+      ${d.cuando ? row("Cuándo", esc(d.cuando)) : ""}
+      ${d.origen ? row("Origen", esc(d.origen)) : ""}
+      ${row("Fecha", esc(fecha))}
+      ${d.comentarios ? row("Comentarios", `<span style="font-weight:400;white-space:pre-wrap">${esc(d.comentarios)}</span>`) : ""}
+    </table>
+  </td></tr>
+  ${detalleHtml(detalle.filter((sec) => sec.title !== "Comentarios"))}
+  ${detalle.length ? "" : `<tr><td style="padding:16px 24px 0"><pre style="margin:0;white-space:pre-wrap;font:13px/1.55 Consolas,Menlo,monospace;background:#f2f5f9;border-radius:12px;padding:14px;color:#26344a">${esc(d.resumen)}</pre></td></tr>`}
+  <tr><td style="padding:22px 24px 26px">
+    <a href="tel:${esc(tel)}" style="display:inline-block;background:#3d8bff;color:#fff;text-decoration:none;font-weight:600;padding:12px 20px;border-radius:999px;margin:0 8px 8px 0">Llamar</a>
+    <a href="https://wa.me/${esc(wa)}" style="display:inline-block;background:#25d366;color:#fff;text-decoration:none;font-weight:600;padding:12px 20px;border-radius:999px;margin:0 8px 8px 0">WhatsApp</a>
+    <a href="mailto:${esc(d.email)}" style="display:inline-block;background:#0f1a2b;color:#fff;text-decoration:none;font-weight:600;padding:12px 20px;border-radius:999px;margin:0 0 8px">Responder por email</a>
   </td></tr>`);
 }
 
-function clienteCalcHtml(d, T, site) {
+function clienteCalcHtml(d, detalle, T, site) {
   const wa = (config.contacto || {}).whatsapp || "34649611494";
   return wrap(`
   <tr><td style="background:#0b1220;padding:26px 24px;text-align:center">
     <img src="${site}/assets/img/logo-full.png" alt="Domótica Hogar Madrid" width="150" style="display:inline-block;width:150px;height:auto">
   </td></tr>
-  <tr><td style="padding:26px 26px 6px;color:#0f1a2b">
+  <tr><td style="padding:26px 26px 18px;color:#0f1a2b">
     <div style="font-size:21px;font-weight:700;margin-bottom:12px">Hola ${esc(d.nombre)},</div>
     <div style="font-size:15px;line-height:1.65;color:#26344a">${esc(T.email_cliente_cuerpo || "Hemos recibido tu solicitud. Te contactaremos en breve.")}</div>
   </td></tr>
-  <tr><td style="padding:16px 26px 4px"><div style="background:#eef5ff;border-radius:12px;padding:16px 18px"><div style="font-size:12px;color:#1f6fe5;text-transform:uppercase;letter-spacing:1px">Tu estimación orientativa</div><div style="font-size:24px;font-weight:700;color:#0f1a2b;margin-top:4px">${esc(d.total)}</div><div style="font-size:13px;color:#5a6a80;margin-top:6px">Precio orientativo. La propuesta final se ajusta tras revisar tu vivienda.</div></div></td></tr>
-  <tr><td style="padding:22px 26px 28px">
+  ${totalHtml(d, "Tu estimación orientativa")}
+  <tr><td style="padding:20px 24px 0"><div style="font-size:12px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#26344a">Resumen de tu configuración</div></td></tr>
+  ${detalleHtml(detalle)}
+  <tr><td style="padding:16px 26px 0;font-size:13px;line-height:1.6;color:#5a6a80">La propuesta final se ajusta tras revisar tu vivienda con un técnico. Si quieres cambiar algo, responde a este correo o escríbenos por WhatsApp.</td></tr>
+  <tr><td style="padding:20px 26px 28px">
     <a href="https://wa.me/${esc(wa)}" style="display:inline-block;background:#25d366;color:#fff;text-decoration:none;font-weight:600;padding:12px 20px;border-radius:999px;margin:0 8px 8px 0">Escríbenos por WhatsApp</a>
     <a href="${site}/proyectos" style="display:inline-block;background:#3d8bff;color:#fff;text-decoration:none;font-weight:600;padding:12px 20px;border-radius:999px;margin:0 0 8px">Ver instalaciones reales</a>
   </td></tr>
-  <tr><td style="padding:16px 26px;background:#f2f5f9;color:#5a6a80;font-size:12px;line-height:1.6">Domótica Hogar Madrid · +34 649 611 494 · info@domoticahogarmadrid.com<br>Recibes este correo porque has solicitado un presupuesto en nuestra web. Más información en nuestra política de privacidad.</td></tr>`);
+  <tr><td style="padding:16px 26px;background:#f2f5f9;color:#5a6a80;font-size:12px;line-height:1.6">Domótica Hogar Madrid · +34 649 611 494 · info@domoticahogarmadrid.com<br>Recibes este correo porque has solicitado un presupuesto en nuestra web. Más información en nuestra <a href="${site}/privacidad" style="color:#5a6a80">política de privacidad</a>.</td></tr>`);
 }
 
 function wrap(rows) {

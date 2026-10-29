@@ -2365,6 +2365,7 @@ function buildResumen(){
   const comentarios=(document.getElementById('res_comentarios')?.value||document.getElementById('ct_comentarios')?.value||'').trim();
   if(comentarios) push('💬','Comentarios',[{t:'info',name:'',val:comentarios}]);
 
+  window.__RESUMEN=sections; // desglose que también se envía por correo
   // Render
   let html='<div class="sum-card">';
   sections.forEach(sec=>{
@@ -2508,6 +2509,8 @@ function sendBudget(){
   fd.append('comentarios',comentarios);
   fd.append('total',total); fd.append('resumen',resumen);
   fd.append('payload_json',btoa(unescape(encodeURIComponent(JSON.stringify(payload)))));
+  try{buildResumen();}catch(e){}
+  fd.append('detalle_json',btoa(unescape(encodeURIComponent(JSON.stringify(window.__RESUMEN||[])))));
   fd.append('cf-turnstile-response',tsToken);
 
   fetch(window.domoticaAjaxUrl||'/wp-admin/admin-ajax.php',{method:'POST',body:fd})
