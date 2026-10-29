@@ -51,7 +51,7 @@
   "camaras": {
     "camara-01-poe-ext": {
       "nombre": "Reolink Exterior PoE 4K 8MP",
-      "imagen": "https://domoticahogarmadrid.com/wp-content/uploads/2026/02/camara_opcion_2.jpg",
+      "imagen": "/wp-content/uploads/2026/02/camara_opcion_2.jpg",
       "precio": 269,
       "zonas": [
         "exterior"
@@ -60,7 +60,7 @@
     },
     "camara-05-poe-ext": {
       "nombre": "Reolink Exterior PoE 4K DUE 8MP",
-      "imagen": "https://domoticahogarmadrid.com/wp-content/uploads/2026/02/camara_opcion_3.jpg",
+      "imagen": "/wp-content/uploads/2026/02/camara_opcion_3.jpg",
       "precio": 339,
       "zonas": [
         "exterior"
@@ -69,7 +69,7 @@
     },
     "camara-02-wifi-ext": {
       "nombre": "Reolink Exterior Wifi 4K ",
-      "imagen": "https://domoticahogarmadrid.com/wp-content/uploads/2026/04/Reolink-4K-Camara-Vigilancia-WiFi-Exterior.jpg",
+      "imagen": "/wp-content/uploads/2026/04/Reolink-4K-Camara-Vigilancia-WiFi-Exterior.jpg",
       "precio": 249,
       "zonas": [
         "exterior"
@@ -78,7 +78,7 @@
     },
     "camara-03-wifi-int": {
       "nombre": "Reolink Interior Wifi",
-      "imagen": "https://domoticahogarmadrid.com/wp-content/uploads/2026/04/Reolink-5MP-PTZ-Camara-Vigilancia-WiFi-interior.jpg",
+      "imagen": "/wp-content/uploads/2026/04/Reolink-5MP-PTZ-Camara-Vigilancia-WiFi-interior.jpg",
       "precio": 235,
       "zonas": [
         "interior"
@@ -87,7 +87,7 @@
     },
     "camara-04-poe-int": {
       "nombre": "Reolink Interior PoE",
-      "imagen": "https://domoticahogarmadrid.com/wp-content/uploads/2026/05/5182ILKsvqL._AC_SL1500_.jpg",
+      "imagen": "/wp-content/uploads/2026/05/5182ILKsvqL._AC_SL1500_.jpg",
       "precio": 220,
       "zonas": [
         "interior"

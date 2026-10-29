@@ -1,7 +1,8 @@
 /* ==========================================================================
    Domótica Hogar Madrid — Worker
    Sirve la web estática, recibe el formulario de contacto en /api/contacto
-   y delega la calculadora y la zona de presupuestos en presupuesto.js.
+   delega la calculadora y la zona de presupuestos en presupuesto.js
+   y sirve las imágenes (/wp-content/uploads/* y /media/*) desde Cloudflare R2.
 
    Secretos (Workers & Pages → baseweb → Settings → Variables and Secrets):
      RESEND_API_KEY    Clave de Resend con permiso de envío
@@ -42,6 +43,9 @@ export default {
         console.error("Error en /api/contacto", err);
         return json({ ok: false, error: "No hemos podido enviar tu solicitud." }, 500);
       }
+    }
+    if (url.pathname.startsWith("/wp-content/uploads/") || url.pathname.startsWith("/media/")) {
+      return serveImage(request, env, ctx, url);
     }
     const path = url.pathname.replace(/\/+$/, "") || "/";
     if (PRESUPUESTO_PATHS.includes(path)) {
@@ -147,4 +151,27 @@ function noticeHtml(d, fecha) {
   </td></tr>
   <tr><td style="padding:14px 24px;background:#f2f5f9;color:#5a6a80;font-size:12px">Enviado desde ${esc(d.pagina) || "la web"} · domoticahogarmadrid.com</td></tr>
 </table></td></tr></table></body></html>`;
+}
+
+/* ---------- Imágenes en R2 (mismas URLs que tenía WordPress) ---------- */
+
+async function serveImage(request, env, ctx, url) {
+  if (!["GET", "HEAD"].includes(request.method)) return new Response("Método no permitido", { status: 405 });
+  if (!env.IMAGENES) return new Response("Almacén de imágenes no configurado", { status: 503 });
+  const cache = caches.default;
+  const cached = await cache.match(request);
+  if (cached) return cached;
+
+  const key = decodeURIComponent(url.pathname.slice(1));
+  const object = await env.IMAGENES.get(key);
+  if (!object) return env.ASSETS.fetch(new Request(new URL("/404", url), request)).then((r) => new Response(r.body, { status: 404, headers: r.headers }));
+
+  const headers = new Headers();
+  object.writeHttpMetadata(headers);
+  headers.set("ETag", object.httpEtag);
+  headers.set("Cache-Control", "public, max-age=2592000");
+  headers.set("Access-Control-Allow-Origin", "*");
+  const res = new Response(request.method === "HEAD" ? null : object.body, { headers });
+  if (request.method === "GET") ctx.waitUntil(cache.put(request, res.clone()));
+  return res;
 }
