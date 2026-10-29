@@ -51,19 +51,18 @@
   };
 
   const CSS = `
-  .dhm-cookies{position:fixed;left:16px;right:16px;bottom:16px;z-index:9999;max-width:560px;margin:0 auto;padding:20px 22px;border-radius:20px;
-    background:rgba(10,16,28,.94);color:#e7eef7;border:1px solid rgba(255,255,255,.14);box-shadow:0 30px 60px -20px rgba(0,0,0,.6);
-    backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);font:14px/1.55 Inter,"Plus Jakarta Sans",system-ui,sans-serif;
-    transform:translateY(20px);opacity:0;transition:transform .5s cubic-bezier(.22,1,.36,1),opacity .5s}
+  .dhm-cookies{position:fixed;left:16px;bottom:16px;z-index:9999;max-width:420px;padding:14px 16px;border-radius:16px;
+    background:rgba(10,16,28,.92);color:#c9d5e3;border:1px solid rgba(255,255,255,.12);box-shadow:0 20px 40px -20px rgba(0,0,0,.6);
+    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);font:13px/1.5 Inter,"Plus Jakarta Sans",system-ui,sans-serif;
+    display:flex;align-items:center;gap:14px;transform:translateY(16px);opacity:0;transition:transform .5s cubic-bezier(.22,1,.36,1),opacity .5s}
   .dhm-cookies.is-in{transform:none;opacity:1}
-  .dhm-cookies strong{display:block;font-size:15px;color:#fff;margin-bottom:6px}
-  .dhm-cookies p{margin:0 0 14px;color:#b9c7d8}
-  .dhm-cookies a{color:#8ec0ff}
-  .dhm-cookies .dhm-row{display:flex;gap:10px;flex-wrap:wrap}
-  .dhm-cookies button{flex:1 1 140px;font:inherit;font-weight:600;padding:11px 16px;border-radius:999px;cursor:pointer;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.06);color:#fff}
-  .dhm-cookies button:hover{background:rgba(255,255,255,.12)}
+  .dhm-cookies p{margin:0;flex:1}
+  .dhm-cookies a{color:#8ec0ff;white-space:nowrap}
+  .dhm-cookies .dhm-row{display:flex;gap:6px;flex:none}
+  .dhm-cookies button{font:inherit;font-weight:600;font-size:12.5px;padding:8px 14px;border-radius:999px;cursor:pointer;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.06);color:#fff}
+  .dhm-cookies button:hover{background:rgba(255,255,255,.14)}
   .dhm-cookies button:focus-visible{outline:2px solid #8ec0ff;outline-offset:2px}
-  @media (max-width:640px){.dhm-cookies{left:10px;right:10px;bottom:10px;padding:16px}}`;
+  @media (max-width:640px){.dhm-cookies{left:10px;right:80px;bottom:10px;max-width:none;flex-direction:column;align-items:stretch;gap:10px}.dhm-cookies .dhm-row button{flex:1}}`;
 
   function showBanner() {
     if (!GA_ID || document.querySelector(".dhm-cookies")) return;
@@ -77,8 +76,7 @@
     box.className = "dhm-cookies";
     box.setAttribute("role", "dialog");
     box.setAttribute("aria-label", "Aviso de cookies");
-    box.innerHTML = `<strong>Tu privacidad, bajo control</strong>
-      <p>Usamos cookies de analítica (Google Analytics) para saber cómo se usa la web y mejorarla. Solo se activan si las aceptas. <a href="/legal#cookies">Más información</a></p>
+    box.innerHTML = `<p>Usamos cookies de Google Analytics para medir las visitas. <a href="/legal#cookies">Más información</a></p>
       <div class="dhm-row"><button type="button" data-dhm="rechazar">Rechazar</button><button type="button" data-dhm="aceptar">Aceptar</button></div>`;
     document.body.appendChild(box);
     requestAnimationFrame(() => box.classList.add("is-in"));
