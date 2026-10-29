@@ -2,7 +2,7 @@
    Calculadora de presupuesto y zona privada de presupuestos.
 
    Rutas:
-     /calculadora-de-presupuesto Calculadora pública (config en presupuesto/config.json)
+     /calculadora-de-presupuesto/ Calculadora pública (config en presupuesto/config.json)
      /api/calculadora           Envío de la calculadora: correos + webhook de n8n
      /acceso, /salir            Entrar / salir de la zona privada (clave PASS_PRESUPUESTO)
      /presupuestos              Listado de presupuestos (privado)
@@ -26,6 +26,7 @@ import accesoHtml from "./presupuesto/acceso.html";
 import config from "./presupuesto/config.json";
 import { verifyTurnstile, sendEmail, clean, esc, json } from "./lib.js";
 
+const CALCULADORA_URL = "/calculadora-de-presupuesto/";
 const COOKIE = "dhm_presupuestos";
 const SESSION_DAYS = 180;
 const PRIVATE_HEADERS = { "Cache-Control": "no-store", "X-Robots-Tag": "noindex, nofollow", "Referrer-Policy": "same-origin" };
@@ -36,8 +37,10 @@ export async function handlePresupuesto(request, env, ctx, url) {
   const path = url.pathname.replace(/\/+$/, "") || "/";
   switch (path) {
     case "/calculadora-presupuesto":
-      return new Response(null, { status: 301, headers: { Location: "/calculadora-de-presupuesto" + url.search } });
+      return new Response(null, { status: 301, headers: { Location: CALCULADORA_URL + url.search } });
     case "/calculadora-de-presupuesto":
+      // Dirección oficial con barra final; sin barra redirige
+      if (url.pathname !== CALCULADORA_URL) return new Response(null, { status: 301, headers: { Location: CALCULADORA_URL + url.search } });
       return html(injectBeforeHead(calculadoraHtml, calculadoraScript()), { "Cache-Control": "no-cache" });
     case "/api/calculadora":
       if (request.method !== "POST") return json({ success: false, error: "Método no permitido." }, 405);

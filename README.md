@@ -44,7 +44,7 @@ Prueba en local: crea `.dev.vars` con esas variables y ejecuta `npx wrangler dev
 
 | Ruta | Acceso | Qué es |
 |---|---|---|
-| `/calculadora-de-presupuesto` | Pública (sin enlaces en el menú) | Calculadora de presupuesto (`worker/presupuesto/calculadora.html`) |
+| `/calculadora-de-presupuesto/` | Pública (sin enlaces en el menú) | Calculadora de presupuesto (`worker/presupuesto/calculadora.html`) |
 | `/presupuestos` | Privada, con `PASS_PRESUPUESTO` | Listado de presupuestos (`worker/presupuesto/listado.html`) |
 | `/presupuesto?id=P-0056` | Privada | Editor de presupuestos (`worker/presupuesto/editor.html`); sin `id` crea uno nuevo |
 | `/acceso` · `/salir` | — | Entrar con la clave (el navegador la recuerda 180 días) y cerrar sesión |
