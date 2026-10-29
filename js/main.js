@@ -253,7 +253,7 @@ if ("IntersectionObserver" in window && !reduceMotion) {
   autoVideos.forEach((v) => vo.observe(v));
 }
 
-/* Reproductor a pantalla completa con sonido */
+/* Reproductor a pantalla completa (siempre en silencio) */
 const lightbox = document.querySelector(".lightbox");
 if (lightbox) {
   const lbVideo = lightbox.querySelector("video");
@@ -272,7 +272,7 @@ if (lightbox) {
       lbCaption.textContent = card.dataset.title || "";
       lightbox.hidden = false;
       document.body.style.overflow = "hidden";
-      lbVideo.muted = false;
+      lbVideo.muted = true;
       lbVideo.play().catch(() => {});
     };
     card.addEventListener("click", open);

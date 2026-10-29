@@ -193,7 +193,7 @@ def footer():
     </div>
   </div>
 </footer>
-<div class="lightbox" hidden role="dialog" aria-modal="true" aria-label="Vídeo"><button class="lightbox__close" aria-label="Cerrar vídeo">×</button><div><video controls playsinline></video><p class="lightbox__caption"></p></div></div>
+<div class="lightbox" hidden role="dialog" aria-modal="true" aria-label="Vídeo"><button class="lightbox__close" aria-label="Cerrar vídeo">×</button><div><video controls muted playsinline></video><p class="lightbox__caption"></p></div></div>
 <a class="wa-float" href="https://wa.me/{WA}?text=Hola%2C%20me%20interesa%20domotizar%20mi%20casa" target="_blank" rel="noopener" aria-label="Escríbenos por WhatsApp">{icon("whatsapp")}<span class="wa-float__tip">¿Hablamos por WhatsApp?</span></a>"""
 
 

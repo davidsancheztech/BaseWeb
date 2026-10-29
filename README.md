@@ -94,9 +94,9 @@ Si la lista tiene contenido, la web incrusta además los reels oficiales encima 
 
 ## Vídeos y logotipo
 
-- Los vídeos están en `assets/video/` (MP4 H.264 + póster `.jpg`). Se reproducen en silencio al aparecer en pantalla y, al pulsarlos, se abren a pantalla completa con sonido.
+- Los vídeos están en `assets/video/` (MP4 H.264 + póster `.jpg`). No tienen audio: se reproducen en silencio al aparecer en pantalla y, al pulsarlos, se abren a pantalla completa.
 - Para añadir uno nuevo: conviértelo con
-  `ffmpeg -i video.mov -vf "scale=540:-2" -c:v libx264 -crf 27 -movflags +faststart -c:a aac -b:a 64k nombre.mp4`
+  `ffmpeg -i video.mov -vf "scale=540:-2" -c:v libx264 -crf 27 -movflags +faststart -an nombre.mp4`
   y añádelo en la tabla `VIDEOS` de `_fuente/build.py` (o copia una tarjeta `<figure class="vcard">` existente).
 - Logotipo original de la empresa, sin modificar: `assets/img/logo-full.png`, `logo-icon.png` y `logo-wordmark.png` (recortes con fondo transparente del archivo original), favicon en `assets/img/favicon.png` y el original en `assets/img/logo-domotica-hogar-madrid.jpg` (imagen al compartir en redes).
 
