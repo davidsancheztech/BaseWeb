@@ -258,8 +258,8 @@ def page(fname, title, desc, body, active=None, schema=False):
 
 
 PAGES = [
-    ("index.html", "Domótica en Madrid | Home Assistant, Zigbee y KNX — Domótica Hogar Madrid",
-     "Integradores de domótica en Madrid. Casas inteligentes con Home Assistant, Shelly, Aqara, Airzone e interruptores Legrand Netatmo. KNX y DALI para empresas. Estudio gratuito.", "index.html", True),
+    ("index.html", "Domótica Hogar Madrid | Instalación de domótica profesional para hogar y empresa",
+     "Instalación de domótica profesional para hogares y empresas en Madrid. Luz, clima, persianas, accesos y seguridad en una sola app. Estudio gratuito.", "index.html", True),
     ("domotica-hogar.html", "Domótica para el hogar en Madrid | Home Assistant, Shelly, Aqara, Airzone",
      "Convierte tu casa en inteligente sin obras: Home Assistant con Shelly, Sonoff, Aqara y Airzone. Luces, persianas, clima, seguridad y ahorro energético en Madrid.", "domotica-hogar.html", False),
     ("interruptores-zigbee.html", "Interruptores inteligentes Zigbee | Legrand with Netatmo en Madrid",
