@@ -14,7 +14,9 @@
     "not_found_handling": "404-page",
     "run_worker_first": ["/api/*", "/wp-content/uploads/*", "/media/*", "/calculadora-de-presupuesto", "/calculadora-presupuesto", "/acceso", "/salir", "/presupuestos", "/presupuesto"]
   },
-  // Imágenes en Cloudflare R2: se activa cuando exista el bucket "domotica-imagenes"
-  // "r2_buckets": [{ "binding": "IMAGENES", "bucket_name": "domotica-imagenes" }],
+  // Imágenes en Cloudflare R2 (bucket "domotica-imagenes"):
+  //   /wp-content/uploads/...  imágenes migradas de WordPress (mismas URLs de siempre)
+  //   /media/...               imágenes nuevas, organizadas por carpetas
+  "r2_buckets": [{ "binding": "IMAGENES", "bucket_name": "domotica-imagenes" }],
   "observability": { "enabled": true }
 }
