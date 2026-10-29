@@ -65,6 +65,12 @@ Secretos adicionales (tipo *Secret* en **Runtime variables and secrets**):
 | `N8N_PRESUPUESTOS_LISTA_URL` | Webhook que devuelve la lista de presupuestos |
 | `N8N_PRESUPUESTO_API_KEY` | Clave enviada a esos tres webhooks en `X-Api-Key` |
 
+## Google Analytics y cookies
+
+- `js/consent.js`: aviso de cookies (Aceptar / Rechazar) y Google Analytics 4. Analytics **solo se carga si el visitante acepta**; la elección se recuerda 6 meses y se cambia desde «Configurar cookies» en el pie.
+- El ID de medición se pone en la constante `GA_ID` de `js/consent.js` (vacío = sin aviso ni Analytics).
+- Eventos: `generate_lead` (formulario de contacto y calculadora), `contacto_whatsapp`, `contacto_telefono`, `contacto_email`.
+
 ## Imágenes (Cloudflare R2)
 
 Las imágenes están en el bucket R2 `domotica-imagenes` (binding `IMAGENES` en `wrangler.jsonc`) y las sirve el Worker con caché de 30 días:

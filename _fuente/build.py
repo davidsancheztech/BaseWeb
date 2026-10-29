@@ -189,7 +189,7 @@ def footer():
     </div>
     <div class="footer-bottom">
       <span>© <span data-year>2026</span> Domótica Hogar Madrid. Todos los derechos reservados.</span>
-      <nav aria-label="Legal"><a href="legal.html">Aviso legal</a><a href="privacidad.html">Política de privacidad</a><a href="legal.html#cookies">Cookies</a></nav>
+      <nav aria-label="Legal"><a href="legal.html">Aviso legal</a><a href="privacidad.html">Política de privacidad</a><a href="legal.html#cookies">Cookies</a><a href="#" data-cookie-settings>Configurar cookies</a></nav>
     </div>
   </div>
 </footer>
@@ -249,6 +249,7 @@ def page(fname, title, desc, body, active=None, schema=False):
 {body.strip()}
 </main>
 {footer()}
+<script src="/js/consent.js" defer></script>
 <script src="js/main.js" defer></script>
 </body>
 </html>

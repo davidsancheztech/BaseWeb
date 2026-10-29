@@ -215,6 +215,7 @@ if (form) {
       if (!res.ok || !out.ok) throw new Error(out.error || "No hemos podido enviar tu solicitud.");
       form.reset();
       ok?.classList.add("is-visible");
+      window.dhmTrack?.("generate_lead", { formulario: "contacto" });
     } catch (error) {
       showError(`${error.message} Si lo prefieres, llámanos o escríbenos por WhatsApp al +34 649 611 494.`);
     } finally {

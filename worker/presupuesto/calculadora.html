@@ -2516,6 +2516,7 @@ function sendBudget(){
   fetch(window.domoticaAjaxUrl||'/wp-admin/admin-ajax.php',{method:'POST',body:fd})
     .then(async r=>{const t=await r.text();try{return JSON.parse(t);}catch(e){throw new Error('El servidor respondió con un error (HTTP '+r.status+')');}}).then(data=>{
       if(!data||data.success!==true) throw new Error((data&&data.error)||'Error');
+      window.dhmTrack&&window.dhmTrack('generate_lead',{formulario:'calculadora',estimacion:total});
       btn.disabled=false;
       document.getElementById('sec-contacto').classList.remove('active');
       // Aplicar textos personalizados desde JSON si existen
@@ -2760,5 +2761,6 @@ if(window.self!==window.top){
 }
 </script>
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+<script src="/js/consent.js" defer></script>
 </body>
 </html>
