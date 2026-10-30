@@ -22,13 +22,17 @@
     } catch (e) {}
   };
 
+  // Páginas que cargan el script con data-sin-aviso (la calculadora): sin aviso;
+  // Analytics sin cookies salvo que el visitante ya las aceptara en la web.
+  const SIN_AVISO = !!(document.currentScript && document.currentScript.hasAttribute("data-sin-aviso"));
+
   let loaded = false;
-  function loadGA() {
+  function loadGA(sinCookies) {
     if (loaded || !GA_ID) return;
     loaded = true;
     window.dataLayer = window.dataLayer || [];
     window.gtag = function () { window.dataLayer.push(arguments); };
-    window.gtag("consent", "default", { ad_storage: "denied", ad_user_data: "denied", ad_personalization: "denied", analytics_storage: "granted" });
+    window.gtag("consent", "default", { ad_storage: "denied", ad_user_data: "denied", ad_personalization: "denied", analytics_storage: sinCookies ? "denied" : "granted" });
     window.gtag("js", new Date());
     window.gtag("config", GA_ID);
     const s = document.createElement("script");
@@ -98,6 +102,7 @@
   function init() {
     const v = read();
     if (v === "aceptadas") loadGA();
+    else if (SIN_AVISO) { if (v !== "rechazadas") loadGA(true); }
     else if (v === null) showBanner();
 
     document.addEventListener("click", (e) => {

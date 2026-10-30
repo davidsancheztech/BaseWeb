@@ -69,6 +69,7 @@ Secretos adicionales (tipo *Secret* en **Runtime variables and secrets**):
 
 - `js/consent.js`: aviso de cookies (Aceptar / Rechazar) y Google Analytics 4. Analytics **solo se carga si el visitante acepta**; la elección se recuerda 6 meses y se cambia desde «Configurar cookies» en el pie.
 - El ID de medición se pone en la constante `GA_ID` de `js/consent.js` (vacío = sin aviso ni Analytics).
+- La calculadora carga el script con `data-sin-aviso`: no muestra aviso y mide sin cookies (consent mode `analytics_storage: denied`), salvo que el visitante ya las aceptara; si las rechazó, no envía nada.
 - Eventos: `generate_lead` (formulario de contacto y calculadora), `contacto_whatsapp`, `contacto_telefono`, `contacto_email`.
 
 ## Imágenes (Cloudflare R2)
