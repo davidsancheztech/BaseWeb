@@ -183,7 +183,7 @@ def footer():
           <li><a href="tel:{PHONE_TEL}">{PHONE_DISPLAY}</a></li>
           <li><a href="mailto:{EMAIL}">{EMAIL}</a></li>
           <li>Madrid capital y Comunidad de Madrid</li>
-          <li>L–V 9:00–19:00</li>
+          <li>L–V 9:00–18:00</li>
         </ul>
       </div>
     </div>
@@ -205,6 +205,7 @@ SCHEMA = {
     "email": EMAIL,
     "telephone": PHONE_TEL,
     "areaServed": {"@type": "AdministrativeArea", "name": "Comunidad de Madrid"},
+    "openingHoursSpecification": [{"@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"], "opens": "09:00", "closes": "18:00"}],
     "address": {"@type": "PostalAddress", "addressLocality": "Torrejón de Ardoz", "postalCode": "28850", "addressRegion": "Madrid", "addressCountry": "ES"},
     "sameAs": [f"https://www.instagram.com/{IG}/"],
     "knowsAbout": ["Domótica", "Home Assistant", "Zigbee", "KNX", "DALI", "Shelly", "Aqara", "Airzone", "Legrand Netatmo"],
